@@ -59,12 +59,6 @@ public class LoginActivity extends PingoActivity {
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
 
-    public interface AnimatorCallback {
-        public void onAnimationEnd();
-
-        public void onAnimationStart();
-    }
-
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
