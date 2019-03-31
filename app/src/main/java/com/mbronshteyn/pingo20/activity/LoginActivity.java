@@ -244,8 +244,11 @@ public class LoginActivity extends PingoActivity {
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 rightSmallBaloon.startAnimation(zoomIntAnimation);
 
-                Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                leftLargeBaloon.startAnimation(zoomIntAnimationOut);
+                if(leftLargeBaloon.getVisibility() == View.VISIBLE) {
+                    Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                    leftLargeBaloon.startAnimation(zoomIntAnimationOut);
+                    leftLargeBaloon.setVisibility(View.INVISIBLE);
+                }
             }
         }, 1500);
     }
@@ -313,6 +316,7 @@ public class LoginActivity extends PingoActivity {
                 case INVALID:
                     leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
                     popBaloon(leftLargeBaloon,4000);
+                    cardNumberInput.setText("");
                     break;
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);

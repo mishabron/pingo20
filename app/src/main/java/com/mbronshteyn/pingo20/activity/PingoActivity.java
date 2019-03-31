@@ -67,6 +67,7 @@ public class PingoActivity extends AppCompatActivity {
             public void run() {
                 Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                 ballon.startAnimation(zoomIntAnimationOut);
+                ballon.setVisibility(View.INVISIBLE);
             }
         }, duration);
     }
