@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class LoginActivity extends PingoActivity {
     private Button authButtonGo;
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
+    private LoginActivity context;
 
     @SuppressLint("ResourceType")
     @Override
@@ -65,6 +67,8 @@ public class LoginActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        context = this;
+        
         scaleUi();
 
         authButton18 = (ImageView) findViewById(R.id.actionButton18);
@@ -377,6 +381,18 @@ public class LoginActivity extends PingoActivity {
         rightSmallBaloon.setImageResource(R.drawable.success);
         popBaloon(rightSmallBaloon,4000);
         progressBar.startSaccess();
+
+        //go to game screen
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.stopSuccess();
+                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(intent);
+                Activity activity = (Activity) context;
+                activity.finish();
+            }
+        }, 4000);
     }
 
     public void scaleUi(){

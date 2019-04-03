@@ -5,9 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:background="#000000"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/icon_new"
         android:label="@string/app_name"
         android:roundIcon="@drawable/icon_new"
@@ -15,12 +15,19 @@
         android:testOnly="false"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <activity
+            android:name=".activity.GameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
+        <activity
             android:name=".activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
