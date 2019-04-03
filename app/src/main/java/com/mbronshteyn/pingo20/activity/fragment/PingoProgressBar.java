@@ -33,8 +33,14 @@ public class PingoProgressBar extends Fragment {
     private ImageView dot3;
     private ProgressIndicator progressIndicator;
     private SuccessIndicator successIndicator;
+    private FailureIndicator failureIndicator;
     private Thread progressThread;
     private Thread successThread;
+    private Thread faiureThread;
+    private int defaultDot;
+    private int progressDot;
+    private int successDot;
+    private int failureDot;
 
     public PingoProgressBar() {
         // Required empty public constructor
@@ -85,11 +91,23 @@ public class PingoProgressBar extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         progressIndicator = new ProgressIndicator(getView());
         successIndicator = new SuccessIndicator(getView());
+        failureIndicator = new FailureIndicator(getView());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void init(Bundle savedInstanceState){
+        defaultDot = savedInstanceState.getInt("default");
+        progressDot = savedInstanceState.getInt("progress");;
+        successDot = savedInstanceState.getInt("success");;
+        failureDot = savedInstanceState.getInt("failure");;
+
+        dot1.setImageResource(defaultDot);
+        dot2.setImageResource(defaultDot);
+        dot3.setImageResource(defaultDot);
     }
 
     public void startProgress(){
@@ -99,9 +117,9 @@ public class PingoProgressBar extends Fragment {
 
     public void stopProgress(){
 
-        dot1.setImageResource(R.drawable.progress_blk_ring);
-        dot2.setImageResource(R.drawable.progress_blk_ring);
-        dot3.setImageResource(R.drawable.progress_blk_ring);
+        dot1.setImageResource(defaultDot);
+        dot2.setImageResource(defaultDot);
+        dot3.setImageResource(defaultDot);
 
         progressThread.interrupt();
     }
@@ -113,6 +131,15 @@ public class PingoProgressBar extends Fragment {
 
     public void stopSuccess(){
         successThread.interrupt();
+    }
+
+    public void startFailure(){
+        faiureThread = new Thread(failureIndicator);
+        faiureThread.start();
+    }
+
+    public void stopFailure(){
+        faiureThread.interrupt();
     }
 
     private class ProgressIndicator implements Runnable {
@@ -133,27 +160,27 @@ public class PingoProgressBar extends Fragment {
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            dot1.setImageResource(R.drawable.progress_yellow);
-                            dot2.setImageResource(R.drawable.progress_blk_ring);
-                            dot3.setImageResource(R.drawable.progress_blk_ring);
+                            dot1.setImageResource(progressDot);
+                            dot2.setImageResource(defaultDot);
+                            dot3.setImageResource(defaultDot);
                         }
                     });
                     Thread.sleep(500);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            dot1.setImageResource(R.drawable.progress_blk_ring);
-                            dot2.setImageResource(R.drawable.progress_yellow);
-                            dot3.setImageResource(R.drawable.progress_blk_ring);
+                            dot1.setImageResource(defaultDot);
+                            dot2.setImageResource(progressDot);
+                            dot3.setImageResource(defaultDot);
                         }
                     });
                     Thread.sleep(500);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            dot1.setImageResource(R.drawable.progress_blk_ring);
-                            dot2.setImageResource(R.drawable.progress_blk_ring);
-                            dot3.setImageResource(R.drawable.progress_yellow);
+                            dot1.setImageResource(defaultDot);
+                            dot2.setImageResource(defaultDot);
+                            dot3.setImageResource(progressDot);
                         }
                     });
                 }
@@ -181,18 +208,57 @@ public class PingoProgressBar extends Fragment {
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            dot1.setImageResource(R.drawable.progress_blk_ring);
-                            dot2.setImageResource(R.drawable.progress_blk_ring);
-                            dot3.setImageResource(R.drawable.progress_blk_ring);
+                            dot1.setImageResource(defaultDot);
+                            dot2.setImageResource(defaultDot);
+                            dot3.setImageResource(defaultDot);
                         }
                     });
                     Thread.sleep(500);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            dot1.setImageResource(R.drawable.progress_yellow);
-                            dot2.setImageResource(R.drawable.progress_yellow);
-                            dot3.setImageResource(R.drawable.progress_yellow);
+                            dot1.setImageResource(successDot);
+                            dot2.setImageResource(successDot);
+                            dot3.setImageResource(successDot);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private class FailureIndicator implements Runnable {
+
+        View view;
+
+        public FailureIndicator(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+
+                    Thread.sleep(500);
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dot1.setImageResource(defaultDot);
+                            dot2.setImageResource(defaultDot);
+                            dot3.setImageResource(defaultDot);
+                        }
+                    });
+                    Thread.sleep(500);
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dot1.setImageResource(failureDot);
+                            dot2.setImageResource(failureDot);
+                            dot3.setImageResource(failureDot);
                         }
                     });
                 }

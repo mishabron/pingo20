@@ -140,6 +140,12 @@ public class LoginActivity extends PingoActivity {
         });
 
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
+        Bundle bandle = new Bundle();
+        bandle.putInt("default",R.drawable.progress_blk_ring);
+        bandle.putInt("progress",R.drawable.progress_yellow);
+        bandle.putInt("success",R.drawable.progress_yellow);
+        bandle.putInt("failure",R.drawable.progress_yellow);
+        progressBar.init(bandle);
 
     }
 
