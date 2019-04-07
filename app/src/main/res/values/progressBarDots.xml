@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FragmentDots">
+        <attr name="initiak" format="string"/>
+        <attr name="progress" format="string"/>
+        <attr name="success" format="string"/>
+        <attr name="failure" format="string"/>
+    </declare-styleable>
+</resources>

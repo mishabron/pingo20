@@ -92,7 +92,7 @@ public class SplashActivity extends Activity {
                 Thread.sleep(2000);
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
-                //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Activity activity = (Activity) context;
                 activity.finish();
 

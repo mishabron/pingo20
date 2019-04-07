@@ -1,9 +1,13 @@
 package com.mbronshteyn.pingo20.activity.fragment;
 
+import android.app.Activity;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,10 +71,6 @@ public class PingoProgressBar extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -82,6 +82,10 @@ public class PingoProgressBar extends Fragment {
         dot1 = (ImageView) view.findViewById(R.id.progress1);
         dot2 = (ImageView) view.findViewById(R.id.progress2);
         dot3 = (ImageView) view.findViewById(R.id.progress3);
+
+        dot1.setImageResource(defaultDot);
+        dot2.setImageResource(defaultDot);
+        dot3.setImageResource(defaultDot);
 
         return view;
     }
@@ -99,15 +103,27 @@ public class PingoProgressBar extends Fragment {
         super.onDetach();
     }
 
-    public void init(Bundle savedInstanceState){
-        defaultDot = savedInstanceState.getInt("default");
-        progressDot = savedInstanceState.getInt("progress");;
-        successDot = savedInstanceState.getInt("success");;
-        failureDot = savedInstanceState.getInt("failure");;
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(activity, attrs, savedInstanceState);
 
-        dot1.setImageResource(defaultDot);
-        dot2.setImageResource(defaultDot);
-        dot3.setImageResource(defaultDot);
+        TypedArray a = activity.obtainStyledAttributes(attrs,R.styleable.FragmentDots);
+
+        Resources res = getResources();
+
+        String dot = (String) a.getText(R.styleable.FragmentDots_initiak);
+        defaultDot = res.getIdentifier(dot , "drawable", getActivity().getPackageName());
+
+        dot = (String) a.getText(R.styleable.FragmentDots_progress);
+        progressDot = res.getIdentifier(dot , "drawable", getActivity().getPackageName());
+
+        dot = (String) a.getText(R.styleable.FragmentDots_success);
+        successDot = res.getIdentifier(dot , "drawable", getActivity().getPackageName());
+
+        dot = (String) a.getText(R.styleable.FragmentDots_failure);
+        failureDot = res.getIdentifier(dot , "drawable", getActivity().getPackageName());
+
+        a.recycle();
     }
 
     public void startProgress(){

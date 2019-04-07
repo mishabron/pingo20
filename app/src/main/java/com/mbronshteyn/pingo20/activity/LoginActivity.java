@@ -7,7 +7,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -91,7 +93,7 @@ public class LoginActivity extends PingoActivity {
         mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_animation);
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_animation);
 
-        Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/comic.ttf");
+        Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
         cardNumberInput = (EditText) findViewById(R.id.cardId);
         cardNumberInput.setTypeface(font,Typeface.BOLD_ITALIC);
 
@@ -144,26 +146,15 @@ public class LoginActivity extends PingoActivity {
         });
 
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
-        Bundle bandle = new Bundle();
-        bandle.putInt("default",R.drawable.progress_blk_ring);
-        bandle.putInt("progress",R.drawable.progress_yellow);
-        bandle.putInt("success",R.drawable.progress_yellow);
-        bandle.putInt("failure",R.drawable.progress_yellow);
-        progressBar.init(bandle);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             public void run() {
                 leftLargeBaloon.setVisibility(View.VISIBLE);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 leftLargeBaloon.startAnimation(zoomIntAnimation);
             }
         }, 3000);
+
     }
 
     @Override
@@ -352,34 +343,12 @@ public class LoginActivity extends PingoActivity {
     public void onCardAuthinticatedEvent(CardAuthinticatedEvent event){
 
         final ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        topBanner.setImageResource(R.drawable.slogan_wht_blur);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                topBanner.setImageResource(R.drawable.slogan_black);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        topBanner.setImageResource(R.drawable.slogan_wht_blur);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                topBanner.setImageResource(R.drawable.slogan_black);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        topBanner.setImageResource(R.drawable.slogan3d);
-                                    }
-                                }, 300);
-                            }
-                        }, 300);
-                    }
-                }, 300);
-            }
-        },1300);
+        topBanner.setImageResource(R.drawable.banner_animation);
+        Animatable bannerAnimation = (Animatable) topBanner.getBackground();
+        bannerAnimation.start();
 
-        rightSmallBaloon.setImageResource(R.drawable.success);
-        popBaloon(rightSmallBaloon,4000);
+        leftLargeBaloon.setImageResource(R.drawable.hero_small);
+        popBaloon(leftLargeBaloon,4000);
         progressBar.startSaccess();
 
         //go to game screen
@@ -389,6 +358,7 @@ public class LoginActivity extends PingoActivity {
                 progressBar.stopSuccess();
                 Intent intent = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Activity activity = (Activity) context;
                 activity.finish();
             }

@@ -7,11 +7,16 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 
 public class GameActivity extends PingoActivity {
+
+    private PingoProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +24,8 @@ public class GameActivity extends PingoActivity {
         setContentView(R.layout.activity_game);
 
         scaleUi();
+
+        progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.gameFragmentProgressBar);
     }
 
     public void scaleUi() {
@@ -55,5 +62,17 @@ public class GameActivity extends PingoActivity {
         set.constrainWidth(iView.getId(), newBmapWidth);
         set.centerVertically(R.id.gameBacgroundimageView, 0);
         set.centerHorizontally(R.id.gameBacgroundimageView, 0);
+        set.applyTo(layout);
+
+        //scale progress bar
+        FrameLayout progressBar = (FrameLayout) findViewById(R.id.gameFragmentProgressBar);
+        ViewGroup.LayoutParams progressParams = progressBar.getLayoutParams();
+        progressParams.height = (int)(newBmapHeight*0.059F);
+        progressParams.width = (int)(newBmapWidth*0.1397F);
+
+        //sacele top banner
+        ImageView topBanner = (ImageView) findViewById(R.id.banner);
+        ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
+        bannerParams.width =(int)(newBmapWidth*0.7890F);
     }
 }
