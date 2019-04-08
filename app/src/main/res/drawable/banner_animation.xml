@@ -7,13 +7,13 @@
         android:duration="1"/>
     <item
         android:drawable="@drawable/slogan_wht_blur"
-        android:duration="250"/>
+        android:duration="300"/>
     <item
         android:drawable="@drawable/slogan3d"
-        android:duration="250"/>
+        android:duration="300"/>
     <item
         android:drawable="@drawable/slogan_wht_blur"
-        android:duration="250"/>
+        android:duration="300"/>
     <item
         android:drawable="@drawable/slogan3d"
         android:duration="500"/>
