@@ -74,5 +74,6 @@ public class GameActivity extends PingoActivity {
         ImageView topBanner = (ImageView) findViewById(R.id.banner);
         ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
         bannerParams.width =(int)(newBmapWidth*0.7890F);
+        bannerParams.height =(int)(newBmapHeight*0.06296F);
     }
 }

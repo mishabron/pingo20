@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
-    android:oneshot="false" >
+    android:oneshot="true" >
 
     <item
-        android:drawable="@drawable/slogan_wht_blur"
-        android:duration="250"/>
-    <item
-        android:drawable="@drawable/slogan_white"
-        android:duration="250"/>
+        android:drawable="@drawable/slogan_black"
+        android:duration="1"/>
     <item
         android:drawable="@drawable/slogan_wht_blur"
         android:duration="250"/>
     <item
-        android:drawable="@drawable/slogan_white"
-        android:duration="1000"/>
+        android:drawable="@drawable/slogan3d"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/slogan_wht_blur"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/slogan3d"
+        android:duration="500"/>
 
 </animation-list>

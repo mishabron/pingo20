@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.09" />
+        app:layout_constraintGuide_percent="0.104" />
 
     <android.support.constraint.Guideline
         android:id="@+id/horisontal_center_guideline"
@@ -127,7 +127,7 @@
         app:layout_constraintHorizontal_bias="0.61"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horisontal_banner_guideline"
-        app:srcCompat="@drawable/slogan_black" />
+        android:background="@drawable/banner_animation" />
 
     <ImageView
         android:id="@+id/leftLargeBaloon"
@@ -154,6 +154,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.20"
         app:srcCompat="@drawable/standby_blueright" />
+
+    <ImageView
+        android:id="@+id/rightErrorBaloon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.20"
+        android:background="@drawable/error_animation"
+        android:visibility="invisible"/>
 
 
 </android.support.constraint.ConstraintLayout>

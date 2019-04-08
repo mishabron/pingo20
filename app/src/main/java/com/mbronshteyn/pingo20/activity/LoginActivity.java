@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -62,6 +63,7 @@ public class LoginActivity extends PingoActivity {
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
     private LoginActivity context;
+    private int invalidAttempt = 0;
 
     @SuppressLint("ResourceType")
     @Override
@@ -316,8 +318,22 @@ public class LoginActivity extends PingoActivity {
             switch(errorCode){
                 case INVALID:
                     leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
-                    popBaloon(leftLargeBaloon,4000);
+                    if(invalidAttempt == 0){
+                        final ImageView rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
+                        Animatable bannerAnimation = (Animatable) rightErrorBaloon.getBackground();
+                        rightErrorBaloon.setVisibility(View.VISIBLE);
+                        bannerAnimation.start();
+                        rightErrorBaloon.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                rightErrorBaloon.setVisibility(View.INVISIBLE);
+                            }
+                        }, 1500);
+                    }else {
+                        popBaloon(leftLargeBaloon, 4000);
+                    }
                     cardNumberInput.setText("");
+                    invalidAttempt++;
                     break;
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);
@@ -343,7 +359,6 @@ public class LoginActivity extends PingoActivity {
     public void onCardAuthinticatedEvent(CardAuthinticatedEvent event){
 
         final ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        topBanner.setImageResource(R.drawable.banner_animation);
         Animatable bannerAnimation = (Animatable) topBanner.getBackground();
         bannerAnimation.start();
 
@@ -433,6 +448,7 @@ public class LoginActivity extends PingoActivity {
         ImageView topBanner = (ImageView) findViewById(R.id.banner);
         ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
         bannerParams.width =(int)(newBmapWidth*0.7890F);
+        bannerParams.height =(int)(newBmapHeight*0.06296F);
 
         //sacele hey baloon
         ImageView heyBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);
