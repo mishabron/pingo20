@@ -321,14 +321,7 @@ public class LoginActivity extends PingoActivity {
                     if(invalidAttempt == 0){
                         final ImageView rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
                         Animatable bannerAnimation = (Animatable) rightErrorBaloon.getBackground();
-                        rightErrorBaloon.setVisibility(View.VISIBLE);
                         bannerAnimation.start();
-                        rightErrorBaloon.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                rightErrorBaloon.setVisibility(View.INVISIBLE);
-                            }
-                        }, 1500);
                     }else {
                         popBaloon(leftLargeBaloon, 4000);
                     }

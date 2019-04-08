@@ -3,6 +3,15 @@
     android:oneshot="true">
 
     <item
+        android:drawable="@drawable/clear"
+        android:duration="1"/>
+    <item
+        android:drawable="@drawable/error3d4"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/error3d5"
+        android:duration="250"/>
+    <item
         android:drawable="@drawable/error3d4"
         android:duration="250"/>
     <item
@@ -15,7 +24,8 @@
         android:drawable="@drawable/error3d5"
         android:duration="250"/>
     <item
-        android:drawable="@drawable/error3d4"
-        android:duration="250"/>
+        android:drawable="@android:color/transparent"
+        android:duration="1"/>
+
 
 </animation-list>
