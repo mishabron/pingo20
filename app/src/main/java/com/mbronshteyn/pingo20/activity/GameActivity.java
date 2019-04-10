@@ -2,12 +2,12 @@ package com.mbronshteyn.pingo20.activity;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -75,5 +75,20 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
         bannerParams.width =(int)(newBmapWidth*0.7890F);
         bannerParams.height =(int)(newBmapHeight*0.06296F);
+
+        //scale action18  button
+        ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
+        int buttonSize18 = (int) (newBmapHeight * 0.2406F);
+        ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
+        buttonParams18.height = buttonSize18;
+        buttonParams18.width = buttonSize18;
+
+        //scale actionGo  button
+        Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
+        int buttonSizeGo = (int) (newBmapHeight * 0.2406F);
+        ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
+        buttonParamsGo.height = buttonSizeGo;
+        buttonParamsGo.width = buttonSizeGo;
+
     }
 }

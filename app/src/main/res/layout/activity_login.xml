@@ -22,13 +22,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/horisontal_banner_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.104" />
-
-    <android.support.constraint.Guideline
         android:id="@+id/horisontal_center_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,19 +62,25 @@
         android:id="@+id/actionButtonGo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="160dp"
         android:background="@drawable/btn_auth"
-        app:layout_constraintStart_toEndOf="@+id/vertical_actionButton_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_actionButton_guideline" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.90999997" />
 
     <ImageView
-        android:id="@+id/actionButton18"
+        android:id="@+id/hitCounter"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="160dp"
         android:background="@drawable/button18"
-        app:layout_constraintStart_toEndOf="@+id/vertical_actionButton_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_actionButton_guideline" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.90999997" />
 
     <fragment
         android:id="@+id/fragmentProgressBar"
@@ -103,31 +102,19 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.59" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/horizontal_actionButton_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.685" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/vertical_actionButton_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.642" />
-
     <ImageView
         android:id="@+id/banner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="34dp"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/banner_animation"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.61"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horisontal_banner_guideline"
-        android:background="@drawable/banner_animation" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.113" />
 
     <ImageView
         android:id="@+id/leftLargeBaloon"

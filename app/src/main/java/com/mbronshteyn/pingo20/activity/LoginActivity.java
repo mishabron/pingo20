@@ -9,12 +9,10 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -75,7 +73,7 @@ public class LoginActivity extends PingoActivity {
         
         scaleUi();
 
-        authButton18 = (ImageView) findViewById(R.id.actionButton18);
+        authButton18 = (ImageView) findViewById(R.id.hitCounter);
 
         authButtonGo = (Button) findViewById(R.id.actionButtonGo);
         authButtonGo.setOnClickListener(new View.OnClickListener() {
@@ -140,9 +138,6 @@ public class LoginActivity extends PingoActivity {
 
                 if (s.length() == 14) {
                     EventBus.getDefault().post(new CardIdEnterEvent());
-                } else {
-                    //authButtonGo.setEnabled(false);
-                    //authButton18.setBackgroundResource(R.drawable.button18_reverse);
                 }
             }
         });
@@ -317,12 +312,12 @@ public class LoginActivity extends PingoActivity {
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
             switch(errorCode){
                 case INVALID:
-                    leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
                     if(invalidAttempt == 0){
                         final ImageView rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
                         Animatable bannerAnimation = (Animatable) rightErrorBaloon.getBackground();
                         bannerAnimation.start();
                     }else {
+                        leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
                         popBaloon(leftLargeBaloon, 4000);
                     }
                     cardNumberInput.setText("");
@@ -424,7 +419,7 @@ public class LoginActivity extends PingoActivity {
         progressParams.width = (int)(newBmapWidth*0.1397F);
 
         //scale action18  button
-        ImageView actionButton18 = (ImageView) findViewById(R.id.actionButton18);
+        ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
         int buttonSize18 = (int) (newBmapHeight * 0.2406F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonSize18;
