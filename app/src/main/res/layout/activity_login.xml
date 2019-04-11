@@ -90,10 +90,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
-        app:initiak="progress_wht_ring"
-        app:progress="progress_yellow"
-        app:success="progress_yellow"
-        app:failure="progress_yellow" />
+        app:initiak="progress_blk_ring"
+        app:progress="progress_wht_ring"
+        app:success="progress_wht_ring"
+        app:failure="progress_wht_ring" />
 
     <android.support.constraint.Guideline
         android:id="@+id/horizontal_progressBar_guideline"
@@ -149,11 +149,11 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.97"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.20"
-        android:background="@drawable/error_animation"/>
+        android:background="@drawable/error3dbl"/>
 
 
 </android.support.constraint.ConstraintLayout>

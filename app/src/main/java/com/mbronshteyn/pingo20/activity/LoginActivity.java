@@ -62,6 +62,7 @@ public class LoginActivity extends PingoActivity {
     private AnimatorSet mSetLeftIn;
     private LoginActivity context;
     private int invalidAttempt = 0;
+    private ImageView rightErrorBaloon;
 
     @SuppressLint("ResourceType")
     @Override
@@ -101,6 +102,9 @@ public class LoginActivity extends PingoActivity {
         leftLargeBaloon.setVisibility(View.INVISIBLE);
         rightSmallBaloon = (ImageView) findViewById(R.id.rightSmallBaloon);
         rightSmallBaloon.setVisibility(View.INVISIBLE);
+
+        rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
+        rightErrorBaloon.setVisibility(View.INVISIBLE);
 
         cardNumberInput.addTextChangedListener(new TextWatcher() {
 
@@ -202,6 +206,8 @@ public class LoginActivity extends PingoActivity {
 
     @Subscribe
     public void onActionButtonEventUi(ActionButtonEvent event){
+
+        rightErrorBaloon.setVisibility(View.INVISIBLE);
 
         //disable input
         cardNumberInput.setEnabled(false);
@@ -313,9 +319,7 @@ public class LoginActivity extends PingoActivity {
             switch(errorCode){
                 case INVALID:
                     if(invalidAttempt == 0){
-                        final ImageView rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
-                        Animatable bannerAnimation = (Animatable) rightErrorBaloon.getBackground();
-                        bannerAnimation.start();
+                        rightErrorBaloon.setVisibility(View.VISIBLE);
                     }else {
                         leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
                         popBaloon(leftLargeBaloon, 4000);
@@ -447,6 +451,7 @@ public class LoginActivity extends PingoActivity {
         ImageView stanByBaloon = (ImageView) findViewById(R.id.rightSmallBaloon);
         ViewGroup.LayoutParams stanByBaloonParams = stanByBaloon.getLayoutParams();
         stanByBaloonParams.width =(int)(newBmapWidth*0.2795F);
+
 
     }
 }

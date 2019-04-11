@@ -17,22 +17,24 @@
         android:scaleType="fitCenter"
         android:src="@drawable/game_background"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <fragment
         android:id="@+id/gameFragmentProgressBar"
         android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        app:failure="progress_yellow"
+        app:initiak="barblueapp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
-        app:initiak="barblueapp"
         app:progress="progress_yellow"
-        app:success="progress_yellow"
-        app:failure="progress_yellow" />
+        app:success="progress_yellow" />
 
     <android.support.constraint.Guideline
         android:id="@+id/horizontal_progressBar_guideline"
@@ -78,6 +80,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.90999997" />
+
+    <fragment
+        android:id="@+id/pingo1"
+        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="62dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintRight_toLeftOf="@+id/pingo2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <fragment
+        android:id="@+id/pingo2"
+        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/pingo1"
+        app:layout_constraintRight_toLeftOf="@+id/pingo3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <fragment
+        android:id="@+id/pingo3"
+        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/pingo2"
+        app:layout_constraintRight_toLeftOf="@+id/pingo4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <fragment
+        android:id="@+id/pingo4"
+        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/pingo3"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
