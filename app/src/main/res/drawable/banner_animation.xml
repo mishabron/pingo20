@@ -4,18 +4,9 @@
 
     <item
         android:drawable="@drawable/slogan_black"
-        android:duration="1"/>
-    <item
-        android:drawable="@drawable/slogan_wht_blur"
-        android:duration="300"/>
+        android:duration="1"/>>
     <item
         android:drawable="@drawable/slogan3d"
         android:duration="300"/>
-    <item
-        android:drawable="@drawable/slogan_wht_blur"
-        android:duration="300"/>
-    <item
-        android:drawable="@drawable/slogan3d"
-        android:duration="500"/>
 
 </animation-list>

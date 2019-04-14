@@ -62,13 +62,10 @@ public class PingoActivity extends AppCompatActivity {
         Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
         ballon.startAnimation(zoomIntAnimation);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(()-> {
                 Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                 ballon.startAnimation(zoomIntAnimationOut);
                 ballon.setVisibility(View.INVISIBLE);
-            }
         }, duration);
     }
 }

@@ -148,14 +148,11 @@ public class LoginActivity extends PingoActivity {
 
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
 
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
+        new Handler().postDelayed(()-> {
                 leftLargeBaloon.setVisibility(View.VISIBLE);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 leftLargeBaloon.startAnimation(zoomIntAnimation);
-            }
         }, 3000);
-
     }
 
     @Override
@@ -182,7 +179,6 @@ public class LoginActivity extends PingoActivity {
         mSetLeftIn.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-
             }
 
             @Override
@@ -192,12 +188,10 @@ public class LoginActivity extends PingoActivity {
 
             @Override
             public void onAnimationCancel(Animator animation) {
-
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-
             }
         });
         mSetRightOut.start();
@@ -240,9 +234,7 @@ public class LoginActivity extends PingoActivity {
         progressBar.startProgress();
 
         //pop baloons
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(()-> {
                 rightSmallBaloon.setImageResource(R.drawable.standby_blueright);
                 rightSmallBaloon.setVisibility(View.VISIBLE);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
@@ -253,7 +245,6 @@ public class LoginActivity extends PingoActivity {
                     leftLargeBaloon.startAnimation(zoomIntAnimationOut);
                     leftLargeBaloon.setVisibility(View.INVISIBLE);
                 }
-            }
         }, 1500);
     }
 
@@ -276,9 +267,7 @@ public class LoginActivity extends PingoActivity {
 
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(()-> {
                 Call<CardDto> call = service.authinticate(dto);
                 call.enqueue(new Callback<CardDto>() {
                     @Override
@@ -300,7 +289,6 @@ public class LoginActivity extends PingoActivity {
                         popBaloon(rightSmallBaloon,4000);
                     }
                 });
-            }
         }, 6000);
     }
 
@@ -359,17 +347,14 @@ public class LoginActivity extends PingoActivity {
         progressBar.startSaccess();
 
         //go to game screen
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(()-> {
                 progressBar.stopSuccess();
                 Intent intent = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Activity activity = (Activity) context;
                 activity.finish();
-            }
-        }, 4000);
+        }, 5000);
     }
 
     public void scaleUi(){

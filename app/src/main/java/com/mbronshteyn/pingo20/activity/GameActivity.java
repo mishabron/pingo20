@@ -15,9 +15,6 @@ import android.widget.ImageView;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
-import com.mbronshteyn.pingo20.events.ActionButtonEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class GameActivity extends PingoActivity {
 
@@ -50,6 +47,8 @@ public class GameActivity extends PingoActivity {
             }
         });
         hitButtonGo.setEnabled(false);
+
+        pingo1.putFinger();
     }
 
     public void scaleUi() {
