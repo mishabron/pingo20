@@ -36,11 +36,12 @@ import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.events.ActionButtonEvent;
 import com.mbronshteyn.pingo20.events.CardAuthinticatedEvent;
 import com.mbronshteyn.pingo20.events.CardIdEnterEvent;
+import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 
-import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -262,8 +263,10 @@ public class LoginActivity extends PingoActivity {
         card = card.replaceAll("[^\\d]", "");
         dto.setCardNumber(Long.parseLong(card));
 
-        dto.setDeviceId(devicedId);
-        dto.setGame(GAMEID);
+        Game.getInstancce().setCardNumber(card);
+
+        dto.setDeviceId(Game.devicedId);
+        dto.setGame(Game.getGAMEID());
 
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 

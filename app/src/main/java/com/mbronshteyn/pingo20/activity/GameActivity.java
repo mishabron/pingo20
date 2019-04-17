@@ -1,6 +1,7 @@
 package com.mbronshteyn.pingo20.activity;
 
 import android.graphics.drawable.BitmapDrawable;
+import android.nfc.cardemulation.CardEmulation;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -9,12 +10,15 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.model.Game;
 
 public class GameActivity extends PingoActivity {
 
@@ -48,7 +52,14 @@ public class GameActivity extends PingoActivity {
         });
         hitButtonGo.setEnabled(false);
 
+        TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
+        String cardId = Game.getInstancce().getCardNumber();
+        cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
+
         pingo1.putFinger();
+        pingo2.spinWheel(600);
+        //pingo3.spinWheel(700);
+        //pingo4.spinWheel(800);
     }
 
     public void scaleUi() {
