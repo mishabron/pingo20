@@ -16,14 +16,12 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ViewFlipper;
 
 import com.mbronshteyn.pingo20.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +31,9 @@ public class PingoWindow extends Fragment {
     private ImageView windowBackground;
     private AnimatorSet rockplay;
     private ImageView play;
+    private ViewFlipper numberFlipper;
+    private ArrayList<Drawable> wheel;
+    private ViewGroup.LayoutParams numberPickParams;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -47,6 +48,15 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
+        //setup numbers to pick
+        wheel = new ArrayList<>();
+        wheel.add(getResources().getDrawable(R.drawable.zero));
+        wheel.add(getResources().getDrawable(R.drawable.one));
+        wheel.add(getResources().getDrawable(R.drawable.two));
+        wheel.add(getResources().getDrawable(R.drawable.three));
+        wheel.add(getResources().getDrawable(R.drawable.four));
+        wheel.add(getResources().getDrawable(R.drawable.five));
+
         return view;
     }
 
@@ -59,6 +69,18 @@ public class PingoWindow extends Fragment {
     public void onStart() {
         super.onStart();
         scaleUi();
+
+        numberFlipper = (ViewFlipper) getView().findViewById(R.id.number_flipper);
+
+        numberFlipper.addView(createNumberImage(wheel.get(0),0, numberPickParams));
+        numberFlipper.addView(createNumberImage(wheel.get(1),1, numberPickParams));
+        numberFlipper.addView(createNumberImage(wheel.get(2),2, numberPickParams));
+        numberFlipper.addView(createNumberImage(wheel.get(3),3, numberPickParams));
+        numberFlipper.addView(createNumberImage(wheel.get(4),4, numberPickParams));
+        numberFlipper.addView(createNumberImage(wheel.get(5),5, numberPickParams));
+
+        numberFlipper.setInAnimation(getActivity(), R.anim.from_top);
+        numberFlipper.setOutAnimation(getActivity(), R.anim.to_bottom);
     }
 
     public void putFinger() {
@@ -87,70 +109,26 @@ public class PingoWindow extends Fragment {
         },totalDuration);
     }
 
-    public void spinWheel(int delay) {
-
-        List<Drawable> wheel = new ArrayList<>();
-        wheel.add(getResources().getDrawable(R.drawable.zero));
-        wheel.add(getResources().getDrawable(R.drawable.one));
-        wheel.add(getResources().getDrawable(R.drawable.two));
-        wheel.add(getResources().getDrawable(R.drawable.three));
-        wheel.add(getResources().getDrawable(R.drawable.four));
-        wheel.add(getResources().getDrawable(R.drawable.five));
-
-        ImageView numberPick = (ImageView) getView().findViewById(R.id.numberPick);
-        numberPick.setVisibility(View.VISIBLE);
+    public void spinWheel(int delay,int duration) {
 
         new Handler().postDelayed(()->{
-            for(int i = 0; i < wheel.size()-1 ; i++){
+            numberFlipper.stopFlipping();
+        },delay+duration);
 
-                Drawable currentNumber = wheel.get(i);
-                Drawable nextNumber = wheel.get(i + 1);
-                flipNumbers(numberPick, currentNumber,nextNumber);
-
-            }},delay);
+        new Handler().postDelayed(()->{
+            numberFlipper.setVisibility(View.VISIBLE);
+            numberFlipper.startFlipping();
+        },delay);
     }
 
-    private boolean flipNumbers(ImageView numberPick,Drawable currentNumber, Drawable nextNumber){
+    private ImageView createNumberImage(Drawable image, Integer tag, ViewGroup.LayoutParams numberPickParams){
 
-        final boolean[] result = {false};
+        ImageView numberImage = new ImageView(getActivity());
+        numberImage.setLayoutParams(numberPickParams);
+        numberImage.setImageDrawable(image);
+        numberImage.setTag(tag);
 
-        Animation slideToBottom = AnimationUtils.loadAnimation(getActivity(), R.anim.to_bottom);
-
-        numberPick.setImageDrawable(currentNumber);
-
-        slideToBottom.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                Animation slideFromTop = AnimationUtils.loadAnimation(getActivity(), R.anim.from_top);
-                slideFromTop.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        result[0] = true;
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                numberPick.setImageDrawable(nextNumber);
-                numberPick.startAnimation(slideFromTop);
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        numberPick.startAnimation(slideToBottom);
-
-        return result[0];
+        return numberImage;
     }
 
     private void scaleUi() {
@@ -185,10 +163,10 @@ public class PingoWindow extends Fragment {
         playParams.height =(int)(newBmapHeight*0.07428F);
 
         //scale number pick
-        ImageView numberPick1 = (ImageView) getView().findViewById(R.id.numberPick);
-        ViewGroup.LayoutParams numberPickParams1 = numberPick1.getLayoutParams();
-        numberPickParams1.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams1.height =(int)(newBmapHeight*0.2599F);
+        ImageView numberFlipper = (ImageView) getView().findViewById(R.id.numberPick);
+        numberPickParams = numberFlipper.getLayoutParams();
+        numberPickParams.width =(int)(newBmapWidth*0.1354F);
+        numberPickParams.height =(int)(newBmapHeight*0.2599F);
 
     }
 

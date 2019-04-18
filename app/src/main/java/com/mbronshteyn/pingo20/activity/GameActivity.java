@@ -57,9 +57,9 @@ public class GameActivity extends PingoActivity {
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
         pingo1.putFinger();
-        pingo2.spinWheel(600);
-        //pingo3.spinWheel(700);
-        //pingo4.spinWheel(800);
+        pingo2.spinWheel(500,2000);
+        pingo3.spinWheel(900,2000);
+        pingo4.spinWheel(1300,100000);
     }
 
     public void scaleUi() {
