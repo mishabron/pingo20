@@ -346,7 +346,7 @@ public class LoginActivity extends PingoActivity {
         bannerAnimation.start();
 
         leftLargeBaloon.setImageResource(R.drawable.hero_small);
-        popBaloon(leftLargeBaloon,4000);
+        popBaloon(leftLargeBaloon);
         progressBar.startSaccess();
 
         //go to game screen
