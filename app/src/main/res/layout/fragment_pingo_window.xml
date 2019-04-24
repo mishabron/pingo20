@@ -15,7 +15,11 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:scaleType="fitCenter"
-        android:background="@drawable/blue_window" />
+        android:background="@drawable/blue_window"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/play"
@@ -38,7 +42,8 @@
         android:autoStart="false"
         android:inAnimation="@anim/from_top"
         android:outAnimation="@anim/to_bottom"
-        android:flipInterval="220"
+        android:flipInterval="140"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

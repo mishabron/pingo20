@@ -6,6 +6,6 @@
         android:interpolator="@android:interpolator/linear"
         android:fromYDelta="-100%"
         android:toYDelta="0%"
-        android:duration="210"/>
+        android:duration="100"/>
 
 </set>

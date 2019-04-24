@@ -64,20 +64,22 @@ public class PingoWindow extends Fragment {
         numberFlipper.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(numberFlipper.getChildCount() == 11){
-                    numberFlipper.removeViewAt(0);
-                }
                 numberFlipper.showNext();
+                if(numberFlipper.getChildCount() == 11){
+                    new Handler().postDelayed(()->numberFlipper.removeViewAt(0),100);
+                }
                 return false;
             }
         });
 
         pingoView = (ImageView)numberFlipper.getChildAt(0);
+        numberFlipper.setDisplayedChild(1);
     }
 
     public void putFinger() {
 
         numberFlipper.setVisibility(View.INVISIBLE);
+        numberFlipper.setDisplayedChild(0);
 
         windowBackground.setBackground(getResources().getDrawable(R.drawable.finger_animation,null));
         play = (ImageView) getView().findViewById(R.id.play);
@@ -114,14 +116,26 @@ public class PingoWindow extends Fragment {
         },totalDuration);
     }
 
-    public void spinWheel(int delay,int duration) {
+    public void spinWheel(int delay) {
 
+        //start spin
         new Handler().postDelayed(()->{
-            numberFlipper.stopFlipping();
-            numberFlipper.setDisplayedChild(0);
-        },delay+duration);
+            numberFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
 
-        new Handler().postDelayed(()->{
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    String tag = (String)numberFlipper.getCurrentView().getTag();
+                    if(tag.equals("10")){
+                        numberFlipper.stopFlipping();
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            numberFlipper.setVisibility(View.VISIBLE);
             numberFlipper.startFlipping();
         },delay);
     }
@@ -210,8 +224,8 @@ public class PingoWindow extends Fragment {
 
         numberPick = (ImageView) getView().findViewById(R.id.pingo);
         numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
+        numberPickParams.width =(int)(newBmapWidth*0.1404F);
+        numberPickParams.height = numberPickParams.width;
 
     }
 
