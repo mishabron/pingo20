@@ -3,6 +3,9 @@ package com.mbronshteyn.pingo20.activity.fragment;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,7 +29,15 @@ import android.widget.ViewFlipper;
 
 import com.mbronshteyn.pingo20.R;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.List;
+
+import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.OnWheelClickedListener;
+import kankan.wheel.widget.OnWheelScrollListener;
+import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.AbstractWheelAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,8 +47,8 @@ public class PingoWindow extends Fragment {
     private ImageView windowBackground;
     private AnimatorSet rockplay;
     private ImageView play;
-    private ViewFlipper numberFlipper;
-    private ImageView pingoView;
+    private WheelView wheel;
+    private boolean starting = true;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -52,34 +63,46 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
+        windowBackground.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                wheel.scroll(-100 , 2000);
+                return false;
+            }
+        });
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        scaleUi();
-        numberFlipper = (ViewFlipper) getView().findViewById(R.id.number_flipper);
 
-        numberFlipper.setOnTouchListener(new View.OnTouchListener() {
+        wheel = getView().findViewById(R.id.slot);
+
+        wheel.setViewAdapter(new SlotMachineAdapter(getActivity()));
+        wheel.setCurrentItem(0,true);
+
+        wheel.addChangingListener(changedListener);
+        wheel.addScrollingListener(scrolledListener);
+        wheel.setCyclic(true);
+        wheel.setEnabled(true);
+        wheel.setDrawShadows(false);
+
+        wheel.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                numberFlipper.showNext();
-                if(numberFlipper.getChildCount() == 11){
-                    new Handler().postDelayed(()->numberFlipper.removeViewAt(0),100);
-                }
+                wheel.scroll(-1 , 600);
                 return false;
             }
         });
 
-        pingoView = (ImageView)numberFlipper.getChildAt(0);
-        numberFlipper.setDisplayedChild(1);
+        scaleUi();
     }
 
     public void putFinger() {
 
-        numberFlipper.setVisibility(View.INVISIBLE);
-        numberFlipper.setDisplayedChild(0);
+        wheel.setVisibility(View.INVISIBLE);
 
         windowBackground.setBackground(getResources().getDrawable(R.drawable.finger_animation,null));
         play = (ImageView) getView().findViewById(R.id.play);
@@ -88,10 +111,11 @@ public class PingoWindow extends Fragment {
         windowBackground.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                numberFlipper.setVisibility(View.VISIBLE);
                 windowBackground.setOnTouchListener(null);
                 windowBackground.setBackground(getResources().getDrawable(R.drawable.blue_window,null));
                 play.setVisibility(View.INVISIBLE);
+                wheel.setVisibility(View.VISIBLE);
+                wheel.setCurrentItem(0);
                 return false;
             }
         });
@@ -117,27 +141,109 @@ public class PingoWindow extends Fragment {
     }
 
     public void spinWheel(int delay) {
+        new Handler().postDelayed(()->{wheel.scroll(-20 , 3000);},delay);
+    }
 
-        //start spin
-        new Handler().postDelayed(()->{
-            numberFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
+    // Wheel scrolled listener
+    OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
+        @Override
+        public void onScrollingStarted(WheelView wheel) {
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    String tag = (String)numberFlipper.getCurrentView().getTag();
-                    if(tag.equals("10")){
-                        numberFlipper.stopFlipping();
-                    }
-                }
+        }
+        @Override
+        public void onScrollingFinished(WheelView wheel) {
+            if (starting){
+                wheel.setCurrentItem(0,true);
+                starting = false;
+            }
+        }
+    };
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-            });
-            numberFlipper.setVisibility(View.VISIBLE);
-            numberFlipper.startFlipping();
-        },delay);
+    // Wheel changed listener
+    private OnWheelChangedListener changedListener = new OnWheelChangedListener() {
+        @Override
+        public void onChanged(WheelView wheel, int oldValue, int newValue) {
+
+        }
+    };
+
+    /**
+     * Slot machine adapter
+     */
+    private class SlotMachineAdapter extends AbstractWheelAdapter {
+        // Image size
+        final int IMAGE_WIDTH = 320;
+        final int IMAGE_HEIGHT = 320;
+
+        // Slot machine symbols
+        private final int items[] = new int[] {
+                R.drawable.pingo,
+                R.drawable.one,
+                R.drawable.two,
+                R.drawable.three,
+                R.drawable.four,
+                R.drawable.five,
+                R.drawable.six,
+                R.drawable.seven,
+                R.drawable.eight,
+                R.drawable.nine,
+                R.drawable.zero
+        };
+
+        // Cached images
+        private List<SoftReference<Bitmap>> images;
+
+        // Layout inflater
+        private Context context;
+
+        /**
+         * Constructor
+         */
+        public SlotMachineAdapter(Context context) {
+            this.context = context;
+            images = new ArrayList<SoftReference<Bitmap>>(items.length);
+            for (int id : items) {
+                images.add(new SoftReference<Bitmap>(loadImage(id)));
+            }
+        }
+
+        /**
+         * Loads image from resources
+         */
+        private Bitmap loadImage(int id) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+            bitmap.recycle();
+            return scaled;
+        }
+
+        @Override
+        public int getItemsCount() {
+            return items.length;
+        }
+
+        // Layout params for image view
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
+
+        @Override
+        public View getItem(int index, View cachedView, ViewGroup parent) {
+            ImageView img;
+            if (cachedView != null) {
+                img = (ImageView) cachedView;
+            } else {
+                img = new ImageView(context);
+            }
+            img.setLayoutParams(params);
+            SoftReference<Bitmap> bitmapRef = images.get(index);
+            Bitmap bitmap = bitmapRef.get();
+            if (bitmap == null) {
+                bitmap = loadImage(items[index]);
+                images.set(index, new SoftReference<Bitmap>(bitmap));
+            }
+            img.setImageBitmap(bitmap);
+
+            return img;
+        }
     }
 
     private void scaleUi() {
@@ -170,62 +276,6 @@ public class PingoWindow extends Fragment {
         ViewGroup.LayoutParams playParams = playIcon.getLayoutParams();
         playParams.width =(int)(newBmapWidth*0.1041F);
         playParams.height =(int)(newBmapHeight*0.07428F);
-
-        //scale number picks
-        ImageView numberPick = (ImageView) getView().findViewById(R.id.numberPick0);
-        ViewGroup.LayoutParams numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick1);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick2);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick3);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick4);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick5);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick6);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick7);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick8);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.numberPick9);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1354F);
-        numberPickParams.height =(int)(newBmapHeight*0.2599F);
-
-        numberPick = (ImageView) getView().findViewById(R.id.pingo);
-        numberPickParams = numberPick.getLayoutParams();
-        numberPickParams.width =(int)(newBmapWidth*0.1404F);
-        numberPickParams.height = numberPickParams.width;
 
     }
 
