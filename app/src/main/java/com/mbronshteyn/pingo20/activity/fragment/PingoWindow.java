@@ -49,6 +49,7 @@ public class PingoWindow extends Fragment {
     private ImageView play;
     private WheelView wheel;
     private boolean starting = true;
+    private ImageView touchBackground;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -63,11 +64,12 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
-        windowBackground.setOnTouchListener(new View.OnTouchListener() {
+        touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
+        touchBackground.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                wheel.scroll(-100 , 2000);
-                return false;
+            public void onClick(View view) {
+                wheel.scroll(-1 , 600);
+                wheel.getCurrentItem();
             }
         });
 
@@ -86,16 +88,8 @@ public class PingoWindow extends Fragment {
         wheel.addChangingListener(changedListener);
         wheel.addScrollingListener(scrolledListener);
         wheel.setCyclic(true);
-        wheel.setEnabled(true);
+        wheel.setEnabled(false);
         wheel.setDrawShadows(false);
-
-        wheel.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                wheel.scroll(-1 , 600);
-                return false;
-            }
-        });
 
         scaleUi();
     }
@@ -103,6 +97,7 @@ public class PingoWindow extends Fragment {
     public void putFinger() {
 
         wheel.setVisibility(View.INVISIBLE);
+        touchBackground.setVisibility(View.INVISIBLE);
 
         windowBackground.setBackground(getResources().getDrawable(R.drawable.finger_animation,null));
         play = (ImageView) getView().findViewById(R.id.play);
@@ -115,7 +110,8 @@ public class PingoWindow extends Fragment {
                 windowBackground.setBackground(getResources().getDrawable(R.drawable.blue_window,null));
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
-                wheel.setCurrentItem(0);
+                touchBackground.setVisibility(View.VISIBLE);
+                wheel.scroll(-1 , 600);
                 return false;
             }
         });
@@ -141,7 +137,7 @@ public class PingoWindow extends Fragment {
     }
 
     public void spinWheel(int delay) {
-        new Handler().postDelayed(()->{wheel.scroll(-20 , 3000);},delay);
+        new Handler().postDelayed(()->{wheel.scroll(-100 , 2000);},delay);
     }
 
     // Wheel scrolled listener
@@ -153,7 +149,7 @@ public class PingoWindow extends Fragment {
         @Override
         public void onScrollingFinished(WheelView wheel) {
             if (starting){
-                wheel.setCurrentItem(0,true);
+                //wheel.setCurrentItem(0,true);
                 starting = false;
             }
         }
@@ -177,17 +173,17 @@ public class PingoWindow extends Fragment {
 
         // Slot machine symbols
         private final int items[] = new int[] {
-                R.drawable.pingo,
-                R.drawable.one,
-                R.drawable.two,
-                R.drawable.three,
-                R.drawable.four,
-                R.drawable.five,
-                R.drawable.six,
-                R.drawable.seven,
-                R.drawable.eight,
+                R.drawable.zero,
                 R.drawable.nine,
-                R.drawable.zero
+                R.drawable.eight,
+                R.drawable.seven,
+                R.drawable.six,
+                R.drawable.five,
+                R.drawable.four,
+                R.drawable.three,
+                R.drawable.two,
+                R.drawable.one,
+                R.drawable.pingo
         };
 
         // Cached images
