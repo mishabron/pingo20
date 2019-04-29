@@ -1,6 +1,7 @@
 package com.mbronshteyn.pingo20.activity.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -104,10 +105,10 @@ public class PingoProgressBar extends Fragment {
     }
 
     @Override
-    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        super.onInflate(activity, attrs, savedInstanceState);
+    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
 
-        TypedArray a = activity.obtainStyledAttributes(attrs,R.styleable.FragmentDots);
+        TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.FragmentDots);
 
         Resources res = getResources();
 

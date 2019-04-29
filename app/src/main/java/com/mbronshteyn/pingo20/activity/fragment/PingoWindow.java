@@ -4,6 +4,8 @@ package com.mbronshteyn.pingo20.activity.fragment;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
@@ -17,6 +19,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -53,6 +56,8 @@ public class PingoWindow extends Fragment {
     private ImageView touchBackground;
     private List<ImageView> numbers;
     private int currentNumber;
+    private int pingoNumber;
+    private boolean hasFinger;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -95,6 +100,14 @@ public class PingoWindow extends Fragment {
     }
 
     @Override
+    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PingoParameters);
+        pingoNumber = a.getInt(R.styleable.PingoParameters_pingoNumber,1);
+        hasFinger = a.getBoolean(R.styleable.PingoParameters_hasFinger,false);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -129,7 +142,6 @@ public class PingoWindow extends Fragment {
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
-                wheel.scroll(-1 , 600);
                 return false;
             }
         });
@@ -167,7 +179,7 @@ public class PingoWindow extends Fragment {
         @Override
         public void onScrollingFinished(WheelView wheel) {
             if (starting){
-                //putFinger();
+                if (hasFinger){ putFinger();}
                 starting = false;
             }
         }
