@@ -167,7 +167,7 @@ public class PingoWindow extends Fragment {
         @Override
         public void onScrollingFinished(WheelView wheel) {
             if (starting){
-                //wheel.setCurrentItem(0,true);
+                //putFinger();
                 starting = false;
             }
         }
@@ -206,8 +206,8 @@ public class PingoWindow extends Fragment {
     private ImageView loadNumber(int number, int image, Context context){
 
         // Image size
-        final int IMAGE_WIDTH = 320;
-        final int IMAGE_HEIGHT = 320;
+        final int IMAGE_WIDTH = 420;
+        final int IMAGE_HEIGHT = 420;
 
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image);

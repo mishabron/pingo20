@@ -56,10 +56,11 @@ public class GameActivity extends PingoActivity {
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
+        //pingo1.spinWheel(500);
+        pingo2.spinWheel(600);
+        pingo3.spinWheel(700);
+        pingo4.spinWheel(800);
         pingo1.putFinger();
-        pingo2.spinWheel(500);
-        pingo3.spinWheel(800);
-        pingo4.spinWheel(1200);
     }
 
     public void scaleUi() {
