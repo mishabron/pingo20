@@ -242,7 +242,6 @@ public class PingoWindow extends Fragment {
                 numbersIter.remove();              // it will remove element from collection
             }
         }
-
     }
 
     private void scaleUi() {
