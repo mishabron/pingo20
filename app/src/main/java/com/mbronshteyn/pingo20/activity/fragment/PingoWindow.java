@@ -31,6 +31,7 @@ import com.mbronshteyn.pingo20.R;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import kankan.wheel.widget.OnWheelChangedListener;
@@ -50,6 +51,8 @@ public class PingoWindow extends Fragment {
     private WheelView wheel;
     private boolean starting = true;
     private ImageView touchBackground;
+    private List<ImageView> numbers;
+    private int currentNumber;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -69,9 +72,24 @@ public class PingoWindow extends Fragment {
             @Override
             public void onClick(View view) {
                 wheel.scroll(-1 , 600);
-                wheel.getCurrentItem();
+                currentNumber = wheel.getCurrentItem();
+                removeNumber(numbers,10);
             }
         });
+
+        numbers = new ArrayList<>();
+
+        numbers.add(loadNumber(0,R.drawable.zero,getActivity()));
+        numbers.add(loadNumber(1,R.drawable.nine,getActivity()));
+        numbers.add(loadNumber(2,R.drawable.eight,getActivity()));
+        numbers.add(loadNumber(3,R.drawable.seven,getActivity()));
+        numbers.add(loadNumber(4,R.drawable.six,getActivity()));
+        numbers.add(loadNumber(5,R.drawable.five,getActivity()));
+        numbers.add(loadNumber(6,R.drawable.four,getActivity()));
+        numbers.add(loadNumber(7,R.drawable.three,getActivity()));
+        numbers.add(loadNumber(8,R.drawable.two,getActivity()));
+        numbers.add(loadNumber(9,R.drawable.one,getActivity()));
+        numbers.add(loadNumber(10,R.drawable.pingo,getActivity()));
 
         return view;
     }
@@ -82,7 +100,7 @@ public class PingoWindow extends Fragment {
 
         wheel = getView().findViewById(R.id.slot);
 
-        wheel.setViewAdapter(new SlotMachineAdapter(getActivity()));
+        wheel.setViewAdapter(new SlotMachineAdapter());
         wheel.setCurrentItem(0,true);
 
         wheel.addChangingListener(changedListener);
@@ -167,79 +185,52 @@ public class PingoWindow extends Fragment {
      * Slot machine adapter
      */
     private class SlotMachineAdapter extends AbstractWheelAdapter {
-        // Image size
-        final int IMAGE_WIDTH = 320;
-        final int IMAGE_HEIGHT = 320;
-
-        // Slot machine symbols
-        private final int items[] = new int[] {
-                R.drawable.zero,
-                R.drawable.nine,
-                R.drawable.eight,
-                R.drawable.seven,
-                R.drawable.six,
-                R.drawable.five,
-                R.drawable.four,
-                R.drawable.three,
-                R.drawable.two,
-                R.drawable.one,
-                R.drawable.pingo
-        };
-
-        // Cached images
-        private List<SoftReference<Bitmap>> images;
-
-        // Layout inflater
-        private Context context;
-
         /**
          * Constructor
          */
-        public SlotMachineAdapter(Context context) {
-            this.context = context;
-            images = new ArrayList<SoftReference<Bitmap>>(items.length);
-            for (int id : items) {
-                images.add(new SoftReference<Bitmap>(loadImage(id)));
-            }
-        }
-
-        /**
-         * Loads image from resources
-         */
-        private Bitmap loadImage(int id) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
-            bitmap.recycle();
-            return scaled;
+        public SlotMachineAdapter() {
         }
 
         @Override
         public int getItemsCount() {
-            return items.length;
+            return numbers.size();
         }
-
-        // Layout params for image view
-        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
 
         @Override
         public View getItem(int index, View cachedView, ViewGroup parent) {
-            ImageView img;
-            if (cachedView != null) {
-                img = (ImageView) cachedView;
-            } else {
-                img = new ImageView(context);
-            }
-            img.setLayoutParams(params);
-            SoftReference<Bitmap> bitmapRef = images.get(index);
-            Bitmap bitmap = bitmapRef.get();
-            if (bitmap == null) {
-                bitmap = loadImage(items[index]);
-                images.set(index, new SoftReference<Bitmap>(bitmap));
-            }
-            img.setImageBitmap(bitmap);
-
+            ImageView img = numbers.get(index);
             return img;
         }
+    }
+
+    private ImageView loadNumber(int number, int image, Context context){
+
+        // Image size
+        final int IMAGE_WIDTH = 320;
+        final int IMAGE_HEIGHT = 320;
+
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image);
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+        bitmap.recycle();
+
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
+        ImageView imageNumber = new ImageView(context);
+        imageNumber.setImageBitmap(scaled);
+        imageNumber.setLayoutParams(params);
+        imageNumber.setTag(number);
+
+        return imageNumber;
+    }
+
+    private void removeNumber(List<ImageView> numbers, int numberToRemove){
+        Iterator<ImageView> numbersIter =numbers.iterator();
+        while (numbersIter.hasNext()){
+            if(numbersIter.next().getTag().equals(numberToRemove)){
+                numbersIter.remove();              // it will remove element from collection
+            }
+        }
+
     }
 
     private void scaleUi() {
