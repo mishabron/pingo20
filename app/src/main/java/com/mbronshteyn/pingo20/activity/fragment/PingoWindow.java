@@ -29,9 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.events.PingoEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,7 +58,7 @@ public class PingoWindow extends Fragment {
     private int newBmapHeight;
     private FishkaTimer fishkaTimer;
     private ImageView fishka;
-    private int[] fishkas = new int[10];
+    private int[] greenFishkas = new int[10];
     private Integer currentPingo;
 
     public PingoWindow() {
@@ -99,16 +96,16 @@ public class PingoWindow extends Fragment {
 
         numbers = new ArrayList<>();
 
-        fishkas[0] = R.drawable.green0;
-        fishkas[1] = R.drawable.green1;
-        fishkas[2] = R.drawable.green2;
-        fishkas[3] = R.drawable.green3;
-        fishkas[4] = R.drawable.green4;
-        fishkas[5] = R.drawable.green5;
-        fishkas[6] = R.drawable.green6;
-        fishkas[7] = R.drawable.green7;
-        fishkas[8] = R.drawable.green8;
-        fishkas[9] = R.drawable.green9;
+        greenFishkas[0] = R.drawable.green0;
+        greenFishkas[1] = R.drawable.green1;
+        greenFishkas[2] = R.drawable.green2;
+        greenFishkas[3] = R.drawable.green3;
+        greenFishkas[4] = R.drawable.green4;
+        greenFishkas[5] = R.drawable.green5;
+        greenFishkas[6] = R.drawable.green6;
+        greenFishkas[7] = R.drawable.green7;
+        greenFishkas[8] = R.drawable.green8;
+        greenFishkas[9] = R.drawable.green9;
 
         scaleUi(view);
 
@@ -258,7 +255,7 @@ public class PingoWindow extends Fragment {
 
         @Override
         public void onFinish() {
-            fishka.setImageResource(fishkas[currentPingo]);
+            fishka.setImageResource(greenFishkas[currentPingo]);
             fishka.setVisibility(View.VISIBLE);
             Animation zoomIntAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.short_fade_in);
             fishka.startAnimation(zoomIntAnimation);
