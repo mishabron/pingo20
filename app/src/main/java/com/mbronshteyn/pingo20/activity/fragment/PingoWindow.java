@@ -27,9 +27,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.PingoEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -91,6 +93,7 @@ public class PingoWindow extends Fragment {
                     fishka.setVisibility(View.INVISIBLE);
                 }
                 removeNumber(numbers,10);
+                //EventBus.getDefault().post(new PingoEvent());
             }
         });
 
