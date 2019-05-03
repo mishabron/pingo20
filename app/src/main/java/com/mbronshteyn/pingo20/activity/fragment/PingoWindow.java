@@ -4,41 +4,37 @@ package com.mbronshteyn.pingo20.activity.fragment;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ViewFlipper;
+import android.widget.LinearLayout;
 
 import com.mbronshteyn.pingo20.R;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import kankan.wheel.widget.OnWheelChangedListener;
-import kankan.wheel.widget.OnWheelClickedListener;
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.AbstractWheelAdapter;
@@ -58,6 +54,12 @@ public class PingoWindow extends Fragment {
     private int currentNumber;
     private int pingoNumber;
     private boolean hasFinger;
+    private int newBmapWidth;
+    private int newBmapHeight;
+    private FishkaTimer fishkaTimer;
+    private ImageView fishka;
+    private int[] greenFishkas = new int[10];
+    private Integer currentPingo;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -72,29 +74,40 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
+        fishkaTimer = new FishkaTimer(3000,1000);
+        fishka = (ImageView) view.findViewById(R.id.fishka);
+
         touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
         touchBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 wheel.scroll(-1 , 600);
-                currentNumber = wheel.getCurrentItem();
+                fishkaTimer.cancel();
+                fishkaTimer.start();
+                if(fishka.getVisibility() == View.VISIBLE) {
+                    Animation zoomIntAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.short_fade_out);
+                    fishka.startAnimation(zoomIntAnimation);
+                    fishka.setVisibility(View.INVISIBLE);
+                }
                 removeNumber(numbers,10);
+                //EventBus.getDefault().post(new PingoEvent());
             }
         });
 
         numbers = new ArrayList<>();
 
-        numbers.add(loadNumber(0,R.drawable.zero,getActivity()));
-        numbers.add(loadNumber(1,R.drawable.nine,getActivity()));
-        numbers.add(loadNumber(2,R.drawable.eight,getActivity()));
-        numbers.add(loadNumber(3,R.drawable.seven,getActivity()));
-        numbers.add(loadNumber(4,R.drawable.six,getActivity()));
-        numbers.add(loadNumber(5,R.drawable.five,getActivity()));
-        numbers.add(loadNumber(6,R.drawable.four,getActivity()));
-        numbers.add(loadNumber(7,R.drawable.three,getActivity()));
-        numbers.add(loadNumber(8,R.drawable.two,getActivity()));
-        numbers.add(loadNumber(9,R.drawable.one,getActivity()));
-        numbers.add(loadNumber(10,R.drawable.pingo,getActivity()));
+        greenFishkas[0] = R.drawable.green0;
+        greenFishkas[1] = R.drawable.green1;
+        greenFishkas[2] = R.drawable.green2;
+        greenFishkas[3] = R.drawable.green3;
+        greenFishkas[4] = R.drawable.green4;
+        greenFishkas[5] = R.drawable.green5;
+        greenFishkas[6] = R.drawable.green6;
+        greenFishkas[7] = R.drawable.green7;
+        greenFishkas[8] = R.drawable.green8;
+        greenFishkas[9] = R.drawable.green9;
+
+        scaleUi(view);
 
         return view;
     }
@@ -111,6 +124,18 @@ public class PingoWindow extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        numbers.add(loadNumber(0,R.drawable.zero,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(9,R.drawable.nine,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(8,R.drawable.eight,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(7,R.drawable.seven,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(6,R.drawable.six,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(5,R.drawable.five,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(4,R.drawable.four,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(3,R.drawable.three,getActivity(),(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(2,R.drawable.two,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(1,R.drawable.one,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(10,R.drawable.pingo,getActivity(),(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
+
         wheel = getView().findViewById(R.id.slot);
 
         wheel.setViewAdapter(new SlotMachineAdapter());
@@ -121,8 +146,6 @@ public class PingoWindow extends Fragment {
         wheel.setCyclic(true);
         wheel.setEnabled(false);
         wheel.setDrawShadows(false);
-
-        scaleUi();
     }
 
     public void putFinger() {
@@ -178,8 +201,12 @@ public class PingoWindow extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+            currentNumber = wheel.getCurrentItem();
+            currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getTag();
             if (starting){
-                if (hasFinger){ putFinger();}
+                if (hasFinger){
+                    new Handler().postDelayed(()->{putFinger();},3000);
+                }
                 starting = false;
             }
         }
@@ -215,20 +242,34 @@ public class PingoWindow extends Fragment {
         }
     }
 
-    private ImageView loadNumber(int number, int image, Context context){
+    private class FishkaTimer extends CountDownTimer {
 
-        // Image size
-        final int IMAGE_WIDTH = 420;
-        final int IMAGE_HEIGHT = 420;
+        public FishkaTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
 
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            fishka.setImageResource(greenFishkas[currentPingo]);
+            fishka.setVisibility(View.VISIBLE);
+            Animation zoomIntAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.short_fade_in);
+            fishka.startAnimation(zoomIntAnimation);
+        }
+    }
+
+    private ImageView loadNumber(int number, int image, Context context, int width, int height){
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image);
-        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
-        bitmap.recycle();
 
-        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        params.gravity = Gravity.CENTER;
         ImageView imageNumber = new ImageView(context);
-        imageNumber.setImageBitmap(scaled);
+        imageNumber.setImageBitmap(bitmap);
         imageNumber.setLayoutParams(params);
         imageNumber.setTag(number);
 
@@ -244,7 +285,11 @@ public class PingoWindow extends Fragment {
         }
     }
 
-    private void scaleUi() {
+    public int getCurrentNumber() {
+        return currentNumber;
+    }
+
+    private void scaleUi(View view) {
 
         // scale the screen
         DisplayMetrics metrics = new DisplayMetrics();
@@ -266,14 +311,20 @@ public class PingoWindow extends Fragment {
             ratioMultiplier = hRatio;
         }
 
-        int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
-        int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
+        newBmapWidth = (int) (bmapWidth * ratioMultiplier);
+        newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
         //scale play
-        ImageView playIcon = (ImageView) getView().findViewById(R.id.play);
+        ImageView playIcon = (ImageView) view.findViewById(R.id.play);
         ViewGroup.LayoutParams playParams = playIcon.getLayoutParams();
         playParams.width =(int)(newBmapWidth*0.1041F);
         playParams.height =(int)(newBmapHeight*0.07428F);
+
+        //scale fishka
+        ImageView fishkaIcon = (ImageView) view.findViewById(R.id.fishka);
+        ViewGroup.LayoutParams fishkaParams = fishkaIcon.getLayoutParams();
+        fishkaParams.width =(int)(newBmapWidth*0.1199F);
+        fishkaParams.height =(int)(newBmapHeight*0.0835F);
 
     }
 
