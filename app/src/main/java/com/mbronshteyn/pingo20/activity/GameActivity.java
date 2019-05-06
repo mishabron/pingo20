@@ -155,10 +155,6 @@ public class GameActivity extends PingoActivity {
 
     public void flippToGo(int counter) {
 
-        //close keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
         mSetRightOut.setTarget(buttonCounter);
         mSetLeftIn.setTarget(hitButtonGo);
         mSetLeftIn.addListener(new Animator.AnimatorListener() {

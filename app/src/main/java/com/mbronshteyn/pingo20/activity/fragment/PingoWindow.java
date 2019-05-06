@@ -79,7 +79,7 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
-        fishkaTimer = new FishkaTimer(700,100);
+        fishkaTimer = new FishkaTimer(1000,100);
         fishka = (ImageView) view.findViewById(R.id.fishka);
 
         fingerTimer = new FingerTimer(3000,100);
@@ -221,7 +221,7 @@ public class PingoWindow extends Fragment {
             removeNumber(numbers,playedNumber);
         }
 
-        new Handler().postDelayed(()->{wheel.scroll(-(numbers.size()+1), 2000);},pingoBundle.getInt("spinDelay"));
+        new Handler().postDelayed(()->{wheel.scroll(-(numbers.size()*2+1), 3000);},pingoBundle.getInt("spinDelay"));
     }
 
     // Wheel scrolled listener
