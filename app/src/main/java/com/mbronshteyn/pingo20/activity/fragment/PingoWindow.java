@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.PingoEvent;
+import com.mbronshteyn.pingo20.types.PingoState;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,13 +50,11 @@ import kankan.wheel.widget.adapters.AbstractWheelAdapter;
 public class PingoWindow extends Fragment {
 
     private ImageView windowBackground;
-    private AnimatorSet rockplay;
     private ImageView play;
     private WheelView wheel;
     private boolean starting = true;
     private ImageView touchBackground;
     private List<ImageView> numbers;
-    private int currentNumber;
     private int pingoNumber;
     private boolean hasFinger;
     private int newBmapWidth;
@@ -64,6 +63,8 @@ public class PingoWindow extends Fragment {
     private ImageView fishka;
     private int[] greenFishkas = new int[10];
     private Integer currentPingo;
+    private FingerTimer fingerTimer;
+    private PingoState pingoState;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -78,8 +79,10 @@ public class PingoWindow extends Fragment {
 
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
-        fishkaTimer = new FishkaTimer(1000,300);
+        fishkaTimer = new FishkaTimer(700,100);
         fishka = (ImageView) view.findViewById(R.id.fishka);
+
+        fingerTimer = new FingerTimer(3000,100);
 
         touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
         touchBackground.setOnClickListener(new View.OnClickListener() {
@@ -88,13 +91,12 @@ public class PingoWindow extends Fragment {
                 wheel.scroll(-1 , 600);
                 fishkaTimer.cancel();
                 fishkaTimer.start();
+                fingerTimer.cancel();
                 if(fishka.getVisibility() == View.VISIBLE) {
                     Animation zoomIntAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom_out);
                     fishka.startAnimation(zoomIntAnimation);
                     fishka.setVisibility(View.INVISIBLE);
                 }
-                removeNumber(numbers,10);
-                //EventBus.getDefault().post(new PingoEvent());
             }
         });
 
@@ -133,7 +135,6 @@ public class PingoWindow extends Fragment {
         super.onInflate(context, attrs, savedInstanceState);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PingoParameters);
         pingoNumber = a.getInt(R.styleable.PingoParameters_pingoNumber,1);
-        hasFinger = a.getBoolean(R.styleable.PingoParameters_hasFinger,false);
     }
 
     @Override
@@ -190,23 +191,37 @@ public class PingoWindow extends Fragment {
         for(int i = 0; i< fingerAnimation.getNumberOfFrames();i++){
             totalDuration += fingerAnimation.getDuration(i);
         }
+
+        //first tap
         fingerAnimation.start();
-
         new Handler().postDelayed(()->{
-            rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+            AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
             rockplay.setTarget(play);
             rockplay.start();
-        },totalDuration/2);
+        },fingerAnimation.getDuration(0));
 
+        //second tap
+        new Handler().postDelayed(()-> {
+            fingerAnimation.stop();
+            fingerAnimation.start();
+        },totalDuration+ 2000);
         new Handler().postDelayed(()->{
-            rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+            AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
             rockplay.setTarget(play);
             rockplay.start();
-        },totalDuration);
+        },totalDuration+2000+fingerAnimation.getDuration(0));
     }
 
-    public void spinWheel(int delay) {
-        new Handler().postDelayed(()->{wheel.scroll(-12, 2000);},delay);
+    public void initPingo(Bundle pingoBundle) {
+        hasFinger = pingoBundle.getBoolean("hasFibger");
+        pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
+
+        ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
+        for(Integer playedNumber: playedNumbers){
+            removeNumber(numbers,playedNumber);
+        }
+
+        new Handler().postDelayed(()->{wheel.scroll(-(numbers.size()+1), 2000);},pingoBundle.getInt("spinDelay"));
     }
 
     // Wheel scrolled listener
@@ -217,16 +232,17 @@ public class PingoWindow extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
-            currentNumber = wheel.getCurrentItem();
+            int currentNumber = wheel.getCurrentItem();
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getTag();
             if (starting){
                 if (hasFinger){
-                    new Handler().postDelayed(()->{putFinger();},3000);
+                    fingerTimer.start();
                 }
                 starting = false;
             }
             else{
                 EventBus.getDefault().post(new PingoEvent(pingoNumber,currentPingo));
+                removeNumber(numbers,10);
             }
         }
     };
@@ -262,14 +278,11 @@ public class PingoWindow extends Fragment {
     }
 
     private class FishkaTimer extends CountDownTimer {
-
         public FishkaTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
-
         @Override
         public void onTick(long millisUntilFinished) {
-
         }
 
         @Override
@@ -281,7 +294,21 @@ public class PingoWindow extends Fragment {
         }
     }
 
-    private ImageView loadNumber(int number, int image, Context context, int width, int height){
+    private class FingerTimer extends CountDownTimer {
+        public FingerTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+        @Override
+        public void onTick(long l) {
+        }
+
+        @Override
+        public void onFinish() {
+            putFinger();
+        }
+    }
+
+    private ImageView loadNumber(int tagNumber, int image, Context context, int width, int height){
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image);
 
@@ -290,15 +317,15 @@ public class PingoWindow extends Fragment {
         ImageView imageNumber = new ImageView(context);
         imageNumber.setImageBitmap(bitmap);
         imageNumber.setLayoutParams(params);
-        imageNumber.setTag(number);
+        imageNumber.setTag(tagNumber);
 
         return imageNumber;
     }
 
-    private void removeNumber(List<ImageView> numbers, int numberToRemove){
+    private void removeNumber(List<ImageView> numbers, int tagNumberToRemove){
         Iterator<ImageView> numbersIter =numbers.iterator();
         while (numbersIter.hasNext()){
-            if(numbersIter.next().getTag().equals(numberToRemove)){
+            if(numbersIter.next().getTag().equals(tagNumberToRemove)){
                 numbersIter.remove();              // it will remove element from collection
             }
         }

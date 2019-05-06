@@ -1,5 +1,9 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -8,6 +12,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -16,11 +21,18 @@ import android.widget.TextView;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.CardIdEnterEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.types.PingoState;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class GameActivity extends PingoActivity {
 
@@ -30,6 +42,12 @@ public class GameActivity extends PingoActivity {
     private PingoWindow pingo3;
     private PingoWindow pingo4;
     private Button hitButtonGo;
+    private ImageView buttonCounter;
+    private AnimatorSet mSetLeftIn;
+    private AnimatorSet mSetRightOut;
+    private int counter;
+    List<Integer> closedPingos;
+    private boolean flippedToGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +56,20 @@ public class GameActivity extends PingoActivity {
 
         scaleUi();
 
+        counter = 4;
+        flippedToGo = false;
+        
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.gameFragmentProgressBar);
 
         pingo1 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo1);
         pingo2 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo2);
         pingo3 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo3);
         pingo4 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo4);
+
+        mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_animation);
+        mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_animation);
+        
+        buttonCounter = (ImageView) findViewById(R.id.hitCounter);
 
         hitButtonGo = (Button) findViewById(R.id.actionButtonGo);
         hitButtonGo.setOnClickListener(new View.OnClickListener() {
@@ -54,14 +80,54 @@ public class GameActivity extends PingoActivity {
         });
         hitButtonGo.setEnabled(false);
 
+        int distance = 8000;
+        float scale = getResources().getDisplayMetrics().density * distance;
+        buttonCounter.setCameraDistance(scale);
+        hitButtonGo.setCameraDistance(scale);
+
         TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
-        pingo1.spinWheel(500);
-        pingo2.spinWheel(600);
-        pingo3.spinWheel(700);
-        pingo4.spinWheel(800);
+        closedPingos = new ArrayList<>();
+        closedPingos.add(1);
+        closedPingos.add(2);
+        closedPingos.add(3);
+        closedPingos.add(4);
+
+        //pingo 1
+        Bundle pingoBundle1 = new Bundle();
+        pingoBundle1.putInt("spinDelay",500);
+        pingoBundle1.putBoolean("hasFibger",true);
+        pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
+        pingoBundle1.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+
+        //pingo 2
+        Bundle pingoBundle2 = new Bundle();
+        pingoBundle2.putInt("spinDelay",600);
+        pingoBundle2.putBoolean("hasFibger",false);
+        pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
+        pingoBundle2.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+
+        //pingo 3
+        Bundle pingoBundle3 = new Bundle();
+        pingoBundle3.putInt("spinDelay",700);
+        pingoBundle3.putBoolean("hasFibger",false);
+        pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
+        pingoBundle3.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+
+        //pingo 4
+        Bundle pingoBundle4 = new Bundle();
+        pingoBundle4.putInt("spinDelay",800);
+        pingoBundle4.putBoolean("hasFibger",false);
+        pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
+        pingoBundle4.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+
+
+        pingo1.initPingo(pingoBundle1);
+        pingo2.initPingo(pingoBundle2);
+        pingo3.initPingo(pingoBundle3);
+        pingo4.initPingo(pingoBundle4);
     }
 
     @Override
@@ -80,6 +146,52 @@ public class GameActivity extends PingoActivity {
     public void onPingoEventMessage(PingoEvent event) {
         int pingo = event.getPingoNumber();
         int numberSelect = event.getCurrentNumber();
+
+        removeNumber(closedPingos,pingo);
+        if(closedPingos.size() ==0 && !flippedToGo){
+            flippToGo(counter);
+        }
+    }
+
+    public void flippToGo(int counter) {
+
+        //close keyboard
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+        mSetRightOut.setTarget(buttonCounter);
+        mSetLeftIn.setTarget(hitButtonGo);
+        mSetLeftIn.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hitButtonGo.setEnabled(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        mSetRightOut.start();
+        mSetLeftIn.start();
+
+        flippedToGo = true;
+    }
+
+    private void removeNumber(List<Integer> closedPingos, int tagNumberToRemove){
+        Iterator<Integer> numbersIter =closedPingos.iterator();
+        while (numbersIter.hasNext()){
+            if(numbersIter.next().equals(tagNumberToRemove)){
+                numbersIter.remove();              // it will remove element from collection
+            }
+        }
     }
 
     public void scaleUi() {

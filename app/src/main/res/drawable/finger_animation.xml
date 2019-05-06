@@ -16,19 +16,6 @@
         android:duration="300"/>
     <item
         android:drawable="@drawable/finger1app"
-        android:duration="2000"/>
-    <item
-        android:drawable="@drawable/finger2app"
-        android:duration="300"/>
-    <item
-        android:drawable="@drawable/finger1app"
-        android:duration="300"/>
-    <item
-        android:drawable="@drawable/finger2app"
-        android:duration="300"/>
-    <item
-        android:drawable="@drawable/finger1app"
         android:duration="1"/>
-
 
 </animation-list>
