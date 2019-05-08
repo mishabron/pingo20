@@ -6,14 +6,13 @@ import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -39,9 +38,9 @@ import com.mbronshteyn.pingo20.events.CardIdEnterEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -83,6 +82,7 @@ public class LoginActivity extends PingoActivity {
             public void onClick(View v) {
                 playSound(R.raw.button);
                 EventBus.getDefault().post(new ActionButtonEvent());
+                authButtonGo.setEnabled(false);
             }
         });
         authButtonGo.setEnabled(false);
@@ -368,9 +368,11 @@ public class LoginActivity extends PingoActivity {
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
 
-        BitmapDrawable bmap = (BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.login_background, null);
-        float bmapWidth = bmap.getBitmap().getWidth();
-        float bmapHeight = bmap.getBitmap().getHeight();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.login_background, options);
+        float bmapHeight = options.outHeight;
+        float bmapWidth  = options.outWidth;
 
         float wRatio = width / bmapWidth;
         float hRatio = height / bmapHeight;
