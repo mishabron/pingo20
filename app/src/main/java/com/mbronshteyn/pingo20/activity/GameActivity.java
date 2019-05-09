@@ -72,6 +72,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
+                pingo2.spin();
             }
         });
         hitButtonGo.setEnabled(false);

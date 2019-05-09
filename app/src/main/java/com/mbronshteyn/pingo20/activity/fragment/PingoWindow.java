@@ -323,6 +323,32 @@ public class PingoWindow extends Fragment {
 
     }
 
+    public void spin(){
+
+        ImageView spin = (ImageView) getView().findViewById(R.id.spin);
+        spin.setVisibility(View.VISIBLE);
+        wheel.setVisibility(View.INVISIBLE);
+        spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1,null));
+        AnimationDrawable spinAnimation = (AnimationDrawable) spin.getBackground();
+        spinAnimation.start();
+
+        new Handler().postDelayed(()->{
+            spinAnimation.stop();
+            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation2,null));
+            ((AnimationDrawable) spin.getBackground()).start();
+        },570);
+
+        new Handler().postDelayed(()->{
+            ((AnimationDrawable) spin.getBackground()).stop();
+            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation3,null));
+            ((AnimationDrawable) spin.getBackground()).start();
+        },7500);
+        new Handler().postDelayed(()->{
+            spin.setVisibility(View.INVISIBLE);
+            wheel.setVisibility(View.VISIBLE);
+        },8000);
+    }
+
     private void scaleUi(View view) {
 
         // scale the screen
@@ -361,6 +387,12 @@ public class PingoWindow extends Fragment {
         ViewGroup.LayoutParams fishkaParams = fishkaIcon.getLayoutParams();
         fishkaParams.width =(int)(newBmapWidth*0.1199F);
         fishkaParams.height =(int)(newBmapHeight*0.0835F);
+
+        //scale spin
+        ImageView spin = (ImageView) view.findViewById(R.id.spin);
+        ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
+        spinParams.width =(int)(newBmapWidth*0.1513F);
+        spinParams.height =(int)(newBmapHeight*0.2588F);
 
     }
 
