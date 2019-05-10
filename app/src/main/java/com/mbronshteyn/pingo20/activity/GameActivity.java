@@ -3,16 +3,13 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.app.Activity;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -21,7 +18,6 @@ import android.widget.TextView;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
-import com.mbronshteyn.pingo20.events.CardIdEnterEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -76,6 +72,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
+                pingo2.spin();
             }
         });
         hitButtonGo.setEnabled(false);
@@ -97,28 +94,28 @@ public class GameActivity extends PingoActivity {
 
         //pingo 1
         Bundle pingoBundle1 = new Bundle();
-        pingoBundle1.putInt("spinDelay",500);
+        pingoBundle1.putInt("spinDelay",100);
         pingoBundle1.putBoolean("hasFibger",true);
         pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle1.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 2
         Bundle pingoBundle2 = new Bundle();
-        pingoBundle2.putInt("spinDelay",600);
+        pingoBundle2.putInt("spinDelay",500);
         pingoBundle2.putBoolean("hasFibger",false);
         pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle2.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 3
         Bundle pingoBundle3 = new Bundle();
-        pingoBundle3.putInt("spinDelay",700);
+        pingoBundle3.putInt("spinDelay",900);
         pingoBundle3.putBoolean("hasFibger",false);
         pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle3.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 4
         Bundle pingoBundle4 = new Bundle();
-        pingoBundle4.putInt("spinDelay",800);
+        pingoBundle4.putInt("spinDelay",1300);
         pingoBundle4.putBoolean("hasFibger",false);
         pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle4.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
@@ -198,9 +195,11 @@ public class GameActivity extends PingoActivity {
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
 
-        BitmapDrawable bmap = (BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.game_background, null);
-        float bmapWidth = bmap.getBitmap().getWidth();
-        float bmapHeight = bmap.getBitmap().getHeight();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.game_background, options);
+        float bmapHeight = options.outHeight;
+        float bmapWidth  = options.outWidth;
 
         float wRatio = width / bmapWidth;
         float hRatio = height / bmapHeight;
@@ -272,6 +271,12 @@ public class GameActivity extends PingoActivity {
         pingoParams = pingo4.getLayoutParams();
         pingoParams.height = (int)(newBmapHeight*0.3203F);
         pingoParams.width = (int)(newBmapHeight*0.3203F);
+
+        //scale header
+        ImageView header = (ImageView) findViewById(R.id.header);
+        ViewGroup.LayoutParams headerParams = header.getLayoutParams();
+        headerParams.width =(int)(newBmapWidth*0.4066F);
+        headerParams.height =(int)(newBmapHeight*0.2939F);
 
     }
 }
