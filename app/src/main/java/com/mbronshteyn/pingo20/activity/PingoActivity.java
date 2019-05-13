@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.pingo20.R;
 
+import java.io.IOException;
+
 
 public class PingoActivity extends AppCompatActivity {
 
@@ -37,7 +39,6 @@ public class PingoActivity extends AppCompatActivity {
 
         mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mediaPlayer.release();

@@ -5,7 +5,6 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -21,9 +20,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -71,12 +74,11 @@ public class PingoWindow extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pingo_window, container, false);
-
         windowBackground = (ImageView) view.findViewById(R.id.window_background);
 
         fishka = (ImageView) view.findViewById(R.id.fishka);
 
-        fingerTimer = new FingerTimer(3000,100);
+        fingerTimer = new FingerTimer(700,100);
 
         touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
         touchBackground.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +108,7 @@ public class PingoWindow extends Fragment {
         greenFishkas[9] = R.drawable.green9;
 
         scaleUi(view);
+        Glide.with(this).load(R.drawable.blue_window).into(windowBackground);
 
         return view;
     }
@@ -162,7 +165,7 @@ public class PingoWindow extends Fragment {
         wheel.setVisibility(View.INVISIBLE);
         touchBackground.setVisibility(View.INVISIBLE);
 
-        windowBackground.setBackground(getResources().getDrawable(R.drawable.finger_animation,null));
+        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.finger_animation,null));
         play = (ImageView) getView().findViewById(R.id.play);
         play.setVisibility(View.VISIBLE);
 
@@ -170,7 +173,7 @@ public class PingoWindow extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 windowBackground.setOnTouchListener(null);
-                windowBackground.setBackground(getResources().getDrawable(R.drawable.blue_window,null));
+                Glide.with(getActivity()).load(R.drawable.blue_window).into(windowBackground);
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
@@ -178,7 +181,7 @@ public class PingoWindow extends Fragment {
             }
         });
 
-        AnimationDrawable fingerAnimation = (AnimationDrawable) windowBackground.getBackground();
+        AnimationDrawable fingerAnimation = (AnimationDrawable) windowBackground.getDrawable();
         long totalDuration = 0;
         for(int i = 0; i< fingerAnimation.getNumberOfFrames();i++){
             totalDuration += fingerAnimation.getDuration(i);
@@ -289,13 +292,14 @@ public class PingoWindow extends Fragment {
 
     private ImageView loadNumber(int tagNumber, int image, Context context, int width, int height){
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image);
-
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
         params.gravity = Gravity.CENTER;
         ImageView imageNumber = new ImageView(context);
-        imageNumber.setImageBitmap(bitmap);
+        imageNumber.setId(tagNumber);
         imageNumber.setLayoutParams(params);
+
+        Glide.with(this).load(image).into(imageNumber);
+
         imageNumber.setTag(tagNumber);
 
         return imageNumber;
@@ -333,19 +337,22 @@ public class PingoWindow extends Fragment {
         spinAnimation.start();
 
         new Handler().postDelayed(()->{
-            spinAnimation.stop();
-            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation2,null));
-            ((AnimationDrawable) spin.getBackground()).start();
+            spin.setBackground(getResources().getDrawable(R.drawable.spin09,null));
+            RotateAnimation rotate = new RotateAnimation(360*30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(7500);
+            rotate.setInterpolator(new AccelerateDecelerateInterpolator());
+            spin.startAnimation(rotate);
         },570);
 
         new Handler().postDelayed(()->{
-            ((AnimationDrawable) spin.getBackground()).stop();
             spin.setBackground(getResources().getDrawable(R.drawable.spin_animation3,null));
             ((AnimationDrawable) spin.getBackground()).start();
         },7500);
+
         new Handler().postDelayed(()->{
             spin.setVisibility(View.INVISIBLE);
             wheel.setVisibility(View.VISIBLE);
+            spin.setBackground(null);
         },8000);
     }
 

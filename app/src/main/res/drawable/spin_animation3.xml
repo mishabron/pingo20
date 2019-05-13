@@ -7,12 +7,12 @@
         android:duration="100"/>
     <item
         android:drawable="@drawable/spin09"
-        android:duration="120"/>
+        android:duration="180"/>
     <item
         android:drawable="@drawable/spin010"
-        android:duration="150"/>
+        android:duration="200"/>
     <item
         android:drawable="@drawable/spin011"
-        android:duration="200"/>
+        android:duration="250"/>
 
 </animation-list>

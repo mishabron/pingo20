@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
@@ -51,6 +52,13 @@ public class GameActivity extends PingoActivity {
         setContentView(R.layout.activity_game);
 
         scaleUi();
+
+        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        Glide.with(this).load(R.drawable.game_background).into(iView);
+        ImageView header = (ImageView) findViewById(R.id.header);
+        Glide.with(this).load(R.drawable.header).into(header);
+        ImageView topBanner = (ImageView) findViewById(R.id.banner);
+        Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
 
         counter = 4;
         flippedToGo = false;
@@ -94,28 +102,28 @@ public class GameActivity extends PingoActivity {
 
         //pingo 1
         Bundle pingoBundle1 = new Bundle();
-        pingoBundle1.putInt("spinDelay",100);
+        pingoBundle1.putInt("spinDelay",300);
         pingoBundle1.putBoolean("hasFibger",true);
         pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle1.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 2
         Bundle pingoBundle2 = new Bundle();
-        pingoBundle2.putInt("spinDelay",500);
+        pingoBundle2.putInt("spinDelay",700);
         pingoBundle2.putBoolean("hasFibger",false);
         pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle2.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 3
         Bundle pingoBundle3 = new Bundle();
-        pingoBundle3.putInt("spinDelay",900);
+        pingoBundle3.putInt("spinDelay",1100);
         pingoBundle3.putBoolean("hasFibger",false);
         pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle3.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
 
         //pingo 4
         Bundle pingoBundle4 = new Bundle();
-        pingoBundle4.putInt("spinDelay",1300);
+        pingoBundle4.putInt("spinDelay",1500);
         pingoBundle4.putBoolean("hasFibger",false);
         pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle4.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));

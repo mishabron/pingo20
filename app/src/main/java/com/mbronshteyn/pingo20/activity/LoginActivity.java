@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -80,7 +81,6 @@ public class LoginActivity extends PingoActivity {
         authButtonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(R.raw.button);
                 EventBus.getDefault().post(new ActionButtonEvent());
                 authButtonGo.setEnabled(false);
             }
@@ -166,6 +166,15 @@ public class LoginActivity extends PingoActivity {
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+
+
+        ImageView iView = (ImageView) findViewById(R.id.loginBacgroundimageView);
+        Drawable d = iView.getDrawable();
+        if (d != null) {
+            d.setCallback(null);
+        }
+        iView.setImageDrawable(null);
+        iView.setBackground(null);
     }
 
     @Subscribe
@@ -202,6 +211,7 @@ public class LoginActivity extends PingoActivity {
     @Subscribe
     public void onActionButtonEventUi(ActionButtonEvent event){
 
+        playSound(R.raw.button);
         rightErrorBaloon.setVisibility(View.INVISIBLE);
 
         //disable input
@@ -357,6 +367,7 @@ public class LoginActivity extends PingoActivity {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Activity activity = (Activity) context;
                 activity.finish();
+                Runtime.getRuntime().gc();
         }, 5000);
     }
 
