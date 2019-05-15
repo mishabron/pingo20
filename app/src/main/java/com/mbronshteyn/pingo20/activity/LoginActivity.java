@@ -273,7 +273,7 @@ public class LoginActivity extends PingoActivity {
         card = card.replaceAll("[^\\d]", "");
         dto.setCardNumber(Long.parseLong(card));
 
-        Game.getInstancce().setCardNumber(card);
+        Game.cardNumber = card;
 
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());

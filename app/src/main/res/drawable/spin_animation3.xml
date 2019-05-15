@@ -3,16 +3,10 @@
     android:oneshot="true">
 
     <item
-        android:drawable="@drawable/spin08"
-        android:duration="100"/>
-    <item
-        android:drawable="@drawable/spin09"
-        android:duration="180"/>
-    <item
         android:drawable="@drawable/spin010"
-        android:duration="200"/>
+        android:duration="150"/>
     <item
         android:drawable="@drawable/spin011"
-        android:duration="250"/>
+        android:duration="200"/>
 
 </animation-list>

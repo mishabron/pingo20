@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
+import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -28,6 +30,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,9 +45,11 @@ public class GameActivity extends PingoActivity {
     private ImageView buttonCounter;
     private AnimatorSet mSetLeftIn;
     private AnimatorSet mSetRightOut;
-    private int counter;
     List<Integer> closedPingos;
+    List<Integer> playPingos;
     private boolean flippedToGo;
+    private Iterator<Integer> pingoIterator;
+    private HashMap<Integer, Integer> buttonMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,6 @@ public class GameActivity extends PingoActivity {
         ImageView topBanner = (ImageView) findViewById(R.id.banner);
         Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
 
-        counter = 4;
         flippedToGo = false;
         
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.gameFragmentProgressBar);
@@ -70,17 +74,28 @@ public class GameActivity extends PingoActivity {
         pingo3 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo3);
         pingo4 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo4);
 
+        buttonMap = new HashMap<>();
+        buttonMap.put(0,R.drawable.button0);
+        buttonMap.put(1,R.drawable.button1);
+        buttonMap.put(2,R.drawable.button2);
+        buttonMap.put(3,R.drawable.button3);
+        buttonMap.put(4,R.drawable.button4);
+        buttonMap.put(5,R.drawable.button5);
+
         mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_animation);
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_animation);
         
         buttonCounter = (ImageView) findViewById(R.id.hitCounter);
+        Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
 
         hitButtonGo = (Button) findViewById(R.id.actionButtonGo);
         hitButtonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
-                pingo2.spin();
+                pingoIterator = playPingos.iterator();
+                EventBus.getDefault().post(new NumberSpinEvent(pingoIterator.next(), false));
+                hitButtonGo.setEnabled(false);
             }
         });
         hitButtonGo.setEnabled(false);
@@ -99,6 +114,12 @@ public class GameActivity extends PingoActivity {
         closedPingos.add(2);
         closedPingos.add(3);
         closedPingos.add(4);
+
+        playPingos = new ArrayList<>();
+        playPingos.add(1);
+        playPingos.add(2);
+        playPingos.add(3);
+        playPingos.add(4);
 
         //pingo 1
         Bundle pingoBundle1 = new Bundle();
@@ -154,11 +175,11 @@ public class GameActivity extends PingoActivity {
 
         removeNumber(closedPingos,pingo);
         if(closedPingos.size() ==0 && !flippedToGo){
-            flippToGo(counter);
+            flippToGo();
         }
     }
 
-    public void flippToGo(int counter) {
+    public void flippToGo() {
 
         mSetRightOut.setTarget(buttonCounter);
         mSetLeftIn.setTarget(hitButtonGo);
@@ -186,8 +207,53 @@ public class GameActivity extends PingoActivity {
         flippedToGo = true;
     }
 
-    private void removeNumber(List<Integer> closedPingos, int tagNumberToRemove){
-        Iterator<Integer> numbersIter =closedPingos.iterator();
+    @Subscribe
+    public void spingEnd(NumberSpinEndEvent event){
+        if(pingoIterator.hasNext()) {
+            EventBus.getDefault().post(new NumberSpinEvent(pingoIterator.next(), false));
+        }
+        else{
+            Game.attemptCounter--;
+            closedPingos.add(1);
+            closedPingos.add(2);
+            closedPingos.add(3);
+            closedPingos.add(4);
+            flippToCounter(Game.attemptCounter);
+        }
+    }
+
+    public void flippToCounter(int counter) {
+
+        //flip button
+        Glide.with(this).load(buttonMap.get(counter)).into(buttonCounter);
+        mSetRightOut.setTarget(hitButtonGo);
+        mSetLeftIn.setTarget(buttonCounter);
+        mSetLeftIn.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hitButtonGo.setEnabled(false);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        mSetRightOut.start();
+        mSetLeftIn.start();
+
+        flippedToGo = false;
+    }
+
+    private void removeNumber(List<Integer> pingos, int tagNumberToRemove){
+        Iterator<Integer> numbersIter =pingos.iterator();
         while (numbersIter.hasNext()){
             if(numbersIter.next().equals(tagNumberToRemove)){
                 numbersIter.remove();              // it will remove element from collection

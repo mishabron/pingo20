@@ -71,7 +71,6 @@
         android:id="@+id/hitCounter"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@drawable/button4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.731"

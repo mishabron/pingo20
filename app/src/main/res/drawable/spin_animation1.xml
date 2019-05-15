@@ -8,11 +8,5 @@
     <item
         android:drawable="@drawable/spin02"
         android:duration="200"/>
-    <item
-        android:drawable="@drawable/spin03"
-        android:duration="70"/>
-    <item
-        android:drawable="@drawable/spin04"
-        android:duration="50"/>
 
 </animation-list>

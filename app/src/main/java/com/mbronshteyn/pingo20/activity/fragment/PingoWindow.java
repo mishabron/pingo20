@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
+import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.types.PingoState;
 
@@ -228,7 +230,7 @@ public class PingoWindow extends Fragment {
         @Override
         public void onScrollingFinished(WheelView wheel) {
             int currentNumber = wheel.getCurrentItem();
-            currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getTag();
+            currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
             if (starting){
                 if (hasFinger){
                     fingerTimer.start();
@@ -300,15 +302,13 @@ public class PingoWindow extends Fragment {
 
         Glide.with(this).load(image).into(imageNumber);
 
-        imageNumber.setTag(tagNumber);
-
         return imageNumber;
     }
 
     private void removeNumber(List<ImageView> numbers, int tagNumberToRemove){
         Iterator<ImageView> numbersIter =numbers.iterator();
         while (numbersIter.hasNext()){
-            if(numbersIter.next().getTag().equals(tagNumberToRemove)){
+            if(numbersIter.next().getId() == tagNumberToRemove){
                 numbersIter.remove();              // it will remove element from collection
             }
         }
@@ -323,37 +323,49 @@ public class PingoWindow extends Fragment {
     }
 
     @Subscribe
-    public void onPingoEventMessage(PingoEvent event) {
+    public void spin(NumberSpinEvent event){
 
-    }
+        if (event.getPingoNumber() == pingoNumber) {
 
-    public void spin(){
+            ImageView spin = (ImageView) getView().findViewById(R.id.spin);
+            spin.setVisibility(View.VISIBLE);
+            wheel.setVisibility(View.INVISIBLE);
+            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1, null));
+            AnimationDrawable spinAnimation = (AnimationDrawable) spin.getBackground();
+            spinAnimation.start();
 
-        ImageView spin = (ImageView) getView().findViewById(R.id.spin);
-        spin.setVisibility(View.VISIBLE);
-        wheel.setVisibility(View.INVISIBLE);
-        spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1,null));
-        AnimationDrawable spinAnimation = (AnimationDrawable) spin.getBackground();
-        spinAnimation.start();
+            new Handler().postDelayed(() -> {
+                spin.setBackground(getResources().getDrawable(R.drawable.spin09, null));
+                RotateAnimation rotate = new RotateAnimation(360 * 30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                rotate.setDuration(7500);
+                rotate.setInterpolator(new AccelerateDecelerateInterpolator());
+                rotate.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
 
-        new Handler().postDelayed(()->{
-            spin.setBackground(getResources().getDrawable(R.drawable.spin09,null));
-            RotateAnimation rotate = new RotateAnimation(360*30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(7500);
-            rotate.setInterpolator(new AccelerateDecelerateInterpolator());
-            spin.startAnimation(rotate);
-        },570);
+                    }
 
-        new Handler().postDelayed(()->{
-            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation3,null));
-            ((AnimationDrawable) spin.getBackground()).start();
-        },7500);
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        spin.setBackground(getResources().getDrawable(R.drawable.spin_animation3, null));
+                        ((AnimationDrawable) spin.getBackground()).start();
+                    }
 
-        new Handler().postDelayed(()->{
-            spin.setVisibility(View.INVISIBLE);
-            wheel.setVisibility(View.VISIBLE);
-            spin.setBackground(null);
-        },8000);
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                spin.startAnimation(rotate);
+            }, 450);
+
+            new Handler().postDelayed(() -> {
+                spin.setVisibility(View.INVISIBLE);
+                wheel.setVisibility(View.VISIBLE);
+                spin.setBackground(null);
+                EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber));
+            }, 8280);
+        }
     }
 
     private void scaleUi(View view) {
