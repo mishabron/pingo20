@@ -12,6 +12,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -20,8 +21,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,6 +68,7 @@ public class PingoWindow extends Fragment {
     private Integer currentPingo;
     private FingerTimer fingerTimer;
     private PingoState pingoState;
+    private boolean guestedNumber;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -138,17 +142,17 @@ public class PingoWindow extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        numbers.add(loadNumber(0,R.drawable.zero,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(9,R.drawable.nine,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(8,R.drawable.eight,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(7,R.drawable.seven,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(6,R.drawable.six,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(5,R.drawable.five,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(4,R.drawable.four,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(3,R.drawable.three,getActivity(),(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(2,R.drawable.two,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(1,R.drawable.one,getActivity(), (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(10,R.drawable.pingo,getActivity(),(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
+        numbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(10,R.drawable.pingo,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
 
         wheel = getView().findViewById(R.id.slot);
 
@@ -212,6 +216,7 @@ public class PingoWindow extends Fragment {
     public void initPingo(Bundle pingoBundle) {
         hasFinger = pingoBundle.getBoolean("hasFibger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
+        guestedNumber = pingoBundle.getBoolean("guestedNumber");
 
         ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
         for(Integer playedNumber: playedNumbers){
@@ -292,11 +297,11 @@ public class PingoWindow extends Fragment {
         }
     }
 
-    private ImageView loadNumber(int tagNumber, int image, Context context, int width, int height){
+    private ImageView loadNumber(int tagNumber, int image, int width, int height){
 
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
         params.gravity = Gravity.CENTER;
-        ImageView imageNumber = new ImageView(context);
+        ImageView imageNumber = new ImageView(getActivity());
         imageNumber.setId(tagNumber);
         imageNumber.setLayoutParams(params);
 
@@ -327,44 +332,52 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
+            ViewGroup.LayoutParams pingoParams = event.getPingo().getLayoutParams();
+            pingoParams.height = (int)(pingoParams.height * 1.06);
+            pingoParams.width = (int)(pingoParams.width * 1.06);
+
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
-            spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1, null));
-            AnimationDrawable spinAnimation = (AnimationDrawable) spin.getBackground();
-            spinAnimation.start();
 
-            new Handler().postDelayed(() -> {
-                spin.setBackground(getResources().getDrawable(R.drawable.spin09, null));
+            //spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1, null));
+
+            int currentNumber = wheel.getCurrentItem();
+            ImageView viw = numbers.get(currentNumber);
+            spin.setImageDrawable(viw.getDrawable());
+
+            RotateAnimation rotateLeft = new RotateAnimation(30, -0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            rotateLeft.setDuration(500);
+            //rotateLeft.setInterpolator(new AnticipateOvershootInterpolator());
+            spin.startAnimation(rotateLeft);
+
+            new Handler().postDelayed(()->{
+                Glide.with(getActivity()).load(R.drawable.spin09).into(spin);
                 RotateAnimation rotate = new RotateAnimation(360 * 30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotate.setDuration(7500);
-                rotate.setInterpolator(new AccelerateDecelerateInterpolator());
-                rotate.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        spin.setBackground(getResources().getDrawable(R.drawable.spin_animation3, null));
-                        ((AnimationDrawable) spin.getBackground()).start();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
+                rotate.setDuration(8200);
+                rotateLeft.setInterpolator(new AnticipateInterpolator());
+                rotateLeft.setInterpolator(new LinearInterpolator());
+                rotate.setInterpolator(new DecelerateInterpolator());
                 spin.startAnimation(rotate);
-            }, 450);
+            },450);
 
             new Handler().postDelayed(() -> {
+
+                spin.setImageDrawable(viw.getDrawable());
+                RotateAnimation rotateEnd = new RotateAnimation(-30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                rotateEnd.setDuration(500);
+                spin.startAnimation(rotateEnd);
+
+            }, 6200);
+
+            new Handler().postDelayed(() -> {
+                pingoParams.height = (int)(pingoParams.height / 1.06);
+                pingoParams.width = (int)(pingoParams.width / 1.06);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber));
-            }, 8280);
+            }, 6900);
         }
     }
 

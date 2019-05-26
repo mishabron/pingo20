@@ -19,7 +19,7 @@ public class PingoActivity extends AppCompatActivity {
 
     protected static MediaPlayer mediaPlayer;
 
-    protected CardDto card;
+    protected static CardDto card;
 
     protected void playSound(int sound) {
 
