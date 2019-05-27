@@ -22,19 +22,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <fragment
-        android:id="@+id/gameFragmentProgressBar"
-        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:failure="progress_yellow"
-        app:initiak="barblueapp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
-        app:progress="progress_yellow"
-        app:success="progress_yellow" />
-
     <android.support.constraint.Guideline
         android:id="@+id/horizontal_progressBar_guideline"
         android:layout_width="wrap_content"
@@ -54,29 +41,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.113" />
-
-    <Button
-        android:id="@+id/actionButtonGo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/btn_auth"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.731"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.90999997" />
-
-    <ImageView
-        android:id="@+id/hitCounter"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.731"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.90999997" />
 
     <fragment
         android:id="@+id/pingo1"
@@ -129,6 +93,17 @@
         app:layout_constraintLeft_toRightOf="@+id/pingo3"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/shield"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shield"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/cardNumber"
         android:layout_width="wrap_content"
@@ -158,6 +133,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.00999999" />
+
+    <fragment
+        android:id="@+id/gameFragmentProgressBar"
+        android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:failure="progress_yellow"
+        app:initiak="barblueapp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
+        app:progress="progress_yellow"
+        app:success="progress_yellow" />
+
+    <Button
+        android:id="@+id/actionButtonGo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/btn_auth"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.90999997" />
+
+    <ImageView
+        android:id="@+id/hitCounter"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.90999997" />
 
     <ImageView
         android:id="@+id/header"

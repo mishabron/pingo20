@@ -260,6 +260,10 @@ public class PingoWindow extends Fragment {
         }
     };
 
+    public void setEnabled(boolean enabled) {
+
+    }
+
     /**
      * Slot machine adapter
      */
@@ -331,12 +335,14 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            touchBackground.setEnabled(false);
             double zoomScale = 1.07;
+            touchBackground.setEnabled(false);
 
             ViewGroup.LayoutParams pingoParams = event.getPingo().getLayoutParams();
             pingoParams.height = (int)(pingoParams.height * zoomScale);
             pingoParams.width = (int)(pingoParams.width * zoomScale);
+            float zOrder = event.getPingo().getZ();
+            event.getPingo().setZ(20);
 
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
@@ -344,8 +350,6 @@ public class PingoWindow extends Fragment {
             ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
             int spinWidth = spinParams.width;
             int spinHeight = spinParams.height;
-
-            //spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1, null));
 
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
@@ -359,7 +363,7 @@ public class PingoWindow extends Fragment {
 
             //spin cycle
             new Handler().postDelayed(()->{
-                Glide.with(getActivity()).load(R.drawable.spin09).into(spin);
+                Glide.with(getActivity()).load(R.drawable.spin).into(spin);
                 spinParams.width = pingoParams.width;
                 spinParams.height = pingoParams.height;
 
@@ -386,9 +390,10 @@ public class PingoWindow extends Fragment {
 
             //restore window state
             new Handler().postDelayed(() -> {
+                touchBackground.setEnabled(true);
+                event.getPingo().setZ(zOrder);
                 pingoParams.height = (int)(pingoParams.height / zoomScale);
                 pingoParams.width = (int)(pingoParams.width / zoomScale);
-                touchBackground.setEnabled(true);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);

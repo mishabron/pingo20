@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -175,9 +176,23 @@ public class GameActivity extends PingoActivity {
         pingo2.initPingo(pingoBundle2);
         pingo3.initPingo(pingoBundle3);
         pingo4.initPingo(pingoBundle4);
+
+        ImageView shield = (ImageView) findViewById(R.id.shield);
+        shield.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
 
     private void doPinCheck() {
+
+        ImageView shield = (ImageView) findViewById(R.id.shield);
+        shield.setVisibility(View.VISIBLE);
+        pingo1.setEnabled(false);
+        pingo2.setEnabled(false);
+        pingo3.setEnabled(false);
+        pingo4.setEnabled(false);
 
         progressBar.startProgress();
 
@@ -368,6 +383,12 @@ public class GameActivity extends PingoActivity {
             closedPingos.add(4);
             flippToCounter(Game.attemptCounter);
             progressBar.stopProgress();
+            ImageView shield = (ImageView) findViewById(R.id.shield);
+            shield.setVisibility(View.INVISIBLE);
+            pingo1.setEnabled(true);
+            pingo2.setEnabled(true);
+            pingo3.setEnabled(true);
+            pingo4.setEnabled(true);
         }
     }
 
@@ -522,6 +543,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams headerParams = header.getLayoutParams();
         headerParams.width =(int)(newBmapWidth*0.4066F);
         headerParams.height =(int)(newBmapHeight*0.2939F);
+
+        //scale shild
+        ImageView shield = (ImageView) findViewById(R.id.shield);
+        ViewGroup.LayoutParams shieldParams = shield.getLayoutParams();
+        shieldParams.width =(int)(newBmapWidth*0.8472F);
+        shieldParams.height =(int)(newBmapHeight*0.5923F);
 
     }
 }
