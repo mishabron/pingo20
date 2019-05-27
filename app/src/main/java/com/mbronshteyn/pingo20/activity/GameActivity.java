@@ -133,11 +133,7 @@ public class GameActivity extends PingoActivity {
         closedPingos.add(3);
         closedPingos.add(4);
 
-        playPingos = new ArrayList<>();
-        playPingos.add(1);
-        playPingos.add(2);
-        playPingos.add(3);
-        playPingos.add(4);
+        playPingos = loadPingosInPlay();
 
         //pingo 1
         Bundle pingoBundle1 = new Bundle();
@@ -181,18 +177,27 @@ public class GameActivity extends PingoActivity {
         shield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //do nothing
             }
         });
+    }
+
+    private List<Integer> loadPingosInPlay() {
+
+        List<Integer> pingosInPlay = new ArrayList<>();
+
+        for(int i=1; i<=4 ; i++){
+            if(!loadGuessed(i)){
+                pingosInPlay.add(i);
+            }
+        }
+        return pingosInPlay;
     }
 
     private void doPinCheck() {
 
         ImageView shield = (ImageView) findViewById(R.id.shield);
         shield.setVisibility(View.VISIBLE);
-        pingo1.setEnabled(false);
-        pingo2.setEnabled(false);
-        pingo3.setEnabled(false);
-        pingo4.setEnabled(false);
 
         progressBar.startProgress();
 
@@ -332,10 +337,10 @@ public class GameActivity extends PingoActivity {
 
     @Subscribe
     public void onPingoEventMessage(PingoEvent event) {
-        int pingo = event.getPingoNumber();
-        int numberSelect = event.getCurrentNumber();
 
+        int pingo = event.getPingoNumber();
         removeNumber(closedPingos,pingo);
+
         if(closedPingos.size() ==0 && !flippedToGo){
             flippToGo();
         }
@@ -385,10 +390,6 @@ public class GameActivity extends PingoActivity {
             progressBar.stopProgress();
             ImageView shield = (ImageView) findViewById(R.id.shield);
             shield.setVisibility(View.INVISIBLE);
-            pingo1.setEnabled(true);
-            pingo2.setEnabled(true);
-            pingo3.setEnabled(true);
-            pingo4.setEnabled(true);
         }
     }
 

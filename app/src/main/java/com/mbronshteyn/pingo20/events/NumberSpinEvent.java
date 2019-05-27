@@ -2,11 +2,14 @@ package com.mbronshteyn.pingo20.events;
 
 import android.support.constraint.ConstraintLayout;
 
+import com.mbronshteyn.pingo20.types.PingoState;
+
 public class NumberSpinEvent {
 
     int pingoNumber;
     boolean numberGuesed;
     ConstraintLayout pingo;
+    PingoState pingoState;
 
     public NumberSpinEvent(int pingoNumber, boolean numberGuesed, ConstraintLayout pingo) {
         this.pingoNumber = pingoNumber;
@@ -36,5 +39,13 @@ public class NumberSpinEvent {
 
     public void setPingo(ConstraintLayout pingo) {
         this.pingo = pingo;
+    }
+
+    public PingoState getPingoState() {
+        return pingoState;
+    }
+
+    public void setPingoState(PingoState pingoState) {
+        this.pingoState = pingoState;
     }
 }
