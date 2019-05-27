@@ -12,7 +12,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -68,7 +67,7 @@ public class PingoWindow extends Fragment {
     private Integer currentPingo;
     private FingerTimer fingerTimer;
     private PingoState pingoState;
-    private boolean guestedNumber;
+    private boolean guessedNumber;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -216,7 +215,7 @@ public class PingoWindow extends Fragment {
     public void initPingo(Bundle pingoBundle) {
         hasFinger = pingoBundle.getBoolean("hasFibger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
-        guestedNumber = pingoBundle.getBoolean("guestedNumber");
+        guessedNumber = pingoBundle.getBoolean("guessedNumber");
 
         ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
         for(Integer playedNumber: playedNumbers){
@@ -332,13 +331,19 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
+            touchBackground.setEnabled(false);
+            double zoomScale = 1.07;
+
             ViewGroup.LayoutParams pingoParams = event.getPingo().getLayoutParams();
-            pingoParams.height = (int)(pingoParams.height * 1.06);
-            pingoParams.width = (int)(pingoParams.width * 1.06);
+            pingoParams.height = (int)(pingoParams.height * zoomScale);
+            pingoParams.width = (int)(pingoParams.width * zoomScale);
 
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
+            int spinWidth = spinParams.width;
+            int spinHeight = spinParams.height;
 
             //spin.setBackground(getResources().getDrawable(R.drawable.spin_animation1, null));
 
@@ -346,13 +351,18 @@ public class PingoWindow extends Fragment {
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
 
+            //start initial move
             RotateAnimation rotateLeft = new RotateAnimation(30, -0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             rotateLeft.setDuration(500);
             //rotateLeft.setInterpolator(new AnticipateOvershootInterpolator());
             spin.startAnimation(rotateLeft);
 
+            //spin cycle
             new Handler().postDelayed(()->{
                 Glide.with(getActivity()).load(R.drawable.spin09).into(spin);
+                spinParams.width = pingoParams.width;
+                spinParams.height = pingoParams.height;
+
                 RotateAnimation rotate = new RotateAnimation(360 * 30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotate.setDuration(8200);
                 rotateLeft.setInterpolator(new AnticipateInterpolator());
@@ -361,7 +371,11 @@ public class PingoWindow extends Fragment {
                 spin.startAnimation(rotate);
             },450);
 
+            //stop spin
             new Handler().postDelayed(() -> {
+
+                spinParams.width = spinWidth;
+                spinParams.height = spinHeight;
 
                 spin.setImageDrawable(viw.getDrawable());
                 RotateAnimation rotateEnd = new RotateAnimation(-30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -370,15 +384,21 @@ public class PingoWindow extends Fragment {
 
             }, 6200);
 
+            //restore window state
             new Handler().postDelayed(() -> {
-                pingoParams.height = (int)(pingoParams.height / 1.06);
-                pingoParams.width = (int)(pingoParams.width / 1.06);
+                pingoParams.height = (int)(pingoParams.height / zoomScale);
+                pingoParams.width = (int)(pingoParams.width / zoomScale);
+                touchBackground.setEnabled(true);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber));
             }, 6900);
         }
+    }
+
+    public boolean isGuessedNumber() {
+        return guessedNumber;
     }
 
     private void scaleUi(View view) {

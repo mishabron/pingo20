@@ -10,22 +10,30 @@ import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.dto.game.CardHitDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
+import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.CardAuthinticatedEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -33,6 +41,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GameActivity extends PingoActivity {
 
@@ -52,6 +67,7 @@ public class GameActivity extends PingoActivity {
     private HashMap<Integer, Integer> buttonMap;
     private int newBmapHeight;
     private int newBmapWidth;
+    private TextView cardNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +111,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
-                pingoIterator = playPingos.iterator();
-                Integer activeWindow = pingoIterator.next();
-                EventBus.getDefault().post(new NumberSpinEvent(activeWindow, false, getPingoWindow(activeWindow)));
+                doPinCheck();
                 hitButtonGo.setEnabled(false);
             }
         });
@@ -108,7 +122,7 @@ public class GameActivity extends PingoActivity {
         buttonCounter.setCameraDistance(scale);
         hitButtonGo.setCameraDistance(scale);
 
-        TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
+        cardNumber = (TextView) findViewById(R.id.cardNumber);
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
@@ -130,7 +144,7 @@ public class GameActivity extends PingoActivity {
         pingoBundle1.putBoolean("hasFibger",true);
         pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle1.putIntegerArrayList("playedNumbers",loadNumbersPlayed(1));
-        pingoBundle1.putBoolean("guestedNumber",loadGuessed(1));
+        pingoBundle1.putBoolean("guessedNumber",loadGuessed(1));
 
         //pingo 2
         Bundle pingoBundle2 = new Bundle();
@@ -138,7 +152,7 @@ public class GameActivity extends PingoActivity {
         pingoBundle2.putBoolean("hasFibger",false);
         pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle2.putIntegerArrayList("playedNumbers",loadNumbersPlayed(2));
-        pingoBundle2.putBoolean("guestedNumber",loadGuessed(2));
+        pingoBundle2.putBoolean("guessedNumber",loadGuessed(2));
 
         //pingo 3
         Bundle pingoBundle3 = new Bundle();
@@ -146,7 +160,7 @@ public class GameActivity extends PingoActivity {
         pingoBundle3.putBoolean("hasFibger",false);
         pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle3.putIntegerArrayList("playedNumbers",loadNumbersPlayed(3));
-        pingoBundle3.putBoolean("guestedNumber",loadGuessed(3));
+        pingoBundle3.putBoolean("guessedNumber",loadGuessed(3));
 
         //pingo 4
         Bundle pingoBundle4 = new Bundle();
@@ -154,7 +168,7 @@ public class GameActivity extends PingoActivity {
         pingoBundle4.putBoolean("hasFibger",false);
         pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle4.putIntegerArrayList("playedNumbers",loadNumbersPlayed(4));
-        pingoBundle4.putBoolean("guestedNumber",loadGuessed(4));
+        pingoBundle4.putBoolean("guessedNumber",loadGuessed(4));
 
 
         pingo1.initPingo(pingoBundle1);
@@ -163,7 +177,78 @@ public class GameActivity extends PingoActivity {
         pingo4.initPingo(pingoBundle4);
     }
 
-    private boolean loadGuessed(int pingoNUmber) {
+    private void doPinCheck() {
+
+        progressBar.startProgress();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+
+        String card = cardNumber.getText().toString();
+        card = card.replaceAll("[^\\d]", "");
+        CardHitDto cardHitDto = new CardHitDto();
+        cardHitDto.setCardNumber(Long.parseLong(card));
+        cardHitDto.setDeviceId(Game.devicedId);
+        cardHitDto.setGame(Game.getGAMEID());
+        cardHitDto.setBonusHit(false);
+        if(!pingo1.isGuessedNumber()) {
+            cardHitDto.setHit1(pingo1.getCurrentPingo());
+        }
+        if(!pingo2.isGuessedNumber()) {
+            cardHitDto.setHit2(pingo2.getCurrentPingo());
+        }
+        if(!pingo3.isGuessedNumber()) {
+            cardHitDto.setHit3(pingo3.getCurrentPingo());
+        }
+        if(!pingo4.isGuessedNumber()) {
+            cardHitDto.setHit4(pingo4.getCurrentPingo());
+        }
+
+        Call<CardDto> call = service.hitCard(cardHitDto);
+        call.enqueue(new Callback<CardDto>() {
+            @Override
+            public void onResponse(Call<CardDto> call, Response<CardDto> response) {
+                processResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<CardDto> call, Throwable t) {
+                playSound(R.raw.error_short);
+                progressBar.stopProgress();
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                rightSmallBaloon.startAnimation(zoomIntAnimation);
+                rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
+                popBaloon(rightSmallBaloon,4000);
+            }
+        });
+    }
+
+    private void processResponse(Response<CardDto> response) {
+
+        Headers headers = response.headers();
+        String message = headers.get("message");
+
+        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+            card = response.body();
+            pingoIterator = playPingos.iterator();
+            Integer activeWindow = pingoIterator.next();
+            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadGuessed(activeWindow), getPingoWindow(activeWindow)));
+        }else{
+            playSound(R.raw.error_short);
+            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
+            switch(errorCode){
+                case SERVERERROR:
+                    rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
+                    popBaloon(rightSmallBaloon,4000);
+                    break;
+            }
+        }
+    }
+
+    private boolean loadGuessed(int pingoNumber) {
 
         boolean guessed = false;
         List<HitDto> hits = card.getHits();
@@ -171,7 +256,7 @@ public class GameActivity extends PingoActivity {
             if(guessed){
                 break;
             }
-            switch(pingoNUmber){
+            switch(pingoNumber){
                 case 1:
                     guessed = hit.getNumber_1().isGuessed();
                     break;
@@ -210,7 +295,9 @@ public class GameActivity extends PingoActivity {
                     playedNumber = hit.getNumber_4().getNumber();
                     break;
             }
-            numbersPlayed.add(playedNumber);
+            if(playedNumber != null) {
+                numbersPlayed.add(playedNumber);
+            }
         }
 
         return numbersPlayed;
@@ -280,6 +367,7 @@ public class GameActivity extends PingoActivity {
             closedPingos.add(3);
             closedPingos.add(4);
             flippToCounter(Game.attemptCounter);
+            progressBar.stopProgress();
         }
     }
 

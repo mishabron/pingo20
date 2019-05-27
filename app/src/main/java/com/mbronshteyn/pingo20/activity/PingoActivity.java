@@ -18,8 +18,9 @@ import java.io.IOException;
 public class PingoActivity extends AppCompatActivity {
 
     protected static MediaPlayer mediaPlayer;
-
+    protected static String baseUrl = "http://ec2-18-219-33-9.us-east-2.compute.amazonaws.com";
     protected static CardDto card;
+    protected ImageView rightSmallBaloon;
 
     protected void playSound(int sound) {
 
