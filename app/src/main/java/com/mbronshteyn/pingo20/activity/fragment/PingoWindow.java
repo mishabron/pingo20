@@ -67,7 +67,7 @@ public class PingoWindow extends Fragment {
     private Integer currentPingo;
     private FingerTimer fingerTimer;
     private PingoState pingoState;
-    private boolean guessedNumber;
+    private Integer guessedNumber;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -98,8 +98,6 @@ public class PingoWindow extends Fragment {
                 }
             }
         });
-
-        numbers = new ArrayList<>();
 
         greenFishkas[0] = R.drawable.green0;
         greenFishkas[1] = R.drawable.green1;
@@ -140,6 +138,19 @@ public class PingoWindow extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        numbers = new ArrayList<>();
+        numbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+        numbers.add(loadNumber(10,R.drawable.pingo,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
 
         wheel = getView().findViewById(R.id.slot);
 
@@ -206,23 +217,17 @@ public class PingoWindow extends Fragment {
 
         hasFinger = pingoBundle.getBoolean("hasFibger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
-        guessedNumber = pingoBundle.getBoolean("guessedNumber");
-
-        numbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        numbers.add(loadNumber(10,R.drawable.pingo,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
-
+        guessedNumber = (Integer)pingoBundle.getSerializable("guessedNumber");
         ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
-        for(Integer playedNumber: playedNumbers){
-            removeNumber(numbers,playedNumber);
+
+        if(guessedNumber != null){
+            hasFinger =false;
+            pingoState = PingoState.WIN;
+        }
+        else{
+            for(Integer playedNumber: playedNumbers){
+                removeNumber(numbers,playedNumber);
+            }
         }
 
         new Handler().postDelayed(()->{wheel.scroll(-(numbers.size()*2+1), 4000);},pingoBundle.getInt("spinDelay"));
@@ -239,9 +244,18 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
             if (starting){
-                if (hasFinger){
-                    fingerTimer.start();
+
+                if(pingoState.equals(PingoState.WIN)){
+                    wheel.setCurrentItem(getNumberIndex(guessedNumber));
+                    Glide.with(getActivity()).load(R.drawable.green_window).into(windowBackground);
+                    touchBackground.setOnClickListener(null);
                 }
+                else{
+                    if (hasFinger){
+                        fingerTimer.start();
+                    }
+                }
+
                 starting = false;
             }
             else{
@@ -317,12 +331,25 @@ public class PingoWindow extends Fragment {
     }
 
     private void removeNumber(List<ImageView> numbers, int tagNumberToRemove){
-        Iterator<ImageView> numbersIter =numbers.iterator();
+        Iterator<ImageView> numbersIter = numbers.iterator();
         while (numbersIter.hasNext()){
             if(numbersIter.next().getId() == tagNumberToRemove){
                 numbersIter.remove();              // it will remove element from collection
             }
         }
+    }
+
+    private int getNumberIndex(int pinNUmber){
+        int index = 0;
+        int i = 0;
+        for (ImageView numberView: numbers){
+            if (numberView.getId() == pinNUmber){
+                index = i;
+                break;
+            }
+            i++;
+        }
+        return index;
     }
 
     public int getPingoNumber() {
@@ -338,7 +365,7 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            guessedNumber = event.isNumberGuesed();
+            guessedNumber = event.getNumberGuesed();
 
             double zoomScale = 1.07;
             touchBackground.setEnabled(false);
@@ -404,7 +431,7 @@ public class PingoWindow extends Fragment {
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
 
-                if(guessedNumber){
+                if(guessedNumber != null){
                     pingoState = PingoState.WIN;
                     Glide.with(this).load(R.drawable.green_window).into(windowBackground);
                     touchBackground.setOnClickListener(null);

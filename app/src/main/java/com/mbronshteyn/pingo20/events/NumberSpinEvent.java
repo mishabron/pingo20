@@ -7,11 +7,11 @@ import com.mbronshteyn.pingo20.types.PingoState;
 public class NumberSpinEvent {
 
     int pingoNumber;
-    boolean numberGuesed;
+    Integer numberGuesed;
     ConstraintLayout pingo;
     PingoState pingoState;
 
-    public NumberSpinEvent(int pingoNumber, boolean numberGuesed, ConstraintLayout pingo) {
+    public NumberSpinEvent(int pingoNumber, Integer numberGuesed, ConstraintLayout pingo) {
         this.pingoNumber = pingoNumber;
         this.numberGuesed = numberGuesed;
         this.pingo = pingo;
@@ -23,14 +23,6 @@ public class NumberSpinEvent {
 
     public void setPingoNumber(int pingoNumber) {
         this.pingoNumber = pingoNumber;
-    }
-
-    public boolean isNumberGuesed() {
-        return numberGuesed;
-    }
-
-    public void setNumberGuesed(boolean numberGuesed) {
-        this.numberGuesed = numberGuesed;
     }
 
     public ConstraintLayout getPingo() {
@@ -47,5 +39,13 @@ public class NumberSpinEvent {
 
     public void setPingoState(PingoState pingoState) {
         this.pingoState = pingoState;
+    }
+
+    public Integer getNumberGuesed() {
+        return numberGuesed;
+    }
+
+    public void setNumberGuesed(Integer numberGuesed) {
+        this.numberGuesed = numberGuesed;
     }
 }

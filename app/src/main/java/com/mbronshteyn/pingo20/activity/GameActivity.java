@@ -61,7 +61,7 @@ public class GameActivity extends PingoActivity {
     private ImageView buttonCounter;
     private AnimatorSet mSetLeftIn;
     private AnimatorSet mSetRightOut;
-    List<Integer> closedPingos;
+    List<Integer> closedPingos  = new ArrayList<>();;
     List<Integer> playPingos;
     private boolean flippedToGo;
     private Iterator<Integer> pingoIterator;
@@ -76,6 +76,8 @@ public class GameActivity extends PingoActivity {
         setContentView(R.layout.activity_game);
 
         scaleUi();
+
+        Game.attemptCounter = 4 - card.getNumberOfHits();
 
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
         Glide.with(this).load(R.drawable.game_background).into(iView);
@@ -127,51 +129,7 @@ public class GameActivity extends PingoActivity {
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
-        closedPingos = new ArrayList<>();
-        closedPingos.add(1);
-        closedPingos.add(2);
-        closedPingos.add(3);
-        closedPingos.add(4);
-
-        playPingos = loadPingosInPlay();
-
-        //pingo 1
-        Bundle pingoBundle1 = new Bundle();
-        pingoBundle1.putInt("spinDelay",300);
-        pingoBundle1.putBoolean("hasFibger",true);
-        pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle1.putIntegerArrayList("playedNumbers",loadNumbersPlayed(1));
-        pingoBundle1.putBoolean("guessedNumber",loadGuessed(1));
-
-        //pingo 2
-        Bundle pingoBundle2 = new Bundle();
-        pingoBundle2.putInt("spinDelay",700);
-        pingoBundle2.putBoolean("hasFibger",false);
-        pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle2.putIntegerArrayList("playedNumbers",loadNumbersPlayed(2));
-        pingoBundle2.putBoolean("guessedNumber",loadGuessed(2));
-
-        //pingo 3
-        Bundle pingoBundle3 = new Bundle();
-        pingoBundle3.putInt("spinDelay",1100);
-        pingoBundle3.putBoolean("hasFibger",false);
-        pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle3.putIntegerArrayList("playedNumbers",loadNumbersPlayed(3));
-        pingoBundle3.putBoolean("guessedNumber",loadGuessed(3));
-
-        //pingo 4
-        Bundle pingoBundle4 = new Bundle();
-        pingoBundle4.putInt("spinDelay",1500);
-        pingoBundle4.putBoolean("hasFibger",false);
-        pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle4.putIntegerArrayList("playedNumbers",loadNumbersPlayed(4));
-        pingoBundle4.putBoolean("guessedNumber",loadGuessed(4));
-
-
-        pingo1.initPingo(pingoBundle1);
-        pingo2.initPingo(pingoBundle2);
-        pingo3.initPingo(pingoBundle3);
-        pingo4.initPingo(pingoBundle4);
+        initState();
 
         ImageView shield = (ImageView) findViewById(R.id.shield);
         shield.setOnClickListener(new View.OnClickListener() {
@@ -182,12 +140,55 @@ public class GameActivity extends PingoActivity {
         });
     }
 
-    private List<Integer> loadPingosInPlay() {
+    private void initState() {
+
+        playPingos = loadPingosInPlay(true);
+        List<Integer> winPingos = loadPingosInPlay(false);
+        initPingos(playPingos,true);
+        initPingos(winPingos,false);
+        for(Integer playPingo: playPingos){
+            closedPingos.add(playPingo);
+        }
+    }
+
+    private void initPingos(List<Integer> playPingos, boolean canHaveFinger) {
+        int i = 0;
+        for(Integer pingo: playPingos){
+
+            Bundle pingoBundle = new Bundle();
+            pingoBundle.putInt("spinDelay",300 +(400*i));
+            pingoBundle.putBoolean("hasFibger", i == 0 && canHaveFinger);
+            pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
+            pingoBundle.putIntegerArrayList("playedNumbers",loadNumbersPlayed(pingo));
+            pingoBundle.putSerializable("guessedNumber",loadNumberGuessed(pingo));
+            i++;
+
+            switch(pingo){
+                case 1:
+                    pingo1.initPingo(pingoBundle);
+                    break;
+                case 2:
+                    pingo2.initPingo(pingoBundle);
+                    break;
+                case 3:
+                    pingo3.initPingo(pingoBundle);
+                    break;
+                case 4:
+                    pingo4.initPingo(pingoBundle);
+                    break;
+            }
+        }
+    }
+
+    private List<Integer> loadPingosInPlay(boolean pickNonWin) {
 
         List<Integer> pingosInPlay = new ArrayList<>();
 
         for(int i=1; i<=4 ; i++){
-            if(!loadGuessed(i)){
+            if(loadNumberGuessed(i) == null && pickNonWin){
+                pingosInPlay.add(i);
+            }
+            else if(loadNumberGuessed(i) != null && !pickNonWin){
                 pingosInPlay.add(i);
             }
         }
@@ -255,7 +256,7 @@ public class GameActivity extends PingoActivity {
             card = response.body();
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
-            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadGuessed(activeWindow), getPingoWindow(activeWindow)));
+            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
@@ -268,26 +269,34 @@ public class GameActivity extends PingoActivity {
         }
     }
 
-    private boolean loadGuessed(int pingoNumber) {
+    private Integer loadNumberGuessed(int pingoNumber) {
 
-        boolean guessed = false;
+        Integer guessed = null;
         List<HitDto> hits = card.getHits();
         for(HitDto hit :hits){
-            if(guessed){
+            if(guessed != null){
                 break;
             }
             switch(pingoNumber){
                 case 1:
-                    guessed = hit.getNumber_1().isGuessed();
+                    if(hit.getNumber_1().isGuessed()){
+                        guessed = hit.getNumber_1().getNumber();
+                    };
                     break;
                 case 2:
-                    guessed = hit.getNumber_1().isGuessed();
+                    if(hit.getNumber_2().isGuessed()){
+                        guessed = hit.getNumber_2().getNumber();
+                    };
                     break;
                 case 3:
-                    guessed = hit.getNumber_1().isGuessed();
+                    if(hit.getNumber_3().isGuessed()){
+                        guessed = hit.getNumber_3().getNumber();
+                    };
                     break;
                 case 4:
-                    guessed = hit.getNumber_1().isGuessed();
+                    if(hit.getNumber_4().isGuessed()){
+                        guessed = hit.getNumber_4().getNumber();
+                    };
                     break;
             }
         }
@@ -378,18 +387,15 @@ public class GameActivity extends PingoActivity {
     public void spingEnd(NumberSpinEndEvent event){
         if(pingoIterator.hasNext()) {
             Integer activeWindow = pingoIterator.next();
-            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, false, getPingoWindow(activeWindow)));
+            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
         }
         else{
             Game.attemptCounter--;
-            closedPingos.add(1);
-            closedPingos.add(2);
-            closedPingos.add(3);
-            closedPingos.add(4);
             flippToCounter(Game.attemptCounter);
             progressBar.stopProgress();
             ImageView shield = (ImageView) findViewById(R.id.shield);
             shield.setVisibility(View.INVISIBLE);
+            initState();
         }
     }
 
