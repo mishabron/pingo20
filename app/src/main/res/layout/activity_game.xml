@@ -139,13 +139,13 @@
         android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:failure="progress_yellow"
+        app:failure="barredapp"
         app:initiak="barblueapp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
-        app:progress="progress_yellow"
-        app:success="progress_yellow" />
+        app:progress="baryellowapp"
+        app:success="bargreenapp" />
 
     <Button
         android:id="@+id/actionButtonGo"
