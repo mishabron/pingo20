@@ -5,10 +5,11 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -26,7 +27,6 @@ import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
-import com.mbronshteyn.pingo20.events.CardAuthinticatedEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
@@ -129,15 +129,19 @@ public class GameActivity extends PingoActivity {
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
-        initState(true);
-
-        ImageView shield = (ImageView) findViewById(R.id.shield);
-        shield.setOnClickListener(new View.OnClickListener() {
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        nonTouchShield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //do nothing
             }
         });
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        new Handler().postDelayed(()->{initState(true);},100);
     }
 
     private void initState(boolean withWin) {
@@ -158,7 +162,7 @@ public class GameActivity extends PingoActivity {
         for(Integer pingo: playPingos){
 
             Bundle pingoBundle = new Bundle();
-            pingoBundle.putInt("spinDelay",10);
+            pingoBundle.putInt("spinDelay",100 + i*300);
             pingoBundle.putBoolean("hasFibger", i == 0 && canHaveFinger);
             pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
             pingoBundle.putIntegerArrayList("playedNumbers",loadNumbersPlayed(pingo));
@@ -199,8 +203,10 @@ public class GameActivity extends PingoActivity {
 
     private void doPinCheck() {
 
-        ImageView shield = (ImageView) findViewById(R.id.shield);
+        ImageView shield = (ImageView) findViewById(R.id.shield_full);
         shield.setVisibility(View.VISIBLE);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        nonTouchShield.setVisibility(View.VISIBLE);
 
         progressBar.startProgress();
 
@@ -259,6 +265,8 @@ public class GameActivity extends PingoActivity {
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
             EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+            Game.attemptCounter--;
+            flippToCounter(Game.attemptCounter);
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
@@ -387,18 +395,34 @@ public class GameActivity extends PingoActivity {
 
     @Subscribe
     public void spinEnd(NumberSpinEndEvent event){
-        if(pingoIterator.hasNext()) {
-            Integer activeWindow = pingoIterator.next();
-            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+
+        if(!pingoIterator.hasNext()) {
+            ImageView shield = (ImageView) findViewById(R.id.shield_full);
+            shield.setVisibility(View.INVISIBLE);
+            ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+            nonTouchShield.setVisibility(View.INVISIBLE);
+        }
+
+        progressBar.stopProgress();
+        if(event.isGuessed()){
+            progressBar.startSaccess();
+            new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
         else{
-            Game.attemptCounter--;
-            flippToCounter(Game.attemptCounter);
-            progressBar.stopProgress();
-            ImageView shield = (ImageView) findViewById(R.id.shield);
-            shield.setVisibility(View.INVISIBLE);
-            initState(false);
+            progressBar.startFailure();
+            new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
         }
+
+        new Handler().postDelayed(()->{
+            if(pingoIterator.hasNext()) {
+                //progressBar.startProgress();
+                Integer activeWindow = pingoIterator.next();
+                EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+            }
+            else{
+                initState(false);
+            }
+        },3100);
     }
 
     public void flippToCounter(int counter) {
@@ -554,10 +578,16 @@ public class GameActivity extends PingoActivity {
         headerParams.height =(int)(newBmapHeight*0.2939F);
 
         //scale shild
-        ImageView shield = (ImageView) findViewById(R.id.shield);
+        ImageView shield = (ImageView) findViewById(R.id.shield_full);
         ViewGroup.LayoutParams shieldParams = shield.getLayoutParams();
-        shieldParams.width =(int)(newBmapWidth*0.8472F);
-        shieldParams.height =(int)(newBmapHeight*0.5923F);
+        shieldParams.width = newBmapWidth;
+        shieldParams.height = newBmapHeight;
+
+        //scale nonTouchShield
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
+        nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
+        nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
 
     }
 }
