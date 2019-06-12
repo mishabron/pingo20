@@ -26,10 +26,6 @@ public class Game {
         return game;
     }
 
-    public static int getAttemptCounter() {
-        return attemptCounter;
-    }
-
     public static String getDevicedId() {
         return devicedId;
     }

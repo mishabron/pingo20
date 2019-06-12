@@ -57,7 +57,6 @@ public class LoginActivity extends PingoActivity {
     private final String ROTATE_VERTICAL = "rotationY";
     private PingoProgressBar progressBar;
     private ImageView leftLargeBaloon;
-    private ImageView rightSmallBaloon;
     private Button authButtonGo;
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
@@ -263,7 +262,7 @@ public class LoginActivity extends PingoActivity {
     public void onActionButtonEventAuthinticate(ActionButtonEvent event){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://ec2-18-219-33-9.us-east-2.compute.amazonaws.com")
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -342,7 +341,7 @@ public class LoginActivity extends PingoActivity {
                     break;
                 case SERVERERROR:
                     rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
-                    popBaloon(leftLargeBaloon,4000);
+                    popBaloon(rightSmallBaloon,4000);
                     break;
             }
         }

@@ -5,17 +5,25 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.dto.game.CardHitDto;
+import com.mbronshteyn.gameserver.dto.game.HitDto;
+import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
@@ -23,16 +31,24 @@ import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GameActivity extends PingoActivity {
 
@@ -45,18 +61,22 @@ public class GameActivity extends PingoActivity {
     private ImageView buttonCounter;
     private AnimatorSet mSetLeftIn;
     private AnimatorSet mSetRightOut;
-    List<Integer> closedPingos;
+    List<Integer> closedPingos  = new ArrayList<>();;
     List<Integer> playPingos;
     private boolean flippedToGo;
     private Iterator<Integer> pingoIterator;
     private HashMap<Integer, Integer> buttonMap;
-
+    private int newBmapHeight;
+    private int newBmapWidth;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
         scaleUi();
+
+        Game.attemptCounter = 4 - card.getNumberOfHits();
 
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
         Glide.with(this).load(R.drawable.game_background).into(iView);
@@ -93,8 +113,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
-                pingoIterator = playPingos.iterator();
-                EventBus.getDefault().post(new NumberSpinEvent(pingoIterator.next(), false));
+                doPinCheck();
                 hitButtonGo.setEnabled(false);
             }
         });
@@ -109,51 +128,223 @@ public class GameActivity extends PingoActivity {
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
-        closedPingos = new ArrayList<>();
-        closedPingos.add(1);
-        closedPingos.add(2);
-        closedPingos.add(3);
-        closedPingos.add(4);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        nonTouchShield.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //do nothing
+            }
+        });
+    }
 
-        playPingos = new ArrayList<>();
-        playPingos.add(1);
-        playPingos.add(2);
-        playPingos.add(3);
-        playPingos.add(4);
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        new Handler().postDelayed(()->{initState(true);},100);
+    }
 
-        //pingo 1
-        Bundle pingoBundle1 = new Bundle();
-        pingoBundle1.putInt("spinDelay",300);
-        pingoBundle1.putBoolean("hasFibger",true);
-        pingoBundle1.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle1.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+    private void initState(boolean withWin) {
 
-        //pingo 2
-        Bundle pingoBundle2 = new Bundle();
-        pingoBundle2.putInt("spinDelay",700);
-        pingoBundle2.putBoolean("hasFibger",false);
-        pingoBundle2.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle2.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+        playPingos = loadPingosInPlay(true);
+        List<Integer> winPingos = loadPingosInPlay(false);
+        initPingos(playPingos,true);
+        if(withWin) {
+            initPingos(winPingos, false);
+        }
+        for(Integer playPingo: playPingos){
+            closedPingos.add(playPingo);
+        }
+    }
 
-        //pingo 3
-        Bundle pingoBundle3 = new Bundle();
-        pingoBundle3.putInt("spinDelay",1100);
-        pingoBundle3.putBoolean("hasFibger",false);
-        pingoBundle3.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle3.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+    private void initPingos(List<Integer> playPingos, boolean canHaveFinger) {
+        int i = 0;
+        for(Integer pingo: playPingos){
 
-        //pingo 4
-        Bundle pingoBundle4 = new Bundle();
-        pingoBundle4.putInt("spinDelay",1500);
-        pingoBundle4.putBoolean("hasFibger",false);
-        pingoBundle4.putSerializable("pingoState", PingoState.ACTIVE);
-        pingoBundle4.putIntegerArrayList("playedNumbers",new ArrayList<>(Arrays.asList()));
+            Bundle pingoBundle = new Bundle();
+            pingoBundle.putInt("spinDelay",100 + i*300);
+            pingoBundle.putBoolean("hasFibger", i == 0 && canHaveFinger);
+            pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
+            pingoBundle.putIntegerArrayList("playedNumbers",loadNumbersPlayed(pingo));
+            pingoBundle.putSerializable("guessedNumber",loadNumberGuessed(pingo));
+            i++;
 
+            switch(pingo){
+                case 1:
+                    pingo1.initPingo(pingoBundle);
+                    break;
+                case 2:
+                    pingo2.initPingo(pingoBundle);
+                    break;
+                case 3:
+                    pingo3.initPingo(pingoBundle);
+                    break;
+                case 4:
+                    pingo4.initPingo(pingoBundle);
+                    break;
+            }
+        }
+    }
 
-        pingo1.initPingo(pingoBundle1);
-        pingo2.initPingo(pingoBundle2);
-        pingo3.initPingo(pingoBundle3);
-        pingo4.initPingo(pingoBundle4);
+    private List<Integer> loadPingosInPlay(boolean pickNonWin) {
+
+        List<Integer> pingosInPlay = new ArrayList<>();
+
+        for(int i=1; i<=4 ; i++){
+            if(loadNumberGuessed(i) == null && pickNonWin){
+                pingosInPlay.add(i);
+            }
+            else if(loadNumberGuessed(i) != null && !pickNonWin){
+                pingosInPlay.add(i);
+            }
+        }
+        return pingosInPlay;
+    }
+
+    private void doPinCheck() {
+
+        TextView pinInPlay = (TextView) findViewById(R.id.pinInPlay);
+        pinInPlay.setText(getString(R.string.pin_in_play)+ pingo1.getCurrentPingo().toString()+
+                pingo2.getCurrentPingo().toString()+
+                pingo3.getCurrentPingo().toString()+
+                pingo4.getCurrentPingo().toString());
+
+        ImageView shield = (ImageView) findViewById(R.id.shield_full);
+        shield.setVisibility(View.VISIBLE);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        nonTouchShield.setVisibility(View.VISIBLE);
+
+        progressBar.startProgress();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+
+        String card = Game.getInstancce().getCardNumber();
+        card = card.replaceAll("[^\\d]", "");
+        CardHitDto cardHitDto = new CardHitDto();
+        cardHitDto.setCardNumber(Long.parseLong(card));
+        cardHitDto.setDeviceId(Game.devicedId);
+        cardHitDto.setGame(Game.getGAMEID());
+        cardHitDto.setBonusHit(false);
+        if(!pingo1.isGuessedNumber()) {
+            cardHitDto.setHit1(pingo1.getCurrentPingo());
+        }
+        if(!pingo2.isGuessedNumber()) {
+            cardHitDto.setHit2(pingo2.getCurrentPingo());
+        }
+        if(!pingo3.isGuessedNumber()) {
+            cardHitDto.setHit3(pingo3.getCurrentPingo());
+        }
+        if(!pingo4.isGuessedNumber()) {
+            cardHitDto.setHit4(pingo4.getCurrentPingo());
+        }
+
+        Call<CardDto> call = service.hitCard(cardHitDto);
+        call.enqueue(new Callback<CardDto>() {
+            @Override
+            public void onResponse(Call<CardDto> call, Response<CardDto> response) {
+                processResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<CardDto> call, Throwable t) {
+                playSound(R.raw.error_short);
+                progressBar.stopProgress();
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                rightSmallBaloon.startAnimation(zoomIntAnimation);
+                rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
+                popBaloon(rightSmallBaloon,4000);
+            }
+        });
+    }
+
+    private void processResponse(Response<CardDto> response) {
+
+        Headers headers = response.headers();
+        String message = headers.get("message");
+
+        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+            card = response.body();
+            pingoIterator = playPingos.iterator();
+            Integer activeWindow = pingoIterator.next();
+            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+            Game.attemptCounter--;
+            flippToCounter(Game.attemptCounter);
+        }else{
+            playSound(R.raw.error_short);
+            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
+            switch(errorCode){
+                case SERVERERROR:
+                    rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
+                    popBaloon(rightSmallBaloon,4000);
+                    break;
+            }
+        }
+    }
+
+    private Integer loadNumberGuessed(int pingoNumber) {
+
+        Integer guessed = null;
+        List<HitDto> hits = card.getHits();
+        for(HitDto hit :hits){
+            if(guessed != null){
+                break;
+            }
+            switch(pingoNumber){
+                case 1:
+                    if(hit.getNumber_1().isGuessed()){
+                        guessed = hit.getNumber_1().getNumber();
+                    };
+                    break;
+                case 2:
+                    if(hit.getNumber_2().isGuessed()){
+                        guessed = hit.getNumber_2().getNumber();
+                    };
+                    break;
+                case 3:
+                    if(hit.getNumber_3().isGuessed()){
+                        guessed = hit.getNumber_3().getNumber();
+                    };
+                    break;
+                case 4:
+                    if(hit.getNumber_4().isGuessed()){
+                        guessed = hit.getNumber_4().getNumber();
+                    };
+                    break;
+            }
+        }
+        return guessed;
+    }
+
+    private ArrayList<Integer> loadNumbersPlayed(int pingoNumber) {
+
+        ArrayList<Integer>  numbersPlayed = new ArrayList<>();
+
+        List<HitDto> hits = card.getHits();
+        for(HitDto hit :hits){
+            Integer playedNumber = null;
+            switch(pingoNumber){
+                case 1:
+                    playedNumber = hit.getNumber_1().getNumber();
+                    break;
+                case 2:
+                    playedNumber = hit.getNumber_2().getNumber();
+                    break;
+                case 3:
+                    playedNumber = hit.getNumber_3().getNumber();
+                    break;
+                case 4:
+                    playedNumber = hit.getNumber_4().getNumber();
+                    break;
+            }
+            if(playedNumber != null) {
+                numbersPlayed.add(playedNumber);
+            }
+        }
+
+        return numbersPlayed;
     }
 
     @Override
@@ -170,10 +361,10 @@ public class GameActivity extends PingoActivity {
 
     @Subscribe
     public void onPingoEventMessage(PingoEvent event) {
-        int pingo = event.getPingoNumber();
-        int numberSelect = event.getCurrentNumber();
 
+        int pingo = event.getPingoNumber();
         removeNumber(closedPingos,pingo);
+
         if(closedPingos.size() ==0 && !flippedToGo){
             flippToGo();
         }
@@ -208,18 +399,35 @@ public class GameActivity extends PingoActivity {
     }
 
     @Subscribe
-    public void spingEnd(NumberSpinEndEvent event){
-        if(pingoIterator.hasNext()) {
-            EventBus.getDefault().post(new NumberSpinEvent(pingoIterator.next(), false));
+    public void spinEnd(NumberSpinEndEvent event){
+
+        if(!pingoIterator.hasNext()) {
+            ImageView shield = (ImageView) findViewById(R.id.shield_full);
+            shield.setVisibility(View.INVISIBLE);
+            ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+            nonTouchShield.setVisibility(View.INVISIBLE);
+        }
+
+        progressBar.stopProgress();
+        if(event.isGuessed()){
+            progressBar.startSaccess();
+            new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
         else{
-            Game.attemptCounter--;
-            closedPingos.add(1);
-            closedPingos.add(2);
-            closedPingos.add(3);
-            closedPingos.add(4);
-            flippToCounter(Game.attemptCounter);
+            progressBar.startFailure();
+            new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
         }
+
+        new Handler().postDelayed(()->{
+            if(pingoIterator.hasNext()) {
+                //progressBar.startProgress();
+                Integer activeWindow = pingoIterator.next();
+                EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+            }
+            else{
+                initState(false);
+            }
+        },3100);
     }
 
     public void flippToCounter(int counter) {
@@ -261,6 +469,28 @@ public class GameActivity extends PingoActivity {
         }
     }
 
+    private ConstraintLayout getPingoWindow(int pingoNumber){
+
+        ConstraintLayout pingoWindow = null;
+
+        switch(pingoNumber){
+            case 1:
+                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo1);
+                break;
+            case 2:
+                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo2);
+                break;
+            case 3:
+                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo3);
+                break;
+            case 4:
+                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo4);
+                break;
+        }
+
+        return pingoWindow;
+    }
+
     public void scaleUi() {
 
         // scale the screen
@@ -285,8 +515,8 @@ public class GameActivity extends PingoActivity {
             ratioMultiplier = hRatio;
         }
 
-        int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
-        int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
+        newBmapWidth = (int) (bmapWidth * ratioMultiplier);
+        newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.coordinatorLayoutGame);
@@ -351,6 +581,18 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams headerParams = header.getLayoutParams();
         headerParams.width =(int)(newBmapWidth*0.4066F);
         headerParams.height =(int)(newBmapHeight*0.2939F);
+
+        //scale shild
+        ImageView shield = (ImageView) findViewById(R.id.shield_full);
+        ViewGroup.LayoutParams shieldParams = shield.getLayoutParams();
+        shieldParams.width = newBmapWidth;
+        shieldParams.height = newBmapHeight;
+
+        //scale nonTouchShield
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
+        nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
+        nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
 
     }
 }
