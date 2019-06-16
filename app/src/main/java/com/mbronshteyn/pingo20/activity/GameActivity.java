@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,7 +71,8 @@ public class GameActivity extends PingoActivity {
     private HashMap<Integer, Integer> buttonMap;
     private int newBmapHeight;
     private int newBmapWidth;
-    
+    private TextView balance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +88,12 @@ public class GameActivity extends PingoActivity {
         Glide.with(this).load(R.drawable.header).into(header);
         ImageView topBanner = (ImageView) findViewById(R.id.banner);
         Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
+
+        //balance
+        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
+        balance = (TextView) findViewById(R.id.balance);
+        balance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
+        balance.setText(getCardReward());
 
         flippedToGo = false;
         
@@ -147,7 +157,7 @@ public class GameActivity extends PingoActivity {
 
         playPingos = loadPingosInPlay(true);
         List<Integer> winPingos = loadPingosInPlay(false);
-        initPingos(playPingos,true);
+        initPingos(playPingos,Game.attemptCounter != 0);
         if(withWin) {
             initPingos(winPingos, false);
         }
@@ -171,17 +181,27 @@ public class GameActivity extends PingoActivity {
             switch(pingo){
                 case 1:
                     pingo1.initPingo(pingoBundle);
+                    checkEndGame(pingo1);
                     break;
                 case 2:
                     pingo2.initPingo(pingoBundle);
+                    checkEndGame(pingo2);
                     break;
                 case 3:
                     pingo3.initPingo(pingoBundle);
+                    checkEndGame(pingo3);
                     break;
                 case 4:
                     pingo4.initPingo(pingoBundle);
+                    checkEndGame(pingo4);
                     break;
             }
+        }
+    }
+
+    private void checkEndGame(PingoWindow pingo) {
+        if(Game.attemptCounter == 0){
+            pingo.disableWindow();
         }
     }
 
@@ -212,6 +232,7 @@ public class GameActivity extends PingoActivity {
         shield.setVisibility(View.VISIBLE);
         ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
         nonTouchShield.setVisibility(View.VISIBLE);
+        balance.setTextColor(Color.WHITE);
 
         progressBar.startProgress();
 
@@ -406,6 +427,8 @@ public class GameActivity extends PingoActivity {
             shield.setVisibility(View.INVISIBLE);
             ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
             nonTouchShield.setVisibility(View.INVISIBLE);
+            balance.setTextColor(Color.BLACK);
+            balance.setText(getCardReward());
         }
 
         progressBar.stopProgress();
@@ -489,6 +512,23 @@ public class GameActivity extends PingoActivity {
         }
 
         return pingoWindow;
+    }
+
+    private String getCardReward(){
+
+        String reward = "";
+
+        if(card.getBalance() != 0) {
+            reward = getString(R.string.card_balance) + " $" +(int) card.getBalance()+ " ";
+        }
+        else if(Game.attemptCounter == 0){
+            reward = "GAME OVER ";
+        }
+        else{
+            reward = "WIN FREE GAME ";
+        }
+
+        return reward;
     }
 
     public void scaleUi() {

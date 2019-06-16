@@ -12,5 +12,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_game">GameActivity</string>
-    <string name="pin_in_play">PIN IN Play:</string>
+    <string name="pin_in_play">PIN IN PLAY:</string>
+    <string name="card_balance">CARD BALANCE:</string>
 </resources>

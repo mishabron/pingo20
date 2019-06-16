@@ -272,9 +272,10 @@ public class PingoWindow extends Fragment {
             if (starting){
 
                 if(pingoState.equals(PingoState.WIN)){
-                    wheel.setCurrentItem(getNumberIndex(guessedNumber));
+                    currentPingo = guessedNumber;
+                    wheel.setCurrentItem(getNumberIndex(guessedNumber),true);
                     Glide.with(getActivity()).load(R.drawable.green_window).into(windowBackground);
-                    touchBackground.setOnClickListener(null);
+                    disableWindow();
                     fishka.setImageResource(greenFishkas[guessedNumber]);
                     fishka.setVisibility(View.VISIBLE);
                 }
@@ -292,6 +293,10 @@ public class PingoWindow extends Fragment {
             }
         }
     };
+
+    public void disableWindow() {
+        touchBackground.setOnClickListener(null);
+    }
 
     // Wheel changed listener
     private OnWheelChangedListener changedListener = new OnWheelChangedListener() {
