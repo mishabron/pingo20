@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -419,21 +420,21 @@ public class PingoWindow extends Fragment {
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
 
-            //start initial move
+/*            //start initial move
             RotateAnimation rotateLeft = new RotateAnimation(10, -25, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             rotateLeft.setDuration(500);
             rotateLeft.setInterpolator(new AnticipateOvershootInterpolator());
-            spin.startAnimation(rotateLeft);
+            spin.startAnimation(rotateLeft);*/
 
             //spin cycle
             new Handler().postDelayed(()->{
-                Glide.with(getActivity()).load(R.drawable.spin_cycle).into(spin);
+/*                Glide.with(getActivity()).load(R.drawable.spin_cycle).into(spin);
                 spinParams.width = (int)(pingoParams.width * zoomScale);
-                spinParams.height = (int)(pingoParams.height * zoomScale);
+                spinParams.height = (int)(pingoParams.height * zoomScale);*/
 
-                RotateAnimation rotateSpin = new RotateAnimation(360 * 30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                RotateAnimation rotateSpin = new RotateAnimation(15, -360 * 20, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateSpin.setDuration(7000);
-                rotateSpin.setInterpolator(new AccelerateInterpolator());
+                rotateSpin.setInterpolator(new AccelerateDecelerateInterpolator());
                 spin.startAnimation(rotateSpin);
             },450);
 
@@ -453,10 +454,10 @@ public class PingoWindow extends Fragment {
                     fishka.setImageResource(readFishkas[ numbers.get(currentNumber).getId()]);
                 }
 
-                spin.setImageDrawable(viw.getDrawable());
+/*                spin.setImageDrawable(viw.getDrawable());
                 RotateAnimation rotateEnd = new RotateAnimation(-30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateEnd.setDuration(500);
-                spin.startAnimation(rotateEnd);
+                spin.startAnimation(rotateEnd);*/
 
             }, 7400);
 
