@@ -428,11 +428,12 @@ public class PingoWindow extends Fragment {
 
             //spin cycle
             new Handler().postDelayed(()->{
-/*                Glide.with(getActivity()).load(R.drawable.spin_cycle).into(spin);
-                spinParams.width = (int)(pingoParams.width * zoomScale);
-                spinParams.height = (int)(pingoParams.height * zoomScale);*/
 
-                RotateAnimation rotateSpin = new RotateAnimation(15, -360 * 20, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                //Glide.with(getActivity()).load(R.drawable.spin_cycle).into(spin);
+                //spinParams.width = (int)(pingoParams.width * zoomScale);
+                //spinParams.height = (int)(pingoParams.height * zoomScale);
+
+                RotateAnimation rotateSpin = new RotateAnimation(20, -360 * 25, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateSpin.setDuration(7000);
                 rotateSpin.setInterpolator(new AccelerateDecelerateInterpolator());
                 spin.startAnimation(rotateSpin);
@@ -441,8 +442,8 @@ public class PingoWindow extends Fragment {
             //stop spin
             new Handler().postDelayed(() -> {
 
-                spinParams.width = spinWidth;
-                spinParams.height = spinHeight;
+                //spinParams.width = spinWidth;
+                //spinParams.height = spinHeight;
 
                 if(guessedNumber != null){
                     pingoState = PingoState.WIN;
@@ -523,7 +524,7 @@ public class PingoWindow extends Fragment {
         //scale spin
         ImageView spin = (ImageView) view.findViewById(R.id.spin);
         ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
-        spinParams.width =(int)(newBmapWidth*0.1513F);
-        spinParams.height =(int)(newBmapHeight*0.2588F);
+        spinParams.width =(int)(newBmapWidth*0.1513F*1.18);
+        spinParams.height =(int)(newBmapHeight*0.2588F*1.18);
     }
 }

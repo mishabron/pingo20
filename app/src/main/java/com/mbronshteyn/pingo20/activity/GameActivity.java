@@ -596,25 +596,26 @@ public class GameActivity extends PingoActivity {
         buttonParamsGo.width = buttonSizeGo;
 
         //scale pingo windows
+        float pingoSize = 0.3403F;
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.pingo1);
         ViewGroup.LayoutParams pingoParams = pingo1.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*0.3203F);
-        pingoParams.width = (int)(newBmapHeight*0.3203F);
+        pingoParams.height = (int)(newBmapHeight*pingoSize);
+        pingoParams.width = (int)(newBmapHeight*pingoSize);
 
         ConstraintLayout pingo2 = (ConstraintLayout) findViewById(R.id.pingo2);
         pingoParams = pingo2.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*0.3203F);
-        pingoParams.width = (int)(newBmapHeight*0.3203F);
+        pingoParams.height = (int)(newBmapHeight*pingoSize);
+        pingoParams.width = (int)(newBmapHeight*pingoSize);
 
         ConstraintLayout pingo3 = (ConstraintLayout) findViewById(R.id.pingo3);
         pingoParams = pingo3.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*0.3203F);
-        pingoParams.width = (int)(newBmapHeight*0.3203F);
+        pingoParams.height = (int)(newBmapHeight*pingoSize);
+        pingoParams.width = (int)(newBmapHeight*pingoSize);
 
         ConstraintLayout pingo4 = (ConstraintLayout) findViewById(R.id.pingo4);
         pingoParams = pingo4.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*0.3203F);
-        pingoParams.width = (int)(newBmapHeight*0.3203F);
+        pingoParams.height = (int)(newBmapHeight*pingoSize);
+        pingoParams.width = (int)(newBmapHeight*pingoSize);
 
         //scale header
         ImageView header = (ImageView) findViewById(R.id.header);
