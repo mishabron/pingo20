@@ -249,18 +249,11 @@ public class GameActivity extends PingoActivity {
         cardHitDto.setDeviceId(Game.devicedId);
         cardHitDto.setGame(Game.getGAMEID());
         cardHitDto.setBonusHit(false);
-        if(!pingo1.isGuessedNumber()) {
-            cardHitDto.setHit1(pingo1.getCurrentPingo());
-        }
-        if(!pingo2.isGuessedNumber()) {
-            cardHitDto.setHit2(pingo2.getCurrentPingo());
-        }
-        if(!pingo3.isGuessedNumber()) {
-            cardHitDto.setHit3(pingo3.getCurrentPingo());
-        }
-        if(!pingo4.isGuessedNumber()) {
-            cardHitDto.setHit4(pingo4.getCurrentPingo());
-        }
+
+        cardHitDto.setHit1(pingo1.getCurrentPingo());
+        cardHitDto.setHit2(pingo2.getCurrentPingo());
+        cardHitDto.setHit3(pingo3.getCurrentPingo());
+        cardHitDto.setHit4(pingo4.getCurrentPingo());
 
         Call<CardDto> call = service.hitCard(cardHitDto);
         call.enqueue(new Callback<CardDto>() {
