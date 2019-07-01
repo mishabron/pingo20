@@ -237,7 +237,7 @@ public class PingoWindow extends Fragment {
         starting = true;
         numbers = loadPingoNumbers();
 
-        hasFinger = pingoBundle.getBoolean("hasFibger");
+        hasFinger = pingoBundle.getBoolean("hasFinger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
         guessedNumber = (Integer)pingoBundle.getSerializable("guessedNumber");
         int spinDelay = pingoBundle.getInt("spinDelay");
@@ -274,10 +274,10 @@ public class PingoWindow extends Fragment {
 
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;
-                    wheel.setCurrentItem(getNumberIndex(guessedNumber),true);
+                    wheel.setCurrentItem(getNumberIndex(currentPingo),true);
                     Glide.with(getActivity()).load(R.drawable.green_window).into(windowBackground);
                     disableWindow();
-                    fishka.setImageResource(greenFishkas[guessedNumber]);
+                    fishka.setImageResource(greenFishkas[currentPingo]);
                     fishka.setVisibility(View.VISIBLE);
                 }
                 else{

@@ -52,6 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class GameActivity extends PingoActivity {
 
@@ -172,7 +173,7 @@ public class GameActivity extends PingoActivity {
 
             Bundle pingoBundle = new Bundle();
             pingoBundle.putInt("spinDelay",100 + i*300);
-            pingoBundle.putBoolean("hasFibger", i == 0 && canHaveFinger);
+            pingoBundle.putBoolean("hasFinger", i == 0 && canHaveFinger);
             pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
             pingoBundle.putIntegerArrayList("playedNumbers",loadNumbersPlayed(pingo));
             pingoBundle.putSerializable("guessedNumber",loadNumberGuessed(pingo));
@@ -415,15 +416,6 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void spinEnd(NumberSpinEndEvent event){
 
-        if(!pingoIterator.hasNext()) {
-            ImageView shield = (ImageView) findViewById(R.id.shield_full);
-            shield.setVisibility(View.INVISIBLE);
-            ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
-            nonTouchShield.setVisibility(View.INVISIBLE);
-            balance.setTextColor(Color.BLACK);
-            balance.setText(getCardReward());
-        }
-
         progressBar.stopProgress();
         if(event.isGuessed()){
             progressBar.startSaccess();
@@ -441,9 +433,79 @@ public class GameActivity extends PingoActivity {
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
             }
             else{
+                ImageView shield = (ImageView) findViewById(R.id.shield_full);
+                shield.setVisibility(View.INVISIBLE);
+                ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+                nonTouchShield.setVisibility(View.INVISIBLE);
+                balance.setTextColor(Color.BLACK);
+                balance.setText(getCardReward());
                 initState(false);
             }
         },3100);
+
+        //checl end of days
+        if(Game.attemptCounter == 0){
+            new Handler().postDelayed(()->{processEndOfGame();},4000);
+        }
+    }
+
+    private void processEndOfGame() {
+        hitButtonGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playSound(R.raw.button);
+                doWinPinCheck();
+                hitButtonGo.setEnabled(false);
+            }
+        });
+        flippToGo();
+    }
+
+    private void doWinPinCheck() {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+        final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+
+        String card = Game.getInstancce().getCardNumber();
+        Call<String> call = service.getWinningPin(Game.GAMEID,Long.parseLong(card),Game.devicedId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                processWinPinResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                playSound(R.raw.error_short);
+                progressBar.stopProgress();
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                rightSmallBaloon.startAnimation(zoomIntAnimation);
+                rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
+                popBaloon(rightSmallBaloon,4000);
+            }
+        });
+    }
+
+    private void processWinPinResponse(Response<String> response) {
+        Headers headers = response.headers();
+        String message = headers.get("message");
+
+        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+            String winPin = response.body();
+            flippToCounter(Game.attemptCounter);
+        }else{
+            playSound(R.raw.error_short);
+            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
+            switch(errorCode){
+                case SERVERERROR:
+                    rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
+                    popBaloon(rightSmallBaloon,4000);
+                    break;
+            }
+        }
     }
 
     public void flippToCounter(int counter) {
