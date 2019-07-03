@@ -440,25 +440,20 @@ public class GameActivity extends PingoActivity {
                 balance.setTextColor(Color.BLACK);
                 balance.setText(getCardReward());
                 initState(false);
+                //checl end of game
+                if(Game.attemptCounter == 0){
+                    flippToGo();
+                    hitButtonGo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            playSound(R.raw.button);
+                            doWinPinCheck();
+                            hitButtonGo.setEnabled(false);
+                        }
+                    });
+                }
             }
         },3100);
-
-        //checl end of days
-        if(Game.attemptCounter == 0){
-            new Handler().postDelayed(()->{processEndOfGame();},4000);
-        }
-    }
-
-    private void processEndOfGame() {
-        hitButtonGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playSound(R.raw.button);
-                doWinPinCheck();
-                hitButtonGo.setEnabled(false);
-            }
-        });
-        flippToGo();
     }
 
     private void doWinPinCheck() {
@@ -469,8 +464,7 @@ public class GameActivity extends PingoActivity {
                 .build();
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 
-        String card = Game.getInstancce().getCardNumber();
-        Call<String> call = service.getWinningPin(Game.GAMEID,Long.parseLong(card),Game.devicedId);
+        Call<String> call = service.getWinningPin(Game.GAMEID,Long.parseLong(Game.cardNumber),Game.devicedId);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -496,6 +490,10 @@ public class GameActivity extends PingoActivity {
         if(StringUtils.isEmpty(headers.get("errorCode"))) {
             String winPin = response.body();
             flippToCounter(Game.attemptCounter);
+            pingo1.showWinPin(Integer.parseInt(winPin.substring(0,1)));
+            pingo2.showWinPin(Integer.parseInt(winPin.substring(1,2)));
+            pingo3.showWinPin(Integer.parseInt(winPin.substring(2,3)));
+            pingo4.showWinPin(Integer.parseInt(winPin.substring(3,4)));
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));

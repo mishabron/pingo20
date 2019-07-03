@@ -21,12 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -71,7 +66,7 @@ public class PingoWindow extends Fragment {
     private FingerTimer fingerTimer;
     private PingoState pingoState;
     private Integer guessedNumber;
-    private int[] readFishkas = new int[10];;
+    private int[] redFishkas = new int[10];;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -113,16 +108,16 @@ public class PingoWindow extends Fragment {
         greenFishkas[8] = R.drawable.green8;
         greenFishkas[9] = R.drawable.green9;
 
-        readFishkas[0] = R.drawable.red0;
-        readFishkas[1] = R.drawable.red1;
-        readFishkas[2] = R.drawable.red2;
-        readFishkas[3] = R.drawable.red3;
-        readFishkas[4] = R.drawable.red4;
-        readFishkas[5] = R.drawable.red4;
-        readFishkas[6] = R.drawable.red6;
-        readFishkas[7] = R.drawable.red7;
-        readFishkas[8] = R.drawable.red8;
-        readFishkas[9] = R.drawable.red9;
+        redFishkas[0] = R.drawable.red0;
+        redFishkas[1] = R.drawable.red1;
+        redFishkas[2] = R.drawable.red2;
+        redFishkas[3] = R.drawable.red3;
+        redFishkas[4] = R.drawable.red4;
+        redFishkas[5] = R.drawable.red4;
+        redFishkas[6] = R.drawable.red6;
+        redFishkas[7] = R.drawable.red7;
+        redFishkas[8] = R.drawable.red8;
+        redFishkas[9] = R.drawable.red9;
 
         scaleUi(view);
         Glide.with(this).load(R.drawable.blue_window).into(windowBackground);
@@ -287,16 +282,19 @@ public class PingoWindow extends Fragment {
                 }
                 starting = false;
             }
-            else{
+            else {
                 fishka.setImageResource(greenFishkas[currentPingo]);
                 fishka.setVisibility(View.VISIBLE);
-                EventBus.getDefault().post(new PingoEvent(pingoNumber,currentPingo));
+                if(!pingoState.equals(PingoState.GAMEOVER)) {
+                    EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
+                }
             }
         }
     };
 
     public void disableWindow() {
         touchBackground.setOnClickListener(null);
+        pingoState = PingoState.INACTIVE;
     }
 
     // Wheel changed listener
@@ -308,10 +306,6 @@ public class PingoWindow extends Fragment {
             }
         }
     };
-
-    public void setEnabled(boolean enabled) {
-
-    }
 
     /**
      * Slot machine adapter
@@ -452,7 +446,7 @@ public class PingoWindow extends Fragment {
                 }
                 else{
                     Glide.with(this).load(R.drawable.red_window).into(windowBackground);
-                    fishka.setImageResource(readFishkas[ numbers.get(currentNumber).getId()]);
+                    fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                 }
 
 /*                spin.setImageDrawable(viw.getDrawable());
@@ -480,6 +474,12 @@ public class PingoWindow extends Fragment {
 
     public boolean isGuessedNumber() {
         return pingoState.equals(PingoState.WIN);
+    }
+
+    public void showWinPin(int pinNumber){
+        pingoState = PingoState.GAMEOVER;
+        numbers = loadPingoNumbers();
+        wheel.setCurrentItem(getNumberIndex(pinNumber),true);
     }
 
     private void scaleUi(View view) {
