@@ -478,7 +478,7 @@ public class PingoWindow extends Fragment {
 
     public void showWinPin(int pinNumber){
         pingoState = PingoState.GAMEOVER;
-        numbers = loadPingoNumbers();
+        //numbers = loadPingoNumbers();
         wheel.setCurrentItem(getNumberIndex(pinNumber),true);
     }
 

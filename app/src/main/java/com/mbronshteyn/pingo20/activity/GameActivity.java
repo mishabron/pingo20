@@ -79,8 +79,6 @@ public class GameActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        scaleUi();
-
         Game.attemptCounter = 4 - card.getNumberOfHits();
 
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
@@ -146,6 +144,8 @@ public class GameActivity extends PingoActivity {
                 //do nothing
             }
         });
+
+        scaleUi();
     }
 
     @Override
@@ -673,8 +673,8 @@ public class GameActivity extends PingoActivity {
         //scale header
         ImageView header = (ImageView) findViewById(R.id.header);
         ViewGroup.LayoutParams headerParams = header.getLayoutParams();
-        headerParams.width =(int)(newBmapWidth*0.4066F);
-        headerParams.height =(int)(newBmapHeight*0.2939F);
+        headerParams.width =(int)(newBmapWidth*0.4225F);
+        //headerParams.height =(int)(newBmapHeight*0.2871F);
 
         //scale shild
         ImageView shield = (ImageView) findViewById(R.id.shield_full);
