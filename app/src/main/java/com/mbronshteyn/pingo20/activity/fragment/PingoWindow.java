@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
@@ -120,7 +121,8 @@ public class PingoWindow extends Fragment {
         redFishkas[9] = R.drawable.red9;
 
         scaleUi(view);
-        Glide.with(this).load(R.drawable.blue_window).into(windowBackground);
+        Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                .skipMemoryCache( true ).into(windowBackground);
 
         return view;
     }
@@ -193,7 +195,8 @@ public class PingoWindow extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 windowBackground.setOnTouchListener(null);
-                Glide.with(getActivity()).load(R.drawable.blue_window).into(windowBackground);
+                Glide.with(getActivity()).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                        .skipMemoryCache( true ).into(windowBackground);
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
@@ -248,7 +251,8 @@ public class PingoWindow extends Fragment {
                 removeNumber(numbers,playedNumber);
             }
             wheel.setCurrentItem(0);
-            Glide.with(this).load(R.drawable.blue_window).into(windowBackground);
+            Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    .skipMemoryCache( true ).into(windowBackground);
         }
 
         wheel.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -270,7 +274,8 @@ public class PingoWindow extends Fragment {
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;
                     wheel.setCurrentItem(getNumberIndex(currentPingo),true);
-                    Glide.with(getActivity()).load(R.drawable.green_window).into(windowBackground);
+                    Glide.with(getActivity()).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                            .skipMemoryCache( true ).into(windowBackground);
                     disableWindow();
                     fishka.setImageResource(greenFishkas[currentPingo]);
                     fishka.setVisibility(View.VISIBLE);
@@ -351,7 +356,8 @@ public class PingoWindow extends Fragment {
         imageNumber.setId(tagNumber);
         imageNumber.setLayoutParams(params);
 
-        Glide.with(this).load(image).into(imageNumber);
+        Glide.with(this).load(image).diskCacheStrategy( DiskCacheStrategy.NONE )
+                .skipMemoryCache( true ).into(imageNumber);
 
         return imageNumber;
     }
@@ -397,12 +403,6 @@ public class PingoWindow extends Fragment {
             touchBackground.setEnabled(false);
 
             ViewGroup.LayoutParams pingoParams = event.getPingo().getLayoutParams();
-            int originalSize = pingoParams.height;
-            //pingoParams.height = (int)(pingoParams.height * zoomScale);
-            //pingoParams.width = (int)(pingoParams.width * zoomScale);
-            //float zOrder = event.getPingo().getZ();
-            //event.getPingo().setZ(20);
-
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
@@ -414,19 +414,8 @@ public class PingoWindow extends Fragment {
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
 
-/*            //start initial move
-            RotateAnimation rotateLeft = new RotateAnimation(10, -25, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            rotateLeft.setDuration(500);
-            rotateLeft.setInterpolator(new AnticipateOvershootInterpolator());
-            spin.startAnimation(rotateLeft);*/
-
             //spin cycle
             new Handler().postDelayed(()->{
-
-                //Glide.with(getActivity()).load(R.drawable.spin_cycle).into(spin);
-                //spinParams.width = (int)(pingoParams.width * zoomScale);
-                //spinParams.height = (int)(pingoParams.height * zoomScale);
-
                 RotateAnimation rotateSpin = new RotateAnimation(20, -360 * 25, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 rotateSpin.setDuration(7000);
                 rotateSpin.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -435,36 +424,25 @@ public class PingoWindow extends Fragment {
 
             //stop spin
             new Handler().postDelayed(() -> {
-
-                //spinParams.width = spinWidth;
-                //spinParams.height = spinHeight;
-
                 if(guessedNumber != null){
                     pingoState = PingoState.WIN;
-                    Glide.with(this).load(R.drawable.green_window).into(windowBackground);
+                    Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                            .skipMemoryCache( true ).into(windowBackground);
                     touchBackground.setOnClickListener(null);
                 }
                 else{
-                    Glide.with(this).load(R.drawable.red_window).into(windowBackground);
+                    Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                            .skipMemoryCache( true ).into(windowBackground);
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                 }
-
-/*                spin.setImageDrawable(viw.getDrawable());
-                RotateAnimation rotateEnd = new RotateAnimation(-30, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotateEnd.setDuration(500);
-                spin.startAnimation(rotateEnd);*/
-
             }, 7400);
 
             //restore window state
             new Handler().postDelayed(() -> {
                 touchBackground.setEnabled(true);
-                //event.getPingo().setZ(zOrder);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
-                //pingoParams.height = originalSize;
-                //pingoParams.width = originalSize;
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
 
@@ -478,7 +456,7 @@ public class PingoWindow extends Fragment {
 
     public void showWinPin(int pinNumber){
         pingoState = PingoState.GAMEOVER;
-        //numbers = loadPingoNumbers();
+        wheel.setInterpolator(new AccelerateDecelerateInterpolator());
         wheel.setCurrentItem(getNumberIndex(pinNumber),true);
     }
 
