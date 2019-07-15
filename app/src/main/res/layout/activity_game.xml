@@ -208,5 +208,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.843" />
 
+    <ImageView
+        android:id="@+id/pingo1_glow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintStart_toStartOf="@id/pingo1"
+        app:layout_constraintTop_toBottomOf="@id/pingo1"
+        app:srcCompat="@drawable/blueglow"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo2_glow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintStart_toStartOf="@id/pingo2"
+        app:layout_constraintTop_toBottomOf="@id/pingo2"
+        app:srcCompat="@drawable/blueglow"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo3_glow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintStart_toStartOf="@id/pingo3"
+        app:layout_constraintTop_toBottomOf="@id/pingo3"
+        app:srcCompat="@drawable/blueglow"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo4_glow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintStart_toStartOf="@id/pingo4"
+        app:layout_constraintTop_toBottomOf="@id/pingo4"
+        app:srcCompat="@drawable/blueglow"
+        android:visibility="invisible" />
+
 
 </android.support.constraint.ConstraintLayout>

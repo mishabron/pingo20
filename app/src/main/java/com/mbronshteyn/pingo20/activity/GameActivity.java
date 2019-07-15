@@ -172,6 +172,7 @@ public class GameActivity extends PingoActivity {
         for(Integer pingo: playPingos){
 
             Bundle pingoBundle = new Bundle();
+            Integer guessedNUmber = loadNumberGuessed(pingo);
             pingoBundle.putInt("spinDelay",100 + i*300);
             pingoBundle.putBoolean("hasFinger", i == 0 && canHaveFinger);
             pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
@@ -228,6 +229,27 @@ public class GameActivity extends PingoActivity {
                 pingo2.getCurrentPingo().toString()+
                 pingo3.getCurrentPingo().toString()+
                 pingo4.getCurrentPingo().toString());
+
+        ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
+        if(!pingo1.isGuessedNumber()) {
+            Glide.with(this).load(R.drawable.blueglow).into(glow1);
+        }
+        glow1.setVisibility(View.VISIBLE);
+        ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
+        if(!pingo2.isGuessedNumber()) {
+            Glide.with(this).load(R.drawable.blueglow).into(glow2);
+        }
+        glow2.setVisibility(View.VISIBLE);
+        ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
+        if(!pingo3.isGuessedNumber()) {
+            Glide.with(this).load(R.drawable.blueglow).into(glow3);
+        }
+        glow3.setVisibility(View.VISIBLE);
+        ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
+        if(!pingo4.isGuessedNumber()) {
+            Glide.with(this).load(R.drawable.blueglow).into(glow4);
+        }
+        glow4.setVisibility(View.VISIBLE);
 
         ImageView shield = (ImageView) findViewById(R.id.shield_full);
         shield.setVisibility(View.VISIBLE);
@@ -416,12 +438,30 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void spinEnd(NumberSpinEndEvent event){
 
+        ImageView glow = null;
+        switch(event.getPingoNumber()){
+            case 1:
+                glow = (ImageView) findViewById(R.id.pingo1_glow);
+                break;
+            case 2:
+                glow = (ImageView) findViewById(R.id.pingo2_glow);
+                break;
+            case 3:
+                glow = (ImageView) findViewById(R.id.pingo3_glow);
+                break;
+            case 4:
+                glow = (ImageView) findViewById(R.id.pingo4_glow);
+                break;                
+        }
+        
         progressBar.stopProgress();
         if(event.isGuessed()){
+            Glide.with(this).load(R.drawable.greenglow).into(glow);
             progressBar.startSaccess();
             new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
         else{
+            Glide.with(this).load(R.drawable.orangeglow).into(glow);
             progressBar.startFailure();
             new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
         }
@@ -433,6 +473,15 @@ public class GameActivity extends PingoActivity {
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
             }
             else{
+                ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
+                glow1.setVisibility(View.INVISIBLE);
+                ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
+                glow2.setVisibility(View.INVISIBLE);
+                ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
+                glow3.setVisibility(View.INVISIBLE);
+                ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
+                glow4.setVisibility(View.INVISIBLE);
+
                 ImageView shield = (ImageView) findViewById(R.id.shield_full);
                 shield.setVisibility(View.INVISIBLE);
                 ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
@@ -687,6 +736,23 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
         nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
         nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
+
+        //scale glows
+        ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
+        ViewGroup.LayoutParams glow1Params = glow1.getLayoutParams();
+        glow1Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
+        ViewGroup.LayoutParams glow2Params = glow2.getLayoutParams();
+        glow2Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
+        ViewGroup.LayoutParams glow3Params = glow3.getLayoutParams();
+        glow3Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
+        ViewGroup.LayoutParams glow4Params = glow4.getLayoutParams();
+        glow4Params.width = (int)(newBmapHeight*pingoSize);
 
     }
 }

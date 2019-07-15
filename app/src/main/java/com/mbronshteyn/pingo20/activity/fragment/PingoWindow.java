@@ -398,17 +398,11 @@ public class PingoWindow extends Fragment {
         if (event.getPingoNumber() == pingoNumber) {
 
             guessedNumber = event.getNumberGuesed();
-
-            double zoomScale = 1.08;
             touchBackground.setEnabled(false);
 
-            ViewGroup.LayoutParams pingoParams = event.getPingo().getLayoutParams();
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
-            ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
-            int spinWidth = spinParams.width;
-            int spinHeight = spinParams.height;
 
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
@@ -426,8 +420,7 @@ public class PingoWindow extends Fragment {
             new Handler().postDelayed(() -> {
                 if(guessedNumber != null){
                     pingoState = PingoState.WIN;
-                    Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                            .skipMemoryCache( true ).into(windowBackground);
+                    doWinAnimation();
                     touchBackground.setOnClickListener(null);
                 }
                 else{
@@ -458,6 +451,22 @@ public class PingoWindow extends Fragment {
         pingoState = PingoState.GAMEOVER;
         wheel.setInterpolator(new AccelerateDecelerateInterpolator());
         wheel.setCurrentItem(getNumberIndex(pinNumber),true);
+    }
+
+    public void doWinAnimation(){
+        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation,null));
+        AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
+        long totalDuration = 0;
+        for(int i = 0; i< winAnimation.getNumberOfFrames();i++){
+            totalDuration += winAnimation.getDuration(i);
+        }
+
+        //first tap
+        winAnimation.start();
+        new Handler().postDelayed(()->{
+            Glide.with(getActivity()).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    .skipMemoryCache( true ).into(windowBackground);
+        },totalDuration);
     }
 
     private void scaleUi(View view) {
