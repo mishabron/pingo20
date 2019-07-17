@@ -3,6 +3,8 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -73,6 +75,7 @@ public class GameActivity extends PingoActivity {
     private int newBmapHeight;
     private int newBmapWidth;
     private TextView balance;
+    private GameActivity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,8 @@ public class GameActivity extends PingoActivity {
         setContentView(R.layout.activity_game);
 
         Game.attemptCounter = 4 - card.getNumberOfHits();
+
+        context = this;
 
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
         Glide.with(this).load(R.drawable.game_background).into(iView);
@@ -543,6 +548,12 @@ public class GameActivity extends PingoActivity {
             pingo2.showWinPin(Integer.parseInt(winPin.substring(1,2)));
             pingo3.showWinPin(Integer.parseInt(winPin.substring(2,3)));
             pingo4.showWinPin(Integer.parseInt(winPin.substring(3,4)));
+            new Handler().postDelayed(()->{
+                Intent intent = new Intent(getApplicationContext(), EndOfGameActivity.class);
+                startActivity(intent);
+                Activity activity = (Activity) context;
+                activity.finish();
+            },4000);
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
