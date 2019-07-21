@@ -148,11 +148,13 @@ public class LoginActivity extends PingoActivity {
 
         progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
 
-        new Handler().postDelayed(()-> {
+        if(!getIntent().getExtras().getBoolean("playAgain")) {
+            new Handler().postDelayed(() -> {
                 leftLargeBaloon.setVisibility(View.VISIBLE);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 leftLargeBaloon.startAnimation(zoomIntAnimation);
-        }, 3000);
+            }, 3000);
+        }
     }
 
     @Override

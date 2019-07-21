@@ -21,7 +21,10 @@ public class EndOfGameActivity extends Activity {
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("playAgain",true);
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 Activity activity = (Activity) context;
                 activity.finish();

@@ -114,7 +114,7 @@ public class PingoWindow extends Fragment {
         redFishkas[2] = R.drawable.red2;
         redFishkas[3] = R.drawable.red3;
         redFishkas[4] = R.drawable.red4;
-        redFishkas[5] = R.drawable.red4;
+        redFishkas[5] = R.drawable.red5;
         redFishkas[6] = R.drawable.red6;
         redFishkas[7] = R.drawable.red7;
         redFishkas[8] = R.drawable.red8;

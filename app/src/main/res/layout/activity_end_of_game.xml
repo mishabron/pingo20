@@ -25,12 +25,12 @@
         android:id="@+id/noAgain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.566"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.89"
-        android:background="@drawable/no" />
+        app:layout_constraintVertical_bias="0.89" />
 
 </android.support.constraint.ConstraintLayout>
