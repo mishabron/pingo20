@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -82,7 +81,12 @@ public class GameActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        Game.attemptCounter = 4 - card.getNumberOfHits();
+        if(card.isFreeGame()){
+            Game.attemptCounter = 3 - card.getNumberOfHits();
+        }
+        else {
+            Game.attemptCounter = 4 - card.getNumberOfHits();
+        }
 
         context = this;
 
@@ -137,6 +141,11 @@ public class GameActivity extends PingoActivity {
         float scale = getResources().getDisplayMetrics().density * distance;
         buttonCounter.setCameraDistance(scale);
         hitButtonGo.setCameraDistance(scale);
+
+        if(isWinningCard()){
+            buttonCounter.setVisibility(View.INVISIBLE);
+            hitButtonGo.setVisibility(View.INVISIBLE);
+        }
 
         TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
         String cardId = Game.getInstancce().getCardNumber();
@@ -287,7 +296,7 @@ public class GameActivity extends PingoActivity {
         call.enqueue(new Callback<CardDto>() {
             @Override
             public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                processResponse(response);
+                processHitResponse(response);
             }
 
             @Override
@@ -302,7 +311,7 @@ public class GameActivity extends PingoActivity {
         });
     }
 
-    private void processResponse(Response<CardDto> response) {
+    private void processHitResponse(Response<CardDto> response) {
 
         Headers headers = response.headers();
         String message = headers.get("message");
@@ -496,18 +505,36 @@ public class GameActivity extends PingoActivity {
                 initState(false);
                 //checl end of game
                 if(Game.attemptCounter == 0){
-                    flippToGo();
-                    hitButtonGo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            playSound(R.raw.button);
-                            doWinPinCheck();
-                            hitButtonGo.setEnabled(false);
-                        }
-                    });
+                    if(isWinningCard()){
+                        //process free game
+                        processFreeGame();
+                    }
+                    else{
+                        //show winning pin
+                        flippToGo();
+                        hitButtonGo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                playSound(R.raw.button);
+                                doWinPinCheck();
+                                hitButtonGo.setEnabled(false);
+                            }
+                        });
+                    }
                 }
             }
         },3100);
+    }
+
+    private void processFreeGame() {
+
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
+            Activity activity = (Activity) context;
+            activity.finish();
+        },5000);
     }
 
     private void doWinPinCheck() {

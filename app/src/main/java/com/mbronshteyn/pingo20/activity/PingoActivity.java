@@ -10,9 +10,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class PingoActivity extends AppCompatActivity {
@@ -67,5 +70,29 @@ public class PingoActivity extends AppCompatActivity {
         ballon.setVisibility(View.VISIBLE);
         Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
         ballon.startAnimation(zoomIntAnimation);
+    }
+
+    protected boolean isWinningCard(){
+         boolean winning = false;
+
+        List<HitDto> hits = card.getHits();
+
+        boolean win1 = false;
+        boolean win2 = false;
+        boolean win3 = false;
+        boolean win4 = false;
+
+        for(HitDto hit: hits){
+            win1 = !win1 ? hit.getNumber_1().isGuessed() : true;
+            win2 = !win2 ? hit.getNumber_2().isGuessed() : true;
+            win3 = !win3 ? hit.getNumber_3().isGuessed() : true;
+            win4 = !win4 ? hit.getNumber_4().isGuessed() : true;
+        }
+
+        if(win1 && win2 && win3 && win4){
+            winning = true;
+        }
+
+        return winning;
     }
 }
