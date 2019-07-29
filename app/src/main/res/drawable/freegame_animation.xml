@@ -14,12 +14,5 @@
     <item
         android:drawable="@drawable/freegame_baloon_normal"
         android:duration="500"/>
-    <item
-        android:drawable="@drawable/freegame_baloon_large"
-        android:duration="500"/>
-    <item
-        android:drawable="@drawable/freegame_baloon_noexlm"
-        android:duration="500"/>
-
 
 </animation-list>
