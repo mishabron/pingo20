@@ -531,10 +531,10 @@ public class GameActivity extends PingoActivity {
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             Activity activity = (Activity) context;
             activity.finish();
-        },5000);
+        },3000);
     }
 
     private void doWinPinCheck() {
