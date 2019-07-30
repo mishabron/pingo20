@@ -534,7 +534,7 @@ public class GameActivity extends PingoActivity {
             overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
             Activity activity = (Activity) context;
             activity.finish();
-        },5000);
+        },2000);
     }
 
     private void doWinPinCheck() {
