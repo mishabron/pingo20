@@ -794,5 +794,10 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams glow4Params = glow4.getLayoutParams();
         glow4Params.width = (int)(newBmapHeight*pingoSize);
 
+        //sacele free game
+        ImageView freeGame = (ImageView) findViewById(R.id.free_game);
+        ViewGroup.LayoutParams freeGameParams = freeGame.getLayoutParams();
+        freeGameParams.width =(int)(newBmapWidth*0.1641F);
+        freeGameParams.height =(int)(newBmapHeight*0.06099F);
     }
 }

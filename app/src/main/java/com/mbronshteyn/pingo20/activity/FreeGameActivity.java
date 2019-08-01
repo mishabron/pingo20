@@ -92,7 +92,7 @@ public class FreeGameActivity extends PingoActivity{
                     new Handler().postDelayed(()->{
                         exl.setVisibility(View.VISIBLE);
                         freeGameBaloon.setImageDrawable(getResources().getDrawable(R.drawable.freegame_baloon_noexlm,null));
-                        RotateAnimation rotateSpin = new RotateAnimation(0, -360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                        RotateAnimation rotateSpin = new RotateAnimation(0, -360*3, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                         rotateSpin.setDuration(1000);
                         exl.startAnimation(rotateSpin);
                     },totalDuration);
