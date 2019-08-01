@@ -248,5 +248,17 @@
         app:srcCompat="@drawable/blueglow"
         android:visibility="invisible" />
 
+    <ImageView
+        android:id="@+id/free_game"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/free_game_app"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.94" />
+
 
 </android.support.constraint.ConstraintLayout>

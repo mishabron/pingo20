@@ -81,11 +81,14 @@ public class GameActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        ImageView freeGame = (ImageView) findViewById(R.id.free_game);
+
         if(card.isFreeGame()){
             Game.attemptCounter = 3 - card.getNumberOfHits();
         }
         else {
             Game.attemptCounter = 4 - card.getNumberOfHits();
+            freeGame.setVisibility(View.INVISIBLE);
         }
 
         context = this;
@@ -530,11 +533,10 @@ public class GameActivity extends PingoActivity {
 
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
             Activity activity = (Activity) context;
             activity.finish();
-        },2000);
+            startActivity(intent);
+        },100);
     }
 
     private void doWinPinCheck() {
