@@ -15,7 +15,6 @@ import com.mbronshteyn.pingo20.R;
 public class SplashActivity extends Activity {
 
     private SplashActivity context;
-    private ImageView zsLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +22,6 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
 
         context = this;
-
-        zsLogo = (ImageView) findViewById(R.id.zsLogoSplash);
-        zsLogo.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -52,44 +48,7 @@ public class SplashActivity extends Activity {
         public void run() {
 
             try {
-                Thread.sleep(1000);
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        zsLogo.setVisibility(View.VISIBLE);
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-                        zsLogo.startAnimation(zoomIntAnimation);
-                    }
-                });
-                Thread.sleep(3000);
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-                        zsLogo.startAnimation(zoomIntAnimation);
-                        zsLogo.setVisibility(View.INVISIBLE);
-                    }
-                });
-                Thread.sleep(2500);
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        zsLogo.setImageResource(R.drawable.pcg_logo2);
-                        zsLogo.setVisibility(View.VISIBLE);
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-                        zsLogo.startAnimation(zoomIntAnimation);
-                    }
-                });
-                Thread.sleep(3500);
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-                        zsLogo.startAnimation(zoomIntAnimation);
-                        zsLogo.setVisibility(View.INVISIBLE);
-                    }
-                });
-                Thread.sleep(2000);
+                Thread.sleep(5000);
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.putExtras(new Bundle());
                 startActivity(intent);

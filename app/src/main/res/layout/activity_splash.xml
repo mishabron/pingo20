@@ -5,17 +5,7 @@
     android:id="@+id/splash"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/loading_red_screen"
+    android:background="@drawable/load_screen"
     android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/zsLogoSplash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/zslogo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"  />
 
 </android.support.constraint.ConstraintLayout>

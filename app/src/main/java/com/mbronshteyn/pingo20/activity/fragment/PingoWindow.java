@@ -32,6 +32,9 @@ import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
+import com.mbronshteyn.pingo20.events.ScrollEnd;
+import com.mbronshteyn.pingo20.events.ScrollStart;
+import com.mbronshteyn.pingo20.events.SpinEvent;
 import com.mbronshteyn.pingo20.types.PingoState;
 
 import org.greenrobot.eventbus.EventBus;
@@ -83,7 +86,7 @@ public class PingoWindow extends Fragment {
 
         fishka = (ImageView) view.findViewById(R.id.fishka);
 
-        fingerTimer = new FingerTimer(700,100);
+        fingerTimer = new FingerTimer(2000,100);
 
         touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
         touchBackground.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +235,7 @@ public class PingoWindow extends Fragment {
 
     public void initPingo(Bundle pingoBundle) {
 
+        touchBackground.setEnabled(true);
         starting = true;
         numbers = loadPingoNumbers();
 
@@ -263,7 +267,11 @@ public class PingoWindow extends Fragment {
     OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
         @Override
         public void onScrollingStarted(WheelView wheel) {
-
+            if(starting) {
+                new Handler().postDelayed(() -> {
+                    EventBus.getDefault().post(new ScrollStart(pingoNumber));
+                }, 300);
+            }
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
@@ -294,6 +302,7 @@ public class PingoWindow extends Fragment {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
                 }
             }
+            EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
 
@@ -393,12 +402,20 @@ public class PingoWindow extends Fragment {
     }
 
     @Subscribe
+    public void onSpinEvent(SpinEvent event){
+        if(event.getPingoNumber() != pingoNumber){
+            touchBackground.setEnabled(true);
+        }
+    }
+
+    @Subscribe
     public void spin(NumberSpinEvent event){
 
         if (event.getPingoNumber() == pingoNumber) {
 
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
+            EventBus.getDefault().post(new SpinEvent(pingoNumber));
 
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
             spin.setVisibility(View.VISIBLE);
@@ -432,7 +449,6 @@ public class PingoWindow extends Fragment {
 
             //restore window state
             new Handler().postDelayed(() -> {
-                touchBackground.setEnabled(true);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);

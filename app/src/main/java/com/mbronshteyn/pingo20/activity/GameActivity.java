@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -34,6 +35,8 @@ import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
+import com.mbronshteyn.pingo20.events.ScrollEnd;
+import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -75,6 +78,9 @@ public class GameActivity extends PingoActivity {
     private int newBmapWidth;
     private TextView balance;
     private GameActivity context;
+    private boolean spinning;
+    private ImageView whiteHeader;
+    private ImageView whiteTopBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +103,14 @@ public class GameActivity extends PingoActivity {
         Glide.with(this).load(R.drawable.game_background).into(iView);
         ImageView header = (ImageView) findViewById(R.id.header);
         Glide.with(this).load(R.drawable.header).into(header);
+        whiteHeader = (ImageView) findViewById(R.id.whiteheader);
+        Glide.with(this).load(R.drawable.header_white).into(whiteHeader);
+        whiteHeader.setVisibility(View.INVISIBLE);
         ImageView topBanner = (ImageView) findViewById(R.id.banner);
         Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
+        whiteTopBanner = (ImageView) findViewById(R.id.whitebanner);
+        Glide.with(this).load(R.drawable.slogan3d).into(whiteTopBanner);
+        whiteTopBanner.setVisibility(View.INVISIBLE);
 
         //balance
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
@@ -273,6 +285,8 @@ public class GameActivity extends PingoActivity {
         ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
         nonTouchShield.setVisibility(View.VISIBLE);
         balance.setTextColor(Color.WHITE);
+        whiteHeader.setVisibility(View.VISIBLE);
+        whiteTopBanner.setVisibility(View.VISIBLE);
 
         progressBar.startProgress();
 
@@ -414,6 +428,20 @@ public class GameActivity extends PingoActivity {
     }
 
     @Subscribe
+    public void onScrollStart(ScrollStart event){
+        if(!spinning){
+            playSound(R.raw.wheel_spinning);
+            spinning = true;
+        }
+    }
+
+    @Subscribe
+    public void onScrollEnd(ScrollEnd event){
+        playSound(R.raw.wheel_stop);
+        spinning = false;
+    }
+
+    @Subscribe
     public void onPingoEventMessage(PingoEvent event) {
 
         int pingo = event.getPingoNumber();
@@ -483,36 +511,41 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
         }
 
-        new Handler().postDelayed(()->{
-            if(pingoIterator.hasNext()) {
+        new Handler().postDelayed(()-> {
+            if (pingoIterator.hasNext()) {
                 //progressBar.startProgress();
                 Integer activeWindow = pingoIterator.next();
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
-            }
-            else{
-                ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
-                glow1.setVisibility(View.INVISIBLE);
-                ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
-                glow2.setVisibility(View.INVISIBLE);
-                ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
-                glow3.setVisibility(View.INVISIBLE);
-                ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
-                glow4.setVisibility(View.INVISIBLE);
+                playSound(R.raw.button);
+            } else {
+                //check free game
+                if (Game.attemptCounter == 0 && isWinningCard()) {
+                    //process free game
+                    processFreeGame();
+                }
+                else{
+                    //turn off glows
+                    ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
+                    glow1.setVisibility(View.INVISIBLE);
+                    ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
+                    glow2.setVisibility(View.INVISIBLE);
+                    ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
+                    glow3.setVisibility(View.INVISIBLE);
+                    ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
+                    glow4.setVisibility(View.INVISIBLE);
+                    whiteHeader.setVisibility(View.INVISIBLE);
+                    whiteTopBanner.setVisibility(View.INVISIBLE);
 
-                ImageView shield = (ImageView) findViewById(R.id.shield_full);
-                shield.setVisibility(View.INVISIBLE);
-                ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
-                nonTouchShield.setVisibility(View.INVISIBLE);
-                balance.setTextColor(Color.BLACK);
-                balance.setText(getCardReward());
-                initState(false);
-                //checl end of game
-                if(Game.attemptCounter == 0){
-                    if(isWinningCard()){
-                        //process free game
-                        processFreeGame();
-                    }
-                    else{
+                    //remove sheilds
+                    ImageView shield = (ImageView) findViewById(R.id.shield_full);
+                    shield.setVisibility(View.INVISIBLE);
+                    ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+                    nonTouchShield.setVisibility(View.INVISIBLE);
+                    balance.setTextColor(Color.BLACK);
+                    balance.setText(getCardReward());
+                    initState(false);
+                    //check end of game
+                    if (Game.attemptCounter == 0) {
                         //show winning pin
                         flippToGo();
                         hitButtonGo.setOnClickListener(new View.OnClickListener() {
@@ -530,13 +563,10 @@ public class GameActivity extends PingoActivity {
     }
 
     private void processFreeGame() {
-
-        new Handler().postDelayed(()->{
-            Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
-            Activity activity = (Activity) context;
-            activity.finish();
-            startActivity(intent);
-        },100);
+        Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
+        Activity activity = (Activity) context;
+        activity.finish();
+        startActivity(intent);
     }
 
     private void doWinPinCheck() {
@@ -723,6 +753,12 @@ public class GameActivity extends PingoActivity {
         bannerParams.width =(int)(newBmapWidth*0.7890F);
         bannerParams.height =(int)(newBmapHeight*0.06296F);
 
+        //sacele top white banner
+        ImageView whiteTopBanner = (ImageView) findViewById(R.id.whitebanner);
+        ViewGroup.LayoutParams whiteTopBannerarams = whiteTopBanner.getLayoutParams();
+        whiteTopBannerarams.width =(int)(newBmapWidth*0.7890F);
+        whiteTopBannerarams.height =(int)(newBmapHeight*0.06296F);
+
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
         int buttonSize18 = (int) (newBmapHeight * 0.2406F);
@@ -763,6 +799,12 @@ public class GameActivity extends PingoActivity {
         ImageView header = (ImageView) findViewById(R.id.header);
         ViewGroup.LayoutParams headerParams = header.getLayoutParams();
         headerParams.width =(int)(newBmapWidth*0.4225F);
+        //headerParams.height =(int)(newBmapHeight*0.2871F);
+
+        //scale white header
+        ImageView whiteHeader = (ImageView) findViewById(R.id.whiteheader);
+        ViewGroup.LayoutParams whiteHeaderParams = whiteHeader.getLayoutParams();
+        whiteHeaderParams.width =(int)(newBmapWidth*0.4225F);
         //headerParams.height =(int)(newBmapHeight*0.2871F);
 
         //scale shild
