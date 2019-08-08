@@ -95,4 +95,38 @@ public class PingoActivity extends AppCompatActivity {
 
         return winning;
     }
+
+    public Integer loadNumberGuessed(int pingoNumber) {
+
+        Integer guessed = null;
+        List<HitDto> hits = card.getHits();
+        for(HitDto hit :hits){
+            if(guessed != null){
+                break;
+            }
+            switch(pingoNumber){
+                case 1:
+                    if(hit.getNumber_1().isGuessed()){
+                        guessed = hit.getNumber_1().getNumber();
+                    };
+                    break;
+                case 2:
+                    if(hit.getNumber_2().isGuessed()){
+                        guessed = hit.getNumber_2().getNumber();
+                    };
+                    break;
+                case 3:
+                    if(hit.getNumber_3().isGuessed()){
+                        guessed = hit.getNumber_3().getNumber();
+                    };
+                    break;
+                case 4:
+                    if(hit.getNumber_4().isGuessed()){
+                        guessed = hit.getNumber_4().getNumber();
+                    };
+                    break;
+            }
+        }
+        return guessed;
+    }
 }

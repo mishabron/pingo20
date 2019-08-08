@@ -363,7 +363,13 @@ public class LoginActivity extends PingoActivity {
         //go to game screen
         new Handler().postDelayed(()-> {
                 progressBar.stopSuccess();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                Intent intent;
+                if(isWinningCard()){
+                    intent = new Intent(getApplicationContext(), WinActivity.class);
+                }else{
+                    intent = new Intent(getApplicationContext(), GameActivity.class);
+                }
+
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 Activity activity = (Activity) context;
