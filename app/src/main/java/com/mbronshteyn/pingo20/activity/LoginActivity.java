@@ -311,7 +311,7 @@ public class LoginActivity extends PingoActivity {
         Headers headers = response.headers();
         String message = headers.get("message");
 
-        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+        if(StringUtils.isEmpty(headers.get("errorCode")) || ErrorCode.valueOf(headers.get("errorCode")).equals(ErrorCode.PLAYED)) {
             card = response.body();
             EventBus.getDefault().post(new CardAuthinticatedEvent());
         }else{
@@ -335,10 +335,6 @@ public class LoginActivity extends PingoActivity {
                     break;
                 case INUSE:
                     leftLargeBaloon.setImageResource(R.drawable.another_device);
-                    popBaloon(leftLargeBaloon,4000);
-                    break;
-                case PLAYED:
-                    leftLargeBaloon.setImageResource(R.drawable.used_card);
                     popBaloon(leftLargeBaloon,4000);
                     break;
                 case SERVERERROR:
