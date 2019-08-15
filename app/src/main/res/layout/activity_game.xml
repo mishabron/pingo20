@@ -65,6 +65,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/pingo1_rays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/pingo1"
+        app:layout_constraintTop_toTopOf="@id/pingo1"
+        app:srcCompat="@drawable/gree_rays"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo2_rays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/pingo2"
+        app:layout_constraintTop_toTopOf="@id/pingo2"
+        app:srcCompat="@drawable/gree_rays"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo3_rays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/pingo3"
+        app:layout_constraintTop_toTopOf="@id/pingo3"
+        app:srcCompat="@drawable/gree_rays"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/pingo4_rays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/pingo4"
+        app:layout_constraintTop_toTopOf="@id/pingo4"
+        app:srcCompat="@drawable/gree_rays"
+        android:visibility="invisible" />
+
     <fragment
         android:id="@+id/pingo1"
         android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"

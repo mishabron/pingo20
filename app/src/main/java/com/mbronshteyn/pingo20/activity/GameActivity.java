@@ -450,24 +450,34 @@ public class GameActivity extends PingoActivity {
     public void spinEnd(NumberSpinEndEvent event){
 
         ImageView glow = null;
+        ImageView rays = null;
         switch(event.getPingoNumber()){
             case 1:
                 glow = (ImageView) findViewById(R.id.pingo1_glow);
+                rays = (ImageView) findViewById(R.id.pingo1_rays);
                 break;
             case 2:
                 glow = (ImageView) findViewById(R.id.pingo2_glow);
+                rays = (ImageView) findViewById(R.id.pingo2_rays);
                 break;
             case 3:
                 glow = (ImageView) findViewById(R.id.pingo3_glow);
+                rays = (ImageView) findViewById(R.id.pingo3_rays);
                 break;
             case 4:
                 glow = (ImageView) findViewById(R.id.pingo4_glow);
+                rays = (ImageView) findViewById(R.id.pingo4_rays);
                 break;                
         }
         
         progressBar.stopProgress();
         if(event.isGuessed()){
             Glide.with(this).load(R.drawable.greenglow).into(glow);
+
+            rays.setVisibility(View.VISIBLE);
+            Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
+            rays.startAnimation(raysAnim);
+
             progressBar.startSaccess();
             new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
@@ -801,6 +811,27 @@ public class GameActivity extends PingoActivity {
         ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
         ViewGroup.LayoutParams glow4Params = glow4.getLayoutParams();
         glow4Params.width = (int)(newBmapHeight*pingoSize);
+
+        //scale green rays
+        ImageView ray1 = (ImageView) findViewById(R.id.pingo1_rays);
+        ViewGroup.LayoutParams ray1Params = ray1.getLayoutParams();
+        ray1Params.height = (int)(newBmapHeight*pingoSize);
+        ray1Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView ray2 = (ImageView) findViewById(R.id.pingo2_rays);
+        ViewGroup.LayoutParams ray2Params = ray2.getLayoutParams();
+        ray2Params.height = (int)(newBmapHeight*pingoSize);
+        ray2Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView ray3 = (ImageView) findViewById(R.id.pingo3_rays);
+        ViewGroup.LayoutParams ray3Params = ray3.getLayoutParams();
+        ray3Params.height = (int)(newBmapHeight*pingoSize);
+        ray3Params.width = (int)(newBmapHeight*pingoSize);
+
+        ImageView ray4 = (ImageView) findViewById(R.id.pingo4_rays);
+        ViewGroup.LayoutParams ray4Params = ray4.getLayoutParams();
+        ray4Params.height = (int)(newBmapHeight*pingoSize);
+        ray4Params.width = (int)(newBmapHeight*pingoSize);
 
         //sacele free game
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);

@@ -479,10 +479,6 @@ public class PingoWindow extends Fragment {
 
         //first tap
         winAnimation.start();
-        new Handler().postDelayed(()->{
-            Glide.with(getActivity()).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                    .skipMemoryCache( true ).into(windowBackground);
-        },totalDuration);
     }
 
     private void scaleUi(View view) {

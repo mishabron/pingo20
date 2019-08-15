@@ -310,14 +310,14 @@ public class LoginActivity extends PingoActivity {
 
         Headers headers = response.headers();
         String message = headers.get("message");
+        ErrorCode errorCode = !StringUtils.isEmpty(headers.get("errorCode")) ? ErrorCode.valueOf(headers.get("errorCode")) : null;
+        card = response.body();
 
-        if(StringUtils.isEmpty(headers.get("errorCode")) || ErrorCode.valueOf(headers.get("errorCode")).equals(ErrorCode.PLAYED)) {
-            card = response.body();
-            EventBus.getDefault().post(new CardAuthinticatedEvent());
+        if(errorCode == null) {
+            EventBus.getDefault().post(new CardAuthinticatedEvent(null));
         }else{
             playSound(R.raw.error_short);
             cardNumberInput.setEnabled(true);
-            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
             switch(errorCode){
                 case INVALID:
                     if(invalidAttempt == 0){
@@ -332,6 +332,9 @@ public class LoginActivity extends PingoActivity {
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);
                     popBaloon(leftLargeBaloon,4000);
+                    break;
+                case PLAYED:
+                    EventBus.getDefault().post(new CardAuthinticatedEvent(errorCode));
                     break;
                 case INUSE:
                     leftLargeBaloon.setImageResource(R.drawable.another_device);
@@ -358,19 +361,21 @@ public class LoginActivity extends PingoActivity {
 
         //go to game screen
         new Handler().postDelayed(()-> {
-                progressBar.stopSuccess();
-                Intent intent;
-                if(isWinningCard()){
-                    intent = new Intent(getApplicationContext(), WinActivity.class);
-                }else{
-                    intent = new Intent(getApplicationContext(), GameActivity.class);
-                }
+            progressBar.stopSuccess();
+            Intent intent;
+            if (event.getErrorCode() != null && event.getErrorCode().equals(ErrorCode.PLAYED)) {
+                intent = new Intent(getApplicationContext(), NoWinActivity.class);
+            } else if (isWinningCard()) {
+                intent = new Intent(getApplicationContext(), WinActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), GameActivity.class);
+            }
 
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                Activity activity = (Activity) context;
-                activity.finish();
-                Runtime.getRuntime().gc();
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            Activity activity = (Activity) context;
+            activity.finish();
+            Runtime.getRuntime().gc();
         }, 5000);
     }
 

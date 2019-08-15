@@ -8,55 +8,12 @@
     android:background="@drawable/win_background"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/number1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintRight_toLeftOf="@+id/number2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/seven" />
-
-    <ImageView
-        android:id="@+id/number2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/seven"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/number1"
-        app:layout_constraintRight_toLeftOf="@+id/number3"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/number3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/seven"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/number2"
-        app:layout_constraintRight_toLeftOf="@+id/number4"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/number4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/seven"
-        android:layout_marginEnd="130dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/number3"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <TextView
         android:id="@+id/balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/you_won"
+        android:text="@string/no_won"
         android:textColor="@android:color/black"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
