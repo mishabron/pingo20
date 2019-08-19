@@ -32,6 +32,7 @@ import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.GreenRaysEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
@@ -284,7 +285,12 @@ public class GameActivity extends PingoActivity {
         shield.setVisibility(View.VISIBLE);
         ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
         nonTouchShield.setVisibility(View.VISIBLE);
+
         balance.setTextColor(Color.WHITE);
+        balance.setTag(balance.getText());
+        balance.setText("GOOD LUCK! ");
+        new Handler().postDelayed(()->{balance.setText((String)balance.getTag());},2000);
+
         whiteHeader.setVisibility(View.VISIBLE);
         whiteTopBanner.setVisibility(View.VISIBLE);
 
@@ -447,41 +453,56 @@ public class GameActivity extends PingoActivity {
     }
 
     @Subscribe
-    public void spinEnd(NumberSpinEndEvent event){
-
-        ImageView glow = null;
+    public void greenRays(GreenRaysEvent event){
         ImageView rays = null;
         switch(event.getPingoNumber()){
             case 1:
-                glow = (ImageView) findViewById(R.id.pingo1_glow);
                 rays = (ImageView) findViewById(R.id.pingo1_rays);
                 break;
             case 2:
-                glow = (ImageView) findViewById(R.id.pingo2_glow);
                 rays = (ImageView) findViewById(R.id.pingo2_rays);
                 break;
             case 3:
-                glow = (ImageView) findViewById(R.id.pingo3_glow);
                 rays = (ImageView) findViewById(R.id.pingo3_rays);
                 break;
             case 4:
-                glow = (ImageView) findViewById(R.id.pingo4_glow);
                 rays = (ImageView) findViewById(R.id.pingo4_rays);
-                break;                
+                break;
         }
-        
+        rays.setVisibility(View.VISIBLE);
+        Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
+        rays.startAnimation(raysAnim);
+    }
+
+    @Subscribe
+    public void spinEnd(NumberSpinEndEvent event){
+
+        ImageView glow = null;
+        switch(event.getPingoNumber()){
+            case 1:
+                glow = (ImageView) findViewById(R.id.pingo1_glow);
+                break;
+            case 2:
+                glow = (ImageView) findViewById(R.id.pingo2_glow);
+                break;
+            case 3:
+                glow = (ImageView) findViewById(R.id.pingo3_glow);
+                break;
+            case 4:
+                glow = (ImageView) findViewById(R.id.pingo4_glow);
+                break;
+        }
+
+        int duration = 0;
         progressBar.stopProgress();
         if(event.isGuessed()){
+            duration = 5000;
             Glide.with(this).load(R.drawable.greenglow).into(glow);
-
-            rays.setVisibility(View.VISIBLE);
-            Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
-            rays.startAnimation(raysAnim);
-
             progressBar.startSaccess();
             new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
         else{
+            duration = 2000;
             Glide.with(this).load(R.drawable.orangeglow).into(glow);
             progressBar.startFailure();
             new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
@@ -535,7 +556,7 @@ public class GameActivity extends PingoActivity {
                     }
                 }
             }
-        },3100);
+        },duration);
     }
 
     private void processFreeGame() {

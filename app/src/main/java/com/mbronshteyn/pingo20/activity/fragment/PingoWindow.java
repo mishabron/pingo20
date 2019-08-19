@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.GreenRaysEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
@@ -470,6 +471,7 @@ public class PingoWindow extends Fragment {
     }
 
     public void doWinAnimation(){
+
         windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation,null));
         AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
         long totalDuration = 0;
@@ -479,6 +481,8 @@ public class PingoWindow extends Fragment {
 
         //first tap
         winAnimation.start();
+
+        EventBus.getDefault().post(new GreenRaysEvent(pingoNumber));
     }
 
     private void scaleUi(View view) {

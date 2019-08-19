@@ -9,14 +9,44 @@
         android:fromYScale="1"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:toXScale="2"
-        android:toYScale="2" />
+        android:toXScale="1.3"
+        android:toYScale="1.3" />
 
     <rotate
-        android:startOffset="500"
-        android:duration="500"
+        android:startOffset="510"
+        android:duration="1000"
         android:fromDegrees="0"
-        android:toDegrees="3600"
+        android:toDegrees="360"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+    <scale
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:startOffset="1550"
+        android:duration="50"
+        android:fromXScale="1.3"
+        android:fromYScale="1.3"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1"
+        android:toYScale="1" />
+
+    <scale
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:startOffset="3000"
+        android:duration="500"
+        android:fromXScale="1"
+        android:fromYScale="1"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.3"
+        android:toYScale="1.3" />
+
+    <rotate
+        android:startOffset="3510"
+        android:duration="1000"
+        android:fromDegrees="0"
+        android:toDegrees="360"
         android:pivotX="50%"
         android:pivotY="50%"/>
 
