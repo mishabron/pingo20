@@ -1,10 +1,10 @@
 package com.mbronshteyn.pingo20.events;
 
-public class GreenRaysEvent {
+public class GuessedNumberEvent {
 
     private final int pingoNumber;
 
-    public GreenRaysEvent(int pingoNumber) {
+    public GuessedNumberEvent(int pingoNumber) {
         this.pingoNumber = pingoNumber;
     }
 

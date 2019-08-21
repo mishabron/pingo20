@@ -29,13 +29,15 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.events.GreenRaysEvent;
+import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
+import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.events.SpinEvent;
+import com.mbronshteyn.pingo20.events.WinFlashEvent;
 import com.mbronshteyn.pingo20.types.PingoState;
 
 import org.greenrobot.eventbus.EventBus;
@@ -410,6 +412,23 @@ public class PingoWindow extends Fragment {
     }
 
     @Subscribe
+    public void flashWin(WinFlashEvent event){
+        touchBackground.setEnabled(true);
+        if (event.getWindow() == pingoNumber) {
+
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation_endgame,null));
+            AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
+            long totalDuration = 0;
+            for(int i = 0; i< winAnimation.getNumberOfFrames();i++){
+                totalDuration += winAnimation.getDuration(i);
+            }
+
+            //first tap
+            winAnimation.start();
+        }
+    }
+
+    @Subscribe
     public void spin(NumberSpinEvent event){
 
         if (event.getPingoNumber() == pingoNumber) {
@@ -432,7 +451,7 @@ public class PingoWindow extends Fragment {
                 rotateSpin.setDuration(7000);
                 rotateSpin.setInterpolator(new AccelerateDecelerateInterpolator());
                 spin.startAnimation(rotateSpin);
-            },450);
+            },445);
 
             //stop spin
             new Handler().postDelayed(() -> {
@@ -440,13 +459,15 @@ public class PingoWindow extends Fragment {
                     pingoState = PingoState.WIN;
                     doWinAnimation();
                     touchBackground.setOnClickListener(null);
+                    EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
                 }
                 else{
                     Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                             .skipMemoryCache( true ).into(windowBackground);
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
+                    EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
-            }, 7400);
+            }, 7450);
 
             //restore window state
             new Handler().postDelayed(() -> {
@@ -481,8 +502,6 @@ public class PingoWindow extends Fragment {
 
         //first tap
         winAnimation.start();
-
-        EventBus.getDefault().post(new GreenRaysEvent(pingoNumber));
     }
 
     private void scaleUi(View view) {

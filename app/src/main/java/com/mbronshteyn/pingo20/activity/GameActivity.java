@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -32,12 +31,14 @@ import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
-import com.mbronshteyn.pingo20.events.GreenRaysEvent;
+import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
+import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
+import com.mbronshteyn.pingo20.events.WinFlashEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -288,8 +289,8 @@ public class GameActivity extends PingoActivity {
 
         balance.setTextColor(Color.WHITE);
         balance.setTag(balance.getText());
-        balance.setText("GOOD LUCK! ");
-        new Handler().postDelayed(()->{balance.setText((String)balance.getTag());},2000);
+        new Handler().postDelayed(()->{balance.setText("GOOD LUCK! ");},2000);
+        new Handler().postDelayed(()->{balance.setText((String)balance.getTag());},4000);
 
         whiteHeader.setVisibility(View.VISIBLE);
         whiteTopBanner.setVisibility(View.VISIBLE);
@@ -453,7 +454,14 @@ public class GameActivity extends PingoActivity {
     }
 
     @Subscribe
-    public void greenRays(GreenRaysEvent event){
+    public void noWinNumber(NoGuessedNumberEvent event){
+        progressBar.startFailure();
+        new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
+    }
+
+    @Subscribe
+    public void winNumber(GuessedNumberEvent event){
+
         ImageView rays = null;
         switch(event.getPingoNumber()){
             case 1:
@@ -471,6 +479,18 @@ public class GameActivity extends PingoActivity {
         }
         rays.setVisibility(View.VISIBLE);
         Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
+        raysAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                progressBar.startSaccess();
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                progressBar.stopSuccess();
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
         rays.startAnimation(raysAnim);
     }
 
@@ -498,19 +518,14 @@ public class GameActivity extends PingoActivity {
         if(event.isGuessed()){
             duration = 5000;
             Glide.with(this).load(R.drawable.greenglow).into(glow);
-            progressBar.startSaccess();
-            new Handler().postDelayed(()->{progressBar.stopSuccess();},3000);
         }
         else{
-            duration = 2000;
+            duration = 3000;
             Glide.with(this).load(R.drawable.orangeglow).into(glow);
-            progressBar.startFailure();
-            new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
         }
 
         new Handler().postDelayed(()-> {
             if (pingoIterator.hasNext()) {
-                //progressBar.startProgress();
                 Integer activeWindow = pingoIterator.next();
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
                 playSound(R.raw.button);
@@ -519,6 +534,9 @@ public class GameActivity extends PingoActivity {
                 if (Game.attemptCounter == 0 && isWinningCard()) {
                     //process free game
                     processFreeGame();
+                }
+                else if(isWinningCard()){
+                    processWin(event.getPingoNumber());
                 }
                 else{
                     //turn off glows
@@ -557,6 +575,26 @@ public class GameActivity extends PingoActivity {
                 }
             }
         },duration);
+    }
+
+    private void processWin(int pingoNumber) {
+
+        //first pair
+        int window1 = pingoNumber;
+        int window2 = (window1 + 2) < 5 ?  window1 + 2 : window1 + 2 - 4;
+
+        //second pair
+        int window3 = (window1 + 1) <= 4 ? window1 + 1 : 1;
+        int window4 = (window3 + 2) < 5 ?  window3 + 2 : window3 + 2 - 4;
+
+        EventBus.getDefault().post(new WinFlashEvent(window1));
+        EventBus.getDefault().post(new WinFlashEvent(window2));
+
+        new Handler().postDelayed(()-> {
+            EventBus.getDefault().post(new WinFlashEvent(window3));
+            EventBus.getDefault().post(new WinFlashEvent(window4));
+        },2000);
+
     }
 
     private void processFreeGame() {

@@ -147,6 +147,11 @@ public class PingoProgressBar extends Fragment {
     }
 
     public void stopSuccess(){
+
+        dot1.setImageResource(defaultDot);
+        dot2.setImageResource(defaultDot);
+        dot3.setImageResource(defaultDot);
+
         successThread.interrupt();
     }
 
@@ -156,6 +161,11 @@ public class PingoProgressBar extends Fragment {
     }
 
     public void stopFailure(){
+
+        dot1.setImageResource(defaultDot);
+        dot2.setImageResource(defaultDot);
+        dot3.setImageResource(defaultDot);
+
         faiureThread.interrupt();
     }
 
