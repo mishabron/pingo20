@@ -833,7 +833,7 @@ public class GameActivity extends PingoActivity {
         buttonParamsGo.width = buttonSizeGo;
 
         //scale pingo windows
-        float pingoSize = 0.3403F;
+        float pingoSize = 0.3203F;
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.pingo1);
         ViewGroup.LayoutParams pingoParams = pingo1.getLayoutParams();
         pingoParams.height = (int)(newBmapHeight*pingoSize);
