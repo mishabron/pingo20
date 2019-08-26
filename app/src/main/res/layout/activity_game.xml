@@ -22,13 +22,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/horizontal_progressBar_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.69" />
-
     <ImageView
         android:id="@+id/shield_full"
         android:layout_width="wrap_content"
@@ -160,11 +153,13 @@
         android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:failure="barredapp"
-        app:initiak="barblueapp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_progressBar_guideline"
+        app:layout_constraintVertical_bias="0.735"
+        app:failure="barredapp"
+        app:initiak="barblueapp"
         app:progress="baryellowapp"
         app:success="bargreenapp" />
 
