@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
@@ -37,6 +38,8 @@ import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.events.SpinEvent;
+import com.mbronshteyn.pingo20.events.StopPlayer;
+import com.mbronshteyn.pingo20.events.WinAnimation;
 import com.mbronshteyn.pingo20.events.WinFlashEvent;
 import com.mbronshteyn.pingo20.types.PingoState;
 
@@ -206,6 +209,7 @@ public class PingoWindow extends Fragment {
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
+                EventBus.getDefault().post(new StopPlayer());
                 return false;
             }
         });
@@ -217,23 +221,27 @@ public class PingoWindow extends Fragment {
         }
 
         //first tap
+        EventBus.getDefault().post(new FingerTap());
         fingerAnimation.start();
         new Handler().postDelayed(()->{
-            AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
-            rockplay.setTarget(play);
-            rockplay.start();
+            if(play.getVisibility() == View.VISIBLE) {
+                AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+                rockplay.setTarget(play);
+                rockplay.setStartDelay(500);
+                rockplay.start();
+            }
         },fingerAnimation.getDuration(0));
 
         //second tap
-        new Handler().postDelayed(()-> {
-            fingerAnimation.stop();
-            fingerAnimation.start();
-        },totalDuration+ 2000);
         new Handler().postDelayed(()->{
-            AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
-            rockplay.setTarget(play);
-            rockplay.start();
-        },totalDuration+2000+fingerAnimation.getDuration(0));
+            if(play.getVisibility() == View.VISIBLE) {
+                EventBus.getDefault().post(new FingerTap());
+                AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+                rockplay.setTarget(play);
+                rockplay.setStartDelay(500);
+                rockplay.start();
+            }
+        },2500+fingerAnimation.getDuration(0));
     }
 
     public void initPingo(Bundle pingoBundle) {
@@ -422,8 +430,6 @@ public class PingoWindow extends Fragment {
             for(int i = 0; i< winAnimation.getNumberOfFrames();i++){
                 totalDuration += winAnimation.getDuration(i);
             }
-
-            //first tap
             winAnimation.start();
         }
     }
@@ -456,8 +462,9 @@ public class PingoWindow extends Fragment {
             //stop spin
             new Handler().postDelayed(() -> {
                 if(guessedNumber != null){
+                    Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                            .skipMemoryCache( true ).into(windowBackground);
                     pingoState = PingoState.WIN;
-                    doWinAnimation();
                     touchBackground.setOnClickListener(null);
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
                 }
@@ -477,7 +484,7 @@ public class PingoWindow extends Fragment {
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
 
-            }, 7900);
+            }, 7500);
         }
     }
 
@@ -491,17 +498,20 @@ public class PingoWindow extends Fragment {
         wheel.setCurrentItem(getNumberIndex(pinNumber),true);
     }
 
-    public void doWinAnimation(){
+    @Subscribe
+    public void doWinAnimation(WinAnimation event){
 
-        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation,null));
-        AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
-        long totalDuration = 0;
-        for(int i = 0; i< winAnimation.getNumberOfFrames();i++){
-            totalDuration += winAnimation.getDuration(i);
+        if(event.getPingoNumber() == pingoNumber) {
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation, null));
+            AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
+            long totalDuration = 0;
+            for (int i = 0; i < winAnimation.getNumberOfFrames(); i++) {
+                totalDuration += winAnimation.getDuration(i);
+            }
+
+            //first tap
+            winAnimation.start();
         }
-
-        //first tap
-        winAnimation.start();
     }
 
     private void scaleUi(View view) {

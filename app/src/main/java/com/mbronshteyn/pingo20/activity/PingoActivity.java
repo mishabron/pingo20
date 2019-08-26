@@ -25,7 +25,7 @@ public class PingoActivity extends AppCompatActivity {
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
 
-    protected void playSound(int sound) {
+    protected void stopPlaySound() {
 
         try {
             try {
@@ -40,6 +40,11 @@ public class PingoActivity extends AppCompatActivity {
         } catch (IllegalStateException e) {
 
         }
+    }
+
+    protected void playSound(int sound) {
+
+        stopPlaySound();
 
         mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

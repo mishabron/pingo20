@@ -4,27 +4,28 @@
 
     <item
         android:drawable="@drawable/green_blink1"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink2"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink1"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink2"
-        android:duration="1000"/>
+        android:duration="2500"/>
+
     <item
         android:drawable="@drawable/green_blink1"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink2"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink1"
-        android:duration="1000"/>
+        android:duration="500"/>
     <item
         android:drawable="@drawable/green_blink2"
-        android:duration="1000"/>
+        android:duration="2500"/>
 
 </animation-list>
