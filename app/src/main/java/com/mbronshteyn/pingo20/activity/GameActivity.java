@@ -84,8 +84,8 @@ public class GameActivity extends PingoActivity {
     private TextView balance;
     private GameActivity context;
     private boolean spinning;
-    private ImageView whiteTopBanner;
     private ImageView header;
+    private ImageView topBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +108,8 @@ public class GameActivity extends PingoActivity {
         Glide.with(this).load(R.drawable.game_background).into(iView);
         header = (ImageView) findViewById(R.id.header);
         Glide.with(this).load(R.drawable.header).into(header);
-        ImageView topBanner = (ImageView) findViewById(R.id.banner);
+        topBanner = (ImageView) findViewById(R.id.banner);
         Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
-        whiteTopBanner = (ImageView) findViewById(R.id.whitebanner);
-        Glide.with(this).load(R.drawable.slogan3d).into(whiteTopBanner);
-        whiteTopBanner.setVisibility(View.INVISIBLE);
 
         //balance
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
@@ -293,7 +290,7 @@ public class GameActivity extends PingoActivity {
         new Handler().postDelayed(()->{balance.setText((String)balance.getTag());},5000);
 
         Glide.with(this).load(R.drawable.header_white).into(header);
-        whiteTopBanner.setVisibility(View.VISIBLE);
+        Glide.with(this).load(R.drawable.slogan3d).into(topBanner);
 
         progressBar.startProgress();
 
@@ -565,8 +562,8 @@ public class GameActivity extends PingoActivity {
                     glow3.setVisibility(View.INVISIBLE);
                     ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
                     glow4.setVisibility(View.INVISIBLE);
-                    Glide.with(this).load(R.drawable.header_white).into(header);
-                    whiteTopBanner.setVisibility(View.INVISIBLE);
+                    Glide.with(this).load(R.drawable.header).into(header);
+                    Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
 
                     //remove sheilds
                     ImageView shield = (ImageView) findViewById(R.id.shield_full);
@@ -811,12 +808,6 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
         bannerParams.width =(int)(newBmapWidth*0.7890F);
         bannerParams.height =(int)(newBmapHeight*0.06296F);
-
-        //sacele top white banner
-        ImageView whiteTopBanner = (ImageView) findViewById(R.id.whitebanner);
-        ViewGroup.LayoutParams whiteTopBannerarams = whiteTopBanner.getLayoutParams();
-        whiteTopBannerarams.width =(int)(newBmapWidth*0.7890F);
-        whiteTopBannerarams.height =(int)(newBmapHeight*0.06296F);
 
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
