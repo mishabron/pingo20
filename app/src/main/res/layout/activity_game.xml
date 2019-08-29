@@ -291,19 +291,6 @@
         app:layout_constraintVertical_bias="0.01309998" />
 
     <ImageView
-        android:id="@+id/whiteFlare"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/white_flare"
-        android:scaleType="centerCrop"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17000002" />
-
-    <ImageView
         android:id="@+id/banner"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
@@ -315,18 +302,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.113" />
-
-    <ImageView
-        android:id="@+id/blueLine"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/blue_line"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/pingo4"
-        app:layout_constraintStart_toStartOf="@id/pingo1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.46000002" />
 
     <android.support.constraint.Guideline
         android:id="@+id/left_guideline"

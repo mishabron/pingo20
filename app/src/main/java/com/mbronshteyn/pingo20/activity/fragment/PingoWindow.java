@@ -3,6 +3,7 @@ package com.mbronshteyn.pingo20.activity.fragment;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
@@ -431,6 +432,12 @@ public class PingoWindow extends Fragment {
                 totalDuration += winAnimation.getDuration(i);
             }
             winAnimation.start();
+
+            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
+            animation.setDuration(1000);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            animation.start();
+            new Handler().postDelayed(()->{animation.start();},4000);
         }
     }
 
@@ -467,6 +474,10 @@ public class PingoWindow extends Fragment {
                     pingoState = PingoState.WIN;
                     touchBackground.setOnClickListener(null);
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
+                    animation.setDuration(1000);
+                    animation.setInterpolator(new AccelerateDecelerateInterpolator());
+                    new Handler().postDelayed(()->{animation.start();},1000);
                 }
                 else{
                     Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )

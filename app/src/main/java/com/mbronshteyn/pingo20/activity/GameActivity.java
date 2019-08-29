@@ -594,10 +594,6 @@ public class GameActivity extends PingoActivity {
     private void processWin(int pingoNumber) {
 
         //blue line
-        ImageView blueLine = (ImageView) findViewById(R.id.blueLine);
-        blueLine.setVisibility(View.VISIBLE);
-        ImageView flare = (ImageView) findViewById(R.id.whiteFlare);
-        flare.setVisibility(View.VISIBLE);
         Glide.with(this).load(R.drawable.header_white_winner).into(header);
 
         //first pair
