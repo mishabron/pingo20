@@ -12,6 +12,8 @@ import retrofit2.http.Path;
 
 public interface PingoRemoteService {
 
+    public static String baseUrl = "http://ec2-18-219-33-9.us-east-2.compute.amazonaws.com";
+
     @POST("/pingo/Game/authinticate")
     Call<CardDto> authinticate(@Body AuthinticateDto authinticateDto);
 

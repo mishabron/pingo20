@@ -264,7 +264,7 @@ public class LoginActivity extends PingoActivity {
     public void onActionButtonEventAuthinticate(ActionButtonEvent event){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(PingoRemoteService.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -478,6 +478,7 @@ public class PingoWindow extends Fragment {
                     animation.setDuration(1000);
                     animation.setInterpolator(new AccelerateDecelerateInterpolator());
                     new Handler().postDelayed(()->{animation.start();},1000);
+                    new Handler().postDelayed(()->{animation.start();},3000);
                 }
                 else{
                     Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )

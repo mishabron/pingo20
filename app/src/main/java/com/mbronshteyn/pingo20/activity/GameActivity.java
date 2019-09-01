@@ -295,7 +295,7 @@ public class GameActivity extends PingoActivity {
         progressBar.startProgress();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(PingoRemoteService.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
@@ -624,7 +624,7 @@ public class GameActivity extends PingoActivity {
     private void doWinPinCheck() {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(PingoRemoteService.baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);

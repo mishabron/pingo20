@@ -46,7 +46,7 @@ public class FreeGameActivity extends PingoActivity{
         activity = this;
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(PingoRemoteService.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
