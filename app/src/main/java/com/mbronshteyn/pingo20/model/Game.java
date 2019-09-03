@@ -17,6 +17,8 @@ public class Game {
 
     public static String cardNumber;
 
+    public static int guessedCount;
+
     private static Game game = new Game();
 
     private Game() {

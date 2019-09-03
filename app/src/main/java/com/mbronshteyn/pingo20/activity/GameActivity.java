@@ -165,7 +165,7 @@ public class GameActivity extends PingoActivity {
         String cardId = Game.getInstancce().getCardNumber();
         cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
-        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         nonTouchShield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,7 +200,6 @@ public class GameActivity extends PingoActivity {
         for(Integer pingo: playPingos){
 
             Bundle pingoBundle = new Bundle();
-            Integer guessedNUmber = loadNumberGuessed(pingo);
             pingoBundle.putInt("spinDelay",100 + i*300);
             pingoBundle.putBoolean("hasFinger", i == 0 && canHaveFinger);
             pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
@@ -281,7 +280,7 @@ public class GameActivity extends PingoActivity {
 
         ImageView shield = (ImageView) findViewById(R.id.shield_full);
         shield.setVisibility(View.VISIBLE);
-        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         nonTouchShield.setVisibility(View.VISIBLE);
 
         balance.setTextColor(Color.WHITE);
@@ -465,41 +464,89 @@ public class GameActivity extends PingoActivity {
     public void winNumber(GuessedNumberEvent event){
 
         if(pingoIterator.hasNext() || !isWinningCard()) {
-            EventBus.getDefault().post(new WinAnimation(event.getPingoNumber()));
-            ImageView rays = null;
-            switch (event.getPingoNumber()) {
-                case 1:
-                    rays = (ImageView) findViewById(R.id.pingo1_rays);
-                    break;
-                case 2:
-                    rays = (ImageView) findViewById(R.id.pingo2_rays);
-                    break;
-                case 3:
-                    rays = (ImageView) findViewById(R.id.pingo3_rays);
-                    break;
-                case 4:
-                    rays = (ImageView) findViewById(R.id.pingo4_rays);
-                    break;
+            int delay = 0;
+            if (Game.guessedCount == 2) {
+                doHalfWayThere();
+                delay = 3000;
             }
-            rays.setVisibility(View.VISIBLE);
-            Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
-            raysAnim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    progressBar.startSaccess();
-                }
+            new Handler().postDelayed(()-> {
+                playSound(R.raw.right_number);
+                //start blinking winning backgound
+                EventBus.getDefault().post(new WinAnimation(event.getPingoNumber()));
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    progressBar.stopSuccess();
+                //set winning windows rays
+                ImageView rays = null;
+                switch (event.getPingoNumber()) {
+                    case 1:
+                        rays = (ImageView) findViewById(R.id.pingo1_rays);
+                        break;
+                    case 2:
+                        rays = (ImageView) findViewById(R.id.pingo2_rays);
+                        break;
+                    case 3:
+                        rays = (ImageView) findViewById(R.id.pingo3_rays);
+                        break;
+                    case 4:
+                        rays = (ImageView) findViewById(R.id.pingo4_rays);
+                        break;
                 }
+                rays.setVisibility(View.VISIBLE);
+                Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
+                raysAnim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        progressBar.startSaccess();
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-            rays.startAnimation(raysAnim);
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        progressBar.stopSuccess();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                rays.startAnimation(raysAnim);
+            },delay);
         }
+    }
+
+    private void doHalfWayThere() {
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        overlayBlue.setVisibility(View.VISIBLE);
+
+        ImageView spiral = (ImageView) findViewById(R.id.spiral);
+        Animation zoomRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate);
+        zoomRotate.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                spiral.setVisibility(View.VISIBLE);
+                ImageView halfWay = (ImageView) findViewById(R.id.halway);
+                Animation zoomHalfWay = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_halfway);
+                halfWay.startAnimation(zoomHalfWay);
+                zoomHalfWay.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        new Handler().postDelayed(()->{
+                            overlayBlue.setVisibility(View.INVISIBLE);
+                            spiral.clearAnimation();
+                            halfWay.clearAnimation();
+                            spiral.setVisibility(View.INVISIBLE);
+                        },500);
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        spiral.startAnimation(zoomRotate);
     }
 
     @Subscribe
@@ -523,13 +570,16 @@ public class GameActivity extends PingoActivity {
 
         int duration = 0;
         progressBar.stopProgress();
-        if((event.isGuessed() && pingoIterator.hasNext()) || (event.isGuessed()  && !isWinningCard())){
-            playSound(R.raw.right_number);
+        if((event.isGuessed() && pingoIterator.hasNext() && Game.guessedCount != 2) || (event.isGuessed() && pingoIterator.hasNext() && card.isFreeGame())){
             duration = 6000;
             Glide.with(this).load(R.drawable.greenglow).into(glow);
         }
         else if(event.isGuessed() && !pingoIterator.hasNext() && isWinningCard()){
             duration = 1000;
+            Glide.with(this).load(R.drawable.greenglow).into(glow);
+        }
+        else if(event.isGuessed() && !card.isFreeGame() && Game.guessedCount == 2){
+            duration = 9000;
             Glide.with(this).load(R.drawable.greenglow).into(glow);
         }
         else{
@@ -568,7 +618,7 @@ public class GameActivity extends PingoActivity {
                     //remove sheilds
                     ImageView shield = (ImageView) findViewById(R.id.shield_full);
                     shield.setVisibility(View.INVISIBLE);
-                    ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+                    ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
                     nonTouchShield.setVisibility(View.INVISIBLE);
                     balance.setTextColor(Color.BLACK);
                     balance.setText(getCardReward());
@@ -854,7 +904,7 @@ public class GameActivity extends PingoActivity {
         shieldParams.height = newBmapHeight;
 
         //scale nonTouchShield
-        ImageView nonTouchShield = (ImageView) findViewById(R.id.shield);
+        ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
         nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
         nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);

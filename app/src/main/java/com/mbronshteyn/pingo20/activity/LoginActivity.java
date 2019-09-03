@@ -312,6 +312,7 @@ public class LoginActivity extends PingoActivity {
         String message = headers.get("message");
         ErrorCode errorCode = !StringUtils.isEmpty(headers.get("errorCode")) ? ErrorCode.valueOf(headers.get("errorCode")) : null;
         card = response.body();
+        Game.guessedCount = getGuessedCount();
 
         if(errorCode == null) {
             EventBus.getDefault().post(new CardAuthinticatedEvent(null));

@@ -133,4 +133,18 @@ public class PingoActivity extends AppCompatActivity {
         }
         return guessed;
     }
+    
+    public int getGuessedCount(){
+
+        int goessedCount = 0;
+
+        for(HitDto hit :card.getHits()){
+            if(hit.getNumber_1().isGuessed() || hit.getNumber_2().isGuessed() || hit.getNumber_3().isGuessed() || hit.getNumber_4().isGuessed()){
+                goessedCount++;
+            }
+
+        }
+        return goessedCount;
+    }
+    
 }

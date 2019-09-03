@@ -42,6 +42,7 @@ import com.mbronshteyn.pingo20.events.SpinEvent;
 import com.mbronshteyn.pingo20.events.StopPlayer;
 import com.mbronshteyn.pingo20.events.WinAnimation;
 import com.mbronshteyn.pingo20.events.WinFlashEvent;
+import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
 
 import org.greenrobot.eventbus.EventBus;
@@ -469,16 +470,12 @@ public class PingoWindow extends Fragment {
             //stop spin
             new Handler().postDelayed(() -> {
                 if(guessedNumber != null){
+                    Game.guessedCount++;
                     Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                             .skipMemoryCache( true ).into(windowBackground);
                     pingoState = PingoState.WIN;
                     touchBackground.setOnClickListener(null);
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
-                    ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
-                    animation.setDuration(1000);
-                    animation.setInterpolator(new AccelerateDecelerateInterpolator());
-                    new Handler().postDelayed(()->{animation.start();},1000);
-                    new Handler().postDelayed(()->{animation.start();},3000);
                 }
                 else{
                     Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )
@@ -514,6 +511,13 @@ public class PingoWindow extends Fragment {
     public void doWinAnimation(WinAnimation event){
 
         if(event.getPingoNumber() == pingoNumber) {
+
+            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
+            animation.setDuration(1000);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            new Handler().postDelayed(()->{animation.start();},1000);
+            new Handler().postDelayed(()->{animation.start();},3000);
+
             windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation, null));
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
             long totalDuration = 0;
