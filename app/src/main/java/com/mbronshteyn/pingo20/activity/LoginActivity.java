@@ -311,10 +311,10 @@ public class LoginActivity extends PingoActivity {
         Headers headers = response.headers();
         String message = headers.get("message");
         ErrorCode errorCode = !StringUtils.isEmpty(headers.get("errorCode")) ? ErrorCode.valueOf(headers.get("errorCode")) : null;
-        card = response.body();
-        Game.guessedCount = getGuessedCount();
-
+;
         if(errorCode == null) {
+            this.card = response.body();
+            Game.guessedCount = getGuessedCount();
             EventBus.getDefault().post(new CardAuthinticatedEvent(null));
         }else{
             playSound(R.raw.error_short);

@@ -63,7 +63,6 @@ public class FreeGameActivity extends PingoActivity{
         setContentView(R.layout.activity_free_game);
 
         ImageView freeGameBaloon = (ImageView) findViewById(R.id.freegame_baloon);
-        //Glide.with(this).load(R.drawable.freegame_animation).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(freeGameBaloon);
         freeGameBaloon.setImageDrawable(getResources().getDrawable(R.drawable.freegame_animation,null));
         ImageView exl = (ImageView) findViewById(R.id.excl);
 

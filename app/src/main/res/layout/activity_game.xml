@@ -266,18 +266,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.94" />
 
-<!--    <ImageView
-        android:id="@+id/whiteFlash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="58dp"
-        android:background="@drawable/white_flash"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.113" />-->
-
     <ImageView
         android:id="@+id/header"
         android:layout_width="wrap_content"
@@ -321,7 +309,6 @@
         android:id="@+id/overlay_blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/overlay_blue7"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -340,14 +327,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/halway"
+        android:id="@+id/popup_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/half_way"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/overlay_stars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/win_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$500"
+        android:textColor="@android:color/white"
+        android:textSize="200sp"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
