@@ -521,6 +521,43 @@ public class GameActivity extends PingoActivity {
                 rays.startAnimation(raysAnim);
             },delay);
         }
+        else if(isWinningCard()){
+            doWinningFlash();
+        }
+    }
+
+    private void doWinningFlash(){
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+        ImageView pingoWinner = (ImageView) findViewById(R.id.popup_logo);
+        Glide.with(this).load(R.drawable.pingo_winner_logo).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(pingoWinner);
+        pingoWinner.setVisibility(View.VISIBLE);
+
+        ImageView winStarts = (ImageView) findViewById(R.id.overlay_stars);
+        winStarts.setImageDrawable(getResources().getDrawable(R.drawable.win_star_animation, null));
+        AnimationDrawable winAnimation = (AnimationDrawable) winStarts.getDrawable();
+        winAnimation.start();
+
+        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
+        TextView winBalance = (TextView) findViewById(R.id.win_amount);
+        winBalance.setText("$" +(int) card.getBalance()+" ");
+        winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
+        winBalance.setShadowLayer(30, 30, 30, 0xFF303030);
+        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},1000);
+
+        new Handler().postDelayed(()->{
+            overlayBlue.setVisibility(View.INVISIBLE);
+            pingoWinner.setVisibility(View.INVISIBLE);
+            Glide.with(context).clear(pingoWinner);
+            winBalance.setVisibility(View.INVISIBLE);
+            winBalance.clearAnimation();
+            winStarts.setVisibility(View.INVISIBLE);
+        },7000);
+
     }
 
     private void doHalfWayThere() {
@@ -588,7 +625,7 @@ public class GameActivity extends PingoActivity {
             }
             //last guessed number when game is won
             else if(!pingoIterator.hasNext() && isWinningCard()){
-                duration = 1000;
+                duration = 8000;
             }
             //flash ray animation for guessed number
             else {
@@ -652,57 +689,25 @@ public class GameActivity extends PingoActivity {
 
     private void processWin(int pingoNumber) {
 
-        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
-        ImageView pingoWinner = (ImageView) findViewById(R.id.popup_logo);
-        Glide.with(this).load(R.drawable.pingo_winner_logo).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(pingoWinner);
-        pingoWinner.setVisibility(View.VISIBLE);
-
-        ImageView winStarts = (ImageView) findViewById(R.id.overlay_stars);
-        winStarts.setImageDrawable(getResources().getDrawable(R.drawable.win_star_animation, null));
-        AnimationDrawable winAnimation = (AnimationDrawable) winStarts.getDrawable();
-        winAnimation.start();
-
-        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
-        TextView winBalance = (TextView) findViewById(R.id.win_amount);
-        winBalance.setText("$" +(int) card.getBalance()+" ");
-        winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
-        winBalance.setShadowLayer(30, 30, 30, 0xFF303030);
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-        new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},2000);
-
         //first pair
         int window1 = pingoNumber;
-        int window2 = (window1 + 2) < 5 ?  window1 + 2 : window1 + 2 - 4;
+        int window2 = (window1 + 2) < 5 ? window1 + 2 : window1 + 2 - 4;
 
         //second pair
         int window3 = (window1 + 1) <= 4 ? window1 + 1 : 1;
-        int window4 = (window3 + 2) < 5 ?  window3 + 2 : window3 + 2 - 4;
+        int window4 = (window3 + 2) < 5 ? window3 + 2 : window3 + 2 - 4;
 
-        new Handler().postDelayed(()->{
-            overlayBlue.setVisibility(View.INVISIBLE);
-            pingoWinner.setVisibility(View.INVISIBLE);
-            Glide.with(context).clear(pingoWinner);
-            winBalance.setVisibility(View.INVISIBLE);
-            winBalance.clearAnimation();
-            winStarts.setVisibility(View.INVISIBLE);
+        EventBus.getDefault().post(new WinFlashEvent(window1));
+        EventBus.getDefault().post(new WinFlashEvent(window2));
+        EventBus.getDefault().post(new NumberRorateEvent(window3));
+        EventBus.getDefault().post(new NumberRorateEvent(window4));
 
-            EventBus.getDefault().post(new WinFlashEvent(window1));
-            EventBus.getDefault().post(new WinFlashEvent(window2));
-            EventBus.getDefault().post(new NumberRorateEvent(window3));
-            EventBus.getDefault().post(new NumberRorateEvent(window4));
-
-            new Handler().postDelayed(()-> {
-                EventBus.getDefault().post(new WinFlashEvent(window3));
-                EventBus.getDefault().post(new WinFlashEvent(window4));
-                EventBus.getDefault().post(new NumberRorateEvent(window1));
-                EventBus.getDefault().post(new NumberRorateEvent(window2));
-            },2000);
-
-        },7000);
-
+        new Handler().postDelayed(() -> {
+            EventBus.getDefault().post(new WinFlashEvent(window3));
+            EventBus.getDefault().post(new WinFlashEvent(window4));
+            EventBus.getDefault().post(new NumberRorateEvent(window1));
+            EventBus.getDefault().post(new NumberRorateEvent(window2));
+        }, 2000);
     }
 
     private void processFreeGame() {
