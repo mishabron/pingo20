@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowScreen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/winner_mail"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/email_background"
+        android:ems="10"
+        android:focusable="auto"
+        android:hint="enter your email"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textEmailAddress"
+        android:singleLine="true"
+        android:textColor="#F8F5F5"
+        android:textColorHint="@android:color/darker_gray"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.35"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/goButton" />
+
+    <EditText
+        android:id="@+id/email_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/email_background"
+        android:textColorHint="@android:color/darker_gray"
+        android:ems="10"
+        android:focusable="auto"
+        android:hint="verify your email"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textEmailAddress"
+        android:singleLine="true"
+        android:textColor="#F8F5F5"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/goButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.35"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/goButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/btn_auth"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.79" />
+
+
+</android.support.constraint.ConstraintLayout>

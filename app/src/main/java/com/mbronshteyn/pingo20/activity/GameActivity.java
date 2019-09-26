@@ -708,6 +708,13 @@ public class GameActivity extends PingoActivity {
             EventBus.getDefault().post(new NumberRorateEvent(window1));
             EventBus.getDefault().post(new NumberRorateEvent(window2));
         }, 2000);
+
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(getApplicationContext(), WinEmailActivity.class);
+            startActivity(intent);
+            Activity activity = (Activity) context;
+            activity.finish();
+        },10000);
     }
 
     private void processFreeGame() {

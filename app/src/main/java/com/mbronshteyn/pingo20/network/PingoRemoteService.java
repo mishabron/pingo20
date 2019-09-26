@@ -3,6 +3,7 @@ package com.mbronshteyn.pingo20.network;
 import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.CardHitDto;
+import com.mbronshteyn.gameserver.dto.game.WinnerEmailDto;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -22,5 +23,8 @@ public interface PingoRemoteService {
 
     @GET("/pingo/Game/winningPin/{game}/{cardNo}/{deviceId}")
     Call<String> getWinningPin(@Path("game") String game,@Path("cardNo") Long cardNo,@Path("deviceId") String deviceId);
+
+    @POST("/pingo/Game/sendEmail")
+    Call<Void> saveEmail(@Body WinnerEmailDto winnerEmailDto);
 
 }
