@@ -55,7 +55,6 @@ public class LoginActivity extends PingoActivity {
     private EditText cardNumberInput;
     private ImageView authButton18;
     private final String ROTATE_VERTICAL = "rotationY";
-    private PingoProgressBar progressBar;
     private ImageView leftLargeBaloon;
     private Button authButtonGo;
     private AnimatorSet mSetRightOut;
@@ -145,16 +144,6 @@ public class LoginActivity extends PingoActivity {
                 }
             }
         });
-
-        progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
-
-        if(!getIntent().getExtras().getBoolean("playAgain")) {
-            new Handler().postDelayed(() -> {
-                leftLargeBaloon.setVisibility(View.VISIBLE);
-                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-                leftLargeBaloon.startAnimation(zoomIntAnimation);
-            }, 3000);
-        }
     }
 
     @Override
@@ -241,23 +230,6 @@ public class LoginActivity extends PingoActivity {
         });
         mSetRightOut.start();
         mSetLeftIn.start();
-
-        //start progress
-        progressBar.startProgress();
-
-        //pop baloons
-        new Handler().postDelayed(()-> {
-                rightSmallBaloon.setImageResource(R.drawable.standby_blueright);
-                rightSmallBaloon.setVisibility(View.VISIBLE);
-                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-                rightSmallBaloon.startAnimation(zoomIntAnimation);
-
-                if(leftLargeBaloon.getVisibility() == View.VISIBLE) {
-                    Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                    leftLargeBaloon.startAnimation(zoomIntAnimationOut);
-                    leftLargeBaloon.setVisibility(View.INVISIBLE);
-                }
-        }, 1500);
     }
 
     @Subscribe
@@ -286,7 +258,6 @@ public class LoginActivity extends PingoActivity {
                 call.enqueue(new Callback<CardDto>() {
                     @Override
                     public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                        progressBar.stopProgress();
                         Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                         rightSmallBaloon.startAnimation(zoomIntAnimation);
                         processResponse(response);
@@ -296,14 +267,13 @@ public class LoginActivity extends PingoActivity {
                     public void onFailure(Call<CardDto> call, Throwable t) {
                         cardNumberInput.setEnabled(true);
                         playSound(R.raw.error_short);
-                        progressBar.stopProgress();
                         Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                         rightSmallBaloon.startAnimation(zoomIntAnimation);
                         rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
                         popBaloon(rightSmallBaloon,4000);
                     }
                 });
-        }, 6000);
+        }, 0);
     }
 
     private void processResponse(Response<CardDto> response) {
@@ -352,17 +322,11 @@ public class LoginActivity extends PingoActivity {
     @Subscribe
     public void onCardAuthinticatedEvent(CardAuthinticatedEvent event){
 
-        final ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        Animatable bannerAnimation = (Animatable) topBanner.getBackground();
-        bannerAnimation.start();
-
         leftLargeBaloon.setImageResource(R.drawable.hero_small);
         popBaloon(leftLargeBaloon);
-        progressBar.startSaccess();
 
         //go to game screen
         new Handler().postDelayed(()-> {
-            progressBar.stopSuccess();
             Intent intent;
             if (event.getErrorCode() != null && event.getErrorCode().equals(ErrorCode.PLAYED)) {
                 intent = new Intent(getApplicationContext(), NoWinActivity.class);
@@ -421,36 +385,24 @@ public class LoginActivity extends PingoActivity {
         //scale tex field
         EditText cardIdText = (EditText) findViewById(R.id.cardId);
         int cardIdTextHeight = (int) (newBmapHeight * 0.1085F);
-        int cardIdTextWidth = (int) (newBmapHeight * 0.8787F);
+        int cardIdTextWidth = (int) (newBmapHeight * 0.9787F);
         ViewGroup.LayoutParams cardIdTextParams = cardIdText.getLayoutParams();
         cardIdTextParams.height = cardIdTextHeight;
         cardIdTextParams.width = cardIdTextWidth;
 
-        //scale progress bar
-        FrameLayout progressBar = (FrameLayout) findViewById(R.id.fragmentProgressBar);
-        ViewGroup.LayoutParams progressParams = progressBar.getLayoutParams();
-        progressParams.height = (int)(newBmapHeight*0.059F);
-        progressParams.width = (int)(newBmapWidth*0.1397F);
-
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
-        int buttonSize18 = (int) (newBmapHeight * 0.2406F);
+        int buttonSize18 = (int) (newBmapHeight * 0.3286F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonSize18;
         buttonParams18.width = buttonSize18;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2406F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.3286F);
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
         buttonParamsGo.height = buttonSizeGo;
         buttonParamsGo.width = buttonSizeGo;
-
-        //sacele top banner
-        ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
-        bannerParams.width =(int)(newBmapWidth*0.7890F);
-        bannerParams.height =(int)(newBmapHeight*0.06296F);
 
         //sacele hey baloon
         ImageView heyBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);
