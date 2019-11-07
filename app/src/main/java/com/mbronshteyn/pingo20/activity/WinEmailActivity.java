@@ -108,7 +108,7 @@ public class WinEmailActivity extends PingoActivity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.login_background, options);
+        BitmapFactory.decodeResource(getResources(), R.drawable.winner_mail, options);
         float bmapHeight = options.outHeight;
         float bmapWidth  = options.outWidth;
 
