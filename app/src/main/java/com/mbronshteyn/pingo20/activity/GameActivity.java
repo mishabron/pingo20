@@ -476,7 +476,7 @@ public class GameActivity extends PingoActivity {
 
         if(pingoIterator.hasNext() || !isWinningCard()) {
             int delay = 0;
-            if (Game.guessedCount == 2) {
+            if (Game.guessedCount == 2 && Game.attemptCounter >2) {
                 doHalfWayThere();
                 delay = 3000;
             }
@@ -524,6 +524,39 @@ public class GameActivity extends PingoActivity {
         else if(isWinningCard()){
             doWinningFlash();
         }
+    }
+
+    private void attemptTransition(){
+
+        int slideNo = 0;
+
+        switch(Game.attemptCounter){
+            case 3:
+                slideNo = R.drawable.to2;
+                break;
+            case 2:
+                slideNo = R.drawable.to3;
+                break;
+            case 1:
+                slideNo = R.drawable.to4;
+                break;
+            case 0:
+                initState(false);
+                break;
+        }
+
+        if(slideNo != 0) {
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+
+            new Handler().postDelayed(() -> {
+                overlayBlue.setVisibility(View.INVISIBLE);
+                initState(false);
+            }, 5000);
+        }
+
     }
 
     private void doWinningFlash(){
@@ -668,7 +701,7 @@ public class GameActivity extends PingoActivity {
                     balance.setTextColor(Color.BLACK);
                     balance.setText(getCardReward());
                     EventBus.getDefault().post(new InitBackgroundEvent());
-                    initState(false);
+                    attemptTransition();
                     //check end of game
                     if (Game.attemptCounter == 0) {
                         //show winning pin
