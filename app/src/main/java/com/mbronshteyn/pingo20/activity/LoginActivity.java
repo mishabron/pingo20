@@ -60,7 +60,6 @@ public class LoginActivity extends PingoActivity {
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
     private LoginActivity context;
-    private int invalidAttempt = 0;
     private ImageView rightErrorBaloon;
 
     @SuppressLint("ResourceType")
@@ -99,8 +98,6 @@ public class LoginActivity extends PingoActivity {
 
         leftLargeBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);
         leftLargeBaloon.setVisibility(View.INVISIBLE);
-        rightSmallBaloon = (ImageView) findViewById(R.id.rightSmallBaloon);
-        rightSmallBaloon.setVisibility(View.INVISIBLE);
 
         rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
         rightErrorBaloon.setVisibility(View.INVISIBLE);
@@ -257,9 +254,7 @@ public class LoginActivity extends PingoActivity {
                 Call<CardDto> call = service.authinticate(dto);
                 call.enqueue(new Callback<CardDto>() {
                     @Override
-                    public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                        rightSmallBaloon.startAnimation(zoomIntAnimation);
+                    public void onResponse(Call<CardDto> call, Response<CardDto> response) { ;
                         processResponse(response);
                     }
 
@@ -267,10 +262,6 @@ public class LoginActivity extends PingoActivity {
                     public void onFailure(Call<CardDto> call, Throwable t) {
                         cardNumberInput.setEnabled(true);
                         playSound(R.raw.error_short);
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                        rightSmallBaloon.startAnimation(zoomIntAnimation);
-                        rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
-                        popBaloon(rightSmallBaloon,4000);
                     }
                 });
         }, 0);
@@ -291,14 +282,8 @@ public class LoginActivity extends PingoActivity {
             cardNumberInput.setEnabled(true);
             switch(errorCode){
                 case INVALID:
-                    if(invalidAttempt == 0){
-                        rightErrorBaloon.setVisibility(View.VISIBLE);
-                    }else {
-                        leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
-                        popBaloon(leftLargeBaloon, 4000);
-                    }
+                    rightErrorBaloon.setVisibility(View.VISIBLE);
                     cardNumberInput.setText("");
-                    invalidAttempt++;
                     break;
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);
@@ -322,9 +307,6 @@ public class LoginActivity extends PingoActivity {
     @Subscribe
     public void onCardAuthinticatedEvent(CardAuthinticatedEvent event){
 
-        leftLargeBaloon.setImageResource(R.drawable.hero_small);
-        popBaloon(leftLargeBaloon);
-
         //go to game screen
         new Handler().postDelayed(()-> {
             Intent intent;
@@ -341,7 +323,7 @@ public class LoginActivity extends PingoActivity {
             Activity activity = (Activity) context;
             activity.finish();
             Runtime.getRuntime().gc();
-        }, 5000);
+        }, 2000);
     }
 
     public void scaleUi(){

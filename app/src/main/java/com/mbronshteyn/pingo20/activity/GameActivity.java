@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -476,7 +477,7 @@ public class GameActivity extends PingoActivity {
 
         if(pingoIterator.hasNext() || !isWinningCard()) {
             int delay = 0;
-            if (Game.guessedCount == 2 && Game.attemptCounter >2) {
+            if (Game.guessedCount == 2 && Game.attemptCounter > 0) {
                 doHalfWayThere();
                 delay = 3000;
             }
@@ -521,7 +522,7 @@ public class GameActivity extends PingoActivity {
                 rays.startAnimation(raysAnim);
             },delay);
         }
-        else if(isWinningCard()){
+        else if(isWinningCard() && Game.attemptCounter != 0 ){
             doWinningFlash();
         }
     }
@@ -545,7 +546,7 @@ public class GameActivity extends PingoActivity {
                 break;
         }
 
-        if(slideNo != 0) {
+        if(slideNo != 0 && !card.isFreeGame()) {
             ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
             Glide.with(context).clear(overlayBlue);
             Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
@@ -555,6 +556,9 @@ public class GameActivity extends PingoActivity {
                 overlayBlue.setVisibility(View.INVISIBLE);
                 initState(false);
             }, 5000);
+        }
+        else{
+            initState(false);
         }
 
     }
@@ -656,9 +660,13 @@ public class GameActivity extends PingoActivity {
             if(!card.isFreeGame() && Game.guessedCount == 2){
                 duration = 9000;
             }
-            //last guessed number when game is won
-            else if(!pingoIterator.hasNext() && isWinningCard()){
+            //last guessed number when game is won / not frre game
+            else if(!pingoIterator.hasNext() && isWinningCard() && Game.attemptCounter > 0){
                 duration = 8000;
+            }
+            //last guessed number when game is won / frre game
+            else if(!pingoIterator.hasNext() && isWinningCard() && Game.attemptCounter == 0){
+                duration = 500;
             }
             //flash ray animation for guessed number
             else {
@@ -672,12 +680,7 @@ public class GameActivity extends PingoActivity {
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
                 playSound(R.raw.button);
             } else {
-                //check free game
-                if (Game.attemptCounter == 0 && isWinningCard()) {
-                    //process free game
-                    processFreeGame();
-                }
-                else if(isWinningCard()){
+                if(isWinningCard()){
                     processWin(event.getPingoNumber());
                 }
                 else{
@@ -742,20 +745,21 @@ public class GameActivity extends PingoActivity {
             EventBus.getDefault().post(new NumberRorateEvent(window2));
         }, 2000);
 
-        new Handler().postDelayed(()->{
-            Intent intent = new Intent(getApplicationContext(), WinEmailActivity.class);
-            startActivity(intent);
+        AtomicReference<Intent> intent  = new AtomicReference<>(new Intent());
+        new Handler().postDelayed(() -> {
+            if(Game.attemptCounter == 0 && isWinningCard() && !card.isFreeGame()){
+                intent.set(new Intent(getApplicationContext(), FreeGameActivity.class));
+            }
+            else{
+                intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
+            }
+
+            startActivity(intent.get());
             Activity activity = (Activity) context;
             activity.finish();
-        },10000);
+        }, 10000);
     }
 
-    private void processFreeGame() {
-        Intent intent = new Intent(getApplicationContext(), FreeGameActivity.class);
-        Activity activity = (Activity) context;
-        activity.finish();
-        startActivity(intent);
-    }
 
     private void doWinPinCheck() {
 
