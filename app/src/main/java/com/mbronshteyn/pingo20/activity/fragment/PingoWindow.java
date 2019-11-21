@@ -471,15 +471,15 @@ public class PingoWindow extends Fragment {
             spin.setImageDrawable(viw.getDrawable());
 
             //spin cycle
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.spin_animation,null));
+            AnimationDrawable spinAnimation = (AnimationDrawable) windowBackground.getDrawable();
             new Handler().postDelayed(()->{
-                RotateAnimation rotateSpin = new RotateAnimation(20, -360 * 25, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotateSpin.setDuration(7000);
-                rotateSpin.setInterpolator(new AccelerateDecelerateInterpolator());
-                spin.startAnimation(rotateSpin);
+                spinAnimation.start();
             },445);
 
             //stop spin
             new Handler().postDelayed(() -> {
+                spinAnimation.stop();
                 if(guessedNumber != null){
                     Game.guessedCount++;
                     Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
@@ -494,7 +494,7 @@ public class PingoWindow extends Fragment {
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
-            }, 7450);
+            }, 5450);
 
             //restore window state
             new Handler().postDelayed(() -> {
@@ -504,7 +504,7 @@ public class PingoWindow extends Fragment {
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
 
-            }, 7500);
+            }, 5500);
         }
     }
 
