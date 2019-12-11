@@ -184,7 +184,18 @@ public class GameActivity extends PingoActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        new Handler().postDelayed(()->{initState(true);},100);
+
+        //display splash
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.load_screen).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(() -> {
+            overlayBlue.setVisibility(View.INVISIBLE);
+            initState(false);
+        }, 4000);
+
+        new Handler().postDelayed(()->{initState(true);},4100);
     }
 
     private void initState(boolean withWin) {

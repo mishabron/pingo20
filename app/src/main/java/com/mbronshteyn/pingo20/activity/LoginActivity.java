@@ -153,15 +153,6 @@ public class LoginActivity extends PingoActivity {
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-
-
-        ImageView iView = (ImageView) findViewById(R.id.loginBacgroundimageView);
-        Drawable d = iView.getDrawable();
-        if (d != null) {
-            d.setCallback(null);
-        }
-        iView.setImageDrawable(null);
-        iView.setBackground(null);
     }
 
     @Subscribe
@@ -323,7 +314,7 @@ public class LoginActivity extends PingoActivity {
             Activity activity = (Activity) context;
             activity.finish();
             Runtime.getRuntime().gc();
-        }, 2000);
+        }, 500);
     }
 
     public void scaleUi(){
