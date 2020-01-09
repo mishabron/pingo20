@@ -89,8 +89,6 @@ public class GameActivity extends PingoActivity {
     private TextView balance;
     private GameActivity context;
     private boolean spinning;
-    private ImageView header;
-    private ImageView topBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +108,7 @@ public class GameActivity extends PingoActivity {
         context = this;
 
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        Glide.with(this).load(R.drawable.game_background).into(iView);
-        header = (ImageView) findViewById(R.id.header);
-        Glide.with(this).load(R.drawable.header).into(header);
-        topBanner = (ImageView) findViewById(R.id.banner);
-        Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
+        Glide.with(this).load(R.drawable.game_background).into(iView);;
 
         //balance
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
@@ -185,17 +179,20 @@ public class GameActivity extends PingoActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        //display splash
-        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.load_screen).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() -> {
-            overlayBlue.setVisibility(View.INVISIBLE);
-            initState(false);
-        }, 4000);
+        if(Game.attemptCounter ==1 ) {
+            //display splash
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(R.drawable.load_screen).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(() -> {
+                overlayBlue.setVisibility(View.INVISIBLE);
+            }, 4000);
+            new Handler().postDelayed(() -> { initState(true); }, 4100);
+        }else{
+            new Handler().postDelayed(() -> { initState(true); }, 200);
+        }
 
-        new Handler().postDelayed(()->{initState(true);},4100);
     }
 
     private void initState(boolean withWin) {
@@ -309,9 +306,6 @@ public class GameActivity extends PingoActivity {
                 balance.setTextColor(Color.WHITE);
                 balance.setText((String)balance.getTag());
             },5000);
-
-        Glide.with(this).load(R.drawable.header_white).into(header);
-        Glide.with(this).load(R.drawable.slogan3d).into(topBanner);
 
         progressBar.startProgress();
 
@@ -704,8 +698,6 @@ public class GameActivity extends PingoActivity {
                     glow3.setVisibility(View.INVISIBLE);
                     ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
                     glow4.setVisibility(View.INVISIBLE);
-                    Glide.with(this).load(R.drawable.header).into(header);
-                    Glide.with(this).load(R.drawable.banner_animation).into(topBanner);
 
                     //remove sheilds
                     ImageView shield = (ImageView) findViewById(R.id.shield_full);
@@ -950,12 +942,6 @@ public class GameActivity extends PingoActivity {
         progressParams.height = (int)(newBmapHeight*0.059F);
         progressParams.width = (int)(newBmapWidth*0.1397F);
 
-        //scale top banner
-        ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
-        bannerParams.width =(int)(newBmapWidth*0.7890F);
-        bannerParams.height =(int)(newBmapHeight*0.06296F);
-
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
         int buttonSize18 = (int) (newBmapHeight * 0.2406F);
@@ -991,12 +977,6 @@ public class GameActivity extends PingoActivity {
         pingoParams = pingo4.getLayoutParams();
         pingoParams.height = (int)(newBmapHeight*pingoSize);
         pingoParams.width = (int)(newBmapHeight*pingoSize);
-
-        //scale header
-        ImageView header = (ImageView) findViewById(R.id.header);
-        ViewGroup.LayoutParams headerParams = header.getLayoutParams();
-        headerParams.width =(int)(newBmapWidth*0.4985F);
-        headerParams.height =(int)(newBmapHeight*0.3271F);
 
         //scale shild
         ImageView shield = (ImageView) findViewById(R.id.shield_full);
@@ -1071,5 +1051,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams starsWinParams = starsWin.getLayoutParams();
         starsWinParams.width = newBmapWidth;
         starsWinParams.height = newBmapHeight;
+
+        //scale blue overlay
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        ViewGroup.LayoutParams overlayBlueParams = overlayBlue.getLayoutParams();
+        overlayBlueParams.width = newBmapWidth;
+        overlayBlueParams.height = newBmapHeight;
+
     }
 }
