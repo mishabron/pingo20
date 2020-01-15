@@ -113,7 +113,7 @@ public class LoginActivity extends PingoActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                rightErrorBaloon.setVisibility(View.INVISIBLE);
             }
 
             @Override

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -11,14 +12,19 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.transition.ChangeBounds;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -89,11 +95,14 @@ public class GameActivity extends PingoActivity {
     private TextView balance;
     private GameActivity context;
     private boolean spinning;
+    private ConstraintLayout root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        setContentView(R.layout.activity_game_start);
+
+        root = findViewById(R.id.coordinatorLayoutGame);
 
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);
 
@@ -107,8 +116,8 @@ public class GameActivity extends PingoActivity {
 
         context = this;
 
-        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        Glide.with(this).load(R.drawable.game_background).into(iView);;
+        //ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        //Glide.with(this).load(R.drawable.game_background).into(iView);;
 
         //balance
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
@@ -179,7 +188,7 @@ public class GameActivity extends PingoActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        if(Game.attemptCounter ==1 ) {
+        if(Game.attemptCounter == 4 ) {
             //display splash
             ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
             Glide.with(context).clear(overlayBlue);
@@ -188,11 +197,51 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(() -> {
                 overlayBlue.setVisibility(View.INVISIBLE);
             }, 4000);
-            new Handler().postDelayed(() -> { initState(true); }, 4100);
+            new Handler().postDelayed(() -> { transitionLayout(); }, 4100);
         }else{
-            new Handler().postDelayed(() -> { initState(true); }, 200);
+            new Handler().postDelayed(() -> { transitionLayout(); }, 1500);
         }
 
+    }
+
+    private void transitionLayout(){
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(this, R.layout.activity_game);
+
+        ChangeBounds transition = new ChangeBounds();
+        transition.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
+        transition.setDuration(2000);
+        transition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(@NonNull Transition transition) {
+                scaleUi();
+                new Handler().postDelayed(() -> {initState(true); }, 1500);
+            }
+
+            @Override
+            public void onTransitionCancel(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(@NonNull Transition transition) {
+
+            }
+        });
+
+        TransitionManager.beginDelayedTransition(root, transition);
+        constraintSet.applyTo(root);
     }
 
     private void initState(boolean withWin) {
@@ -932,8 +981,8 @@ public class GameActivity extends PingoActivity {
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
         set.constrainWidth(iView.getId(), newBmapWidth);
-        set.centerVertically(R.id.gameBacgroundimageView, 0);
-        set.centerHorizontally(R.id.gameBacgroundimageView, 0);
+        //set.centerVertically(R.id.gameBacgroundimageView, 0);
+        //set.centerHorizontally(R.id.gameBacgroundimageView, 0);
         set.applyTo(layout);
 
         //scale progress bar
