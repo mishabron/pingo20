@@ -199,7 +199,7 @@ public class GameActivity extends PingoActivity {
             }, 4000);
             new Handler().postDelayed(() -> { transitionLayout(); }, 4100);
         }else{
-            new Handler().postDelayed(() -> { transitionLayout(); }, 1500);
+            new Handler().postDelayed(() -> { transitionLayout(); }, 500);
         }
 
     }
@@ -210,8 +210,8 @@ public class GameActivity extends PingoActivity {
         constraintSet.clone(this, R.layout.activity_game);
 
         ChangeBounds transition = new ChangeBounds();
-        transition.setInterpolator(new AnticipateOvershootInterpolator(1.0f));
-        transition.setDuration(2000);
+        transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+        transition.setDuration(1000);
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
@@ -984,6 +984,12 @@ public class GameActivity extends PingoActivity {
         //set.centerVertically(R.id.gameBacgroundimageView, 0);
         //set.centerHorizontally(R.id.gameBacgroundimageView, 0);
         set.applyTo(layout);
+
+        //scale game background
+        ImageView mainBackground = (ImageView) findViewById(R.id.mainGameBacgroundimageView);
+        ViewGroup.LayoutParams mainBackgroundParams = mainBackground.getLayoutParams();
+        mainBackgroundParams.width = newBmapWidth;
+        mainBackgroundParams.height = newBmapHeight;
 
         //scale progress bar
         FrameLayout progressBar = (FrameLayout) findViewById(R.id.gameFragmentProgressBar);

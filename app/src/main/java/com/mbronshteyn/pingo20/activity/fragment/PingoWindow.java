@@ -306,6 +306,7 @@ public class PingoWindow extends Fragment {
                     disableWindow();
                     fishka.setImageResource(greenFishkas[currentPingo]);
                     fishka.setVisibility(View.VISIBLE);
+                    rockFishka(fishka);
                 }
                 else{
                     if (hasFinger){
@@ -317,6 +318,7 @@ public class PingoWindow extends Fragment {
             else {
                 fishka.setImageResource(greenFishkas[currentPingo]);
                 fishka.setVisibility(View.VISIBLE);
+                rockFishka(fishka);
                 if(!pingoState.equals(PingoState.GAMEOVER)) {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
                 }
@@ -324,6 +326,13 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
+
+    private void rockFishka(ImageView fishka) {
+        AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+        rockplay.setTarget(fishka);
+        rockplay.setStartDelay(100);
+        rockplay.start();
+    }
 
     public void disableWindow() {
         touchBackground.setOnClickListener(null);
