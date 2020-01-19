@@ -179,6 +179,7 @@ public class PingoWindow extends Fragment {
         wheel.setCyclic(true);
         wheel.setEnabled(false);
         wheel.setDrawShadows(false);
+        wheel.setVisibility(View.INVISIBLE);
     }
 
     private List<ImageView> loadPingoNumbers() {
@@ -257,6 +258,7 @@ public class PingoWindow extends Fragment {
         touchBackground.setEnabled(true);
         starting = true;
         numbers = loadPingoNumbers();
+        wheel.setVisibility(View.VISIBLE);
 
         hasFinger = pingoBundle.getBoolean("hasFinger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
@@ -277,7 +279,6 @@ public class PingoWindow extends Fragment {
             Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                     .skipMemoryCache( true ).into(windowBackground);
         }
-
         wheel.setInterpolator(new AccelerateDecelerateInterpolator());
         wheel.scroll(-(numbers.size()*2+1), 3000+spinDelay);
     }
@@ -328,7 +329,7 @@ public class PingoWindow extends Fragment {
     };
 
     private void rockFishka(ImageView fishka) {
-        AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
+        AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_rockplay);
         rockplay.setTarget(fishka);
         rockplay.setStartDelay(100);
         rockplay.start();
