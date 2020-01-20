@@ -255,7 +255,7 @@ public class LoginActivity extends PingoActivity {
                         playSound(R.raw.error_short);
                     }
                 });
-        }, 0);
+        }, 1000);
     }
 
     private void processResponse(Response<CardDto> response) {
@@ -274,7 +274,6 @@ public class LoginActivity extends PingoActivity {
             switch(errorCode){
                 case INVALID:
                     rightErrorBaloon.setVisibility(View.VISIBLE);
-                    cardNumberInput.setText("");
                     break;
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);
@@ -365,14 +364,14 @@ public class LoginActivity extends PingoActivity {
 
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
-        int buttonSize18 = (int) (newBmapHeight * 0.3286F);
+        int buttonSize18 = (int) (newBmapHeight * 0.3386F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonSize18;
         buttonParams18.width = buttonSize18;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
-        int buttonSizeGo = (int) (newBmapHeight * 0.3286F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.3386F);
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
         buttonParamsGo.height = buttonSizeGo;
         buttonParamsGo.width = buttonSizeGo;
