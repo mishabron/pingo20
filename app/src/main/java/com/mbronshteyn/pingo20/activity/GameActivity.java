@@ -221,7 +221,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
                 scaleUi();
-                new Handler().postDelayed(() -> {initState(true); }, 1500);
+                new Handler().postDelayed(() -> {initState(true); }, 500);
             }
 
             @Override

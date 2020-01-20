@@ -258,7 +258,6 @@ public class PingoWindow extends Fragment {
         touchBackground.setEnabled(true);
         starting = true;
         numbers = loadPingoNumbers();
-        wheel.setVisibility(View.VISIBLE);
 
         hasFinger = pingoBundle.getBoolean("hasFinger");
         pingoState = (PingoState)pingoBundle.getSerializable("pingoState");
@@ -287,6 +286,7 @@ public class PingoWindow extends Fragment {
     OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
         @Override
         public void onScrollingStarted(WheelView wheel) {
+            new Handler().postDelayed(()->{wheel.setVisibility(View.VISIBLE);},350);
             if(starting) {
                 new Handler().postDelayed(() -> {
                     EventBus.getDefault().post(new ScrollStart(pingoNumber));
