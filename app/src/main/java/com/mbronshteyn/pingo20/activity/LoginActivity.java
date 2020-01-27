@@ -162,6 +162,8 @@ public class LoginActivity extends PingoActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
+        new Handler().postDelayed(()->{playSound(R.raw.short_button_turn);},200);
+
         mSetRightOut.setTarget(authButton18);
         mSetLeftIn.setTarget(authButtonGo);
         mSetLeftIn.addListener(new Animator.AnimatorListener() {
@@ -309,11 +311,10 @@ public class LoginActivity extends PingoActivity {
             }
 
             startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             Activity activity = (Activity) context;
             activity.finish();
             Runtime.getRuntime().gc();
-        }, 500);
+        }, 1500);
     }
 
     public void scaleUi(){

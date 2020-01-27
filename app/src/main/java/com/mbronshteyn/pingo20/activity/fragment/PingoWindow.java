@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.BlinkEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
@@ -310,8 +311,8 @@ public class PingoWindow extends Fragment {
                     rockFishka(fishka);
                 }
                 else{
-                    if (hasFinger){
-                        fingerTimer.start();
+                    if (pingoNumber == 4){
+                        EventBus.getDefault().post(new BlinkEvent(1));
                     }
                 }
                 starting = false;
@@ -428,6 +429,26 @@ public class PingoWindow extends Fragment {
 
     public Integer getCurrentPingo() {
         return currentPingo;
+    }
+
+    @Subscribe
+    public void onBlinkEvent(BlinkEvent event){
+        if(event.getPingoNumber() != pingoNumber){
+            Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    .skipMemoryCache( true ).into(windowBackground);
+            if(event.getPingoNumber() > 4){
+                if (hasFinger){
+                    fingerTimer.start();
+                }
+            }
+        }
+        else{
+            Glide.with(this).load(R.drawable.blue_window_blink).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    .skipMemoryCache( true ).into(windowBackground);
+            new Handler().postDelayed(()->{
+                EventBus.getDefault().post(new BlinkEvent(pingoNumber+1));
+            },100);
+        }
     }
 
     @Subscribe

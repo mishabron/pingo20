@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -221,7 +220,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
                 scaleUi();
-                new Handler().postDelayed(() -> {initState(true); }, 500);
+                new Handler().postDelayed(() -> {initState(true); }, 100);
             }
 
             @Override
