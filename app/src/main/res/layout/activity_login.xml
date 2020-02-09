@@ -111,5 +111,18 @@
         app:layout_constraintVertical_bias="0.20"
         android:background="@drawable/error3dbl"/>
 
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WARNING: ALL RIGHTS RESERVED.  INT-L PATENTS PENDING. NO &quot;ME TOO&quot; COPYCATTING.                                                                                  MADE IN USA"
+        android:textColor="@android:color/white"
+        android:textSize="6sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.991"/>
+
 
 </android.support.constraint.ConstraintLayout>

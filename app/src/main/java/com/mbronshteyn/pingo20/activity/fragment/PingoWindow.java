@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -308,7 +309,6 @@ public class PingoWindow extends Fragment {
                     disableWindow();
                     fishka.setImageResource(greenFishkas[currentPingo]);
                     fishka.setVisibility(View.VISIBLE);
-                    rockFishka(fishka);
                 }
                 else{
                     if (pingoNumber == 4){
@@ -319,7 +319,6 @@ public class PingoWindow extends Fragment {
             }
             else {
                 fishka.setImageResource(greenFishkas[currentPingo]);
-                fishka.setVisibility(View.VISIBLE);
                 rockFishka(fishka);
                 if(!pingoState.equals(PingoState.GAMEOVER)) {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
@@ -331,8 +330,8 @@ public class PingoWindow extends Fragment {
 
     private void rockFishka(ImageView fishka) {
         AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_rockplay);
+        fishka.setVisibility(View.VISIBLE);
         rockplay.setTarget(fishka);
-        rockplay.setStartDelay(100);
         rockplay.start();
     }
 

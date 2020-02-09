@@ -344,14 +344,14 @@ public class GameActivity extends PingoActivity {
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         nonTouchShield.setVisibility(View.VISIBLE);
 
-        balance.setTextColor(Color.WHITE);
+        balance.setTextColor(Color.BLACK);
         balance.setTag(balance.getText());
         new Handler().postDelayed(()->{
                 balance.setTextColor(Color.parseColor("#00FF00"));
                 balance.setText("GOOD LUCK! ");
             },1500);
         new Handler().postDelayed(()->{
-                balance.setTextColor(Color.WHITE);
+                balance.setTextColor(Color.BLACK);
                 balance.setText((String)balance.getTag());
             },5000);
 
@@ -752,7 +752,7 @@ public class GameActivity extends PingoActivity {
                     shield.setVisibility(View.INVISIBLE);
                     ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
                     nonTouchShield.setVisibility(View.INVISIBLE);
-                    balance.setTextColor(Color.BLACK);
+                    balance.setTextColor(Color.WHITE);
                     balance.setText(getCardReward());
                     EventBus.getDefault().post(new InitBackgroundEvent());
                     attemptTransition();
