@@ -45,6 +45,7 @@ import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberRorateEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
+import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
@@ -522,7 +523,10 @@ public class GameActivity extends PingoActivity {
     public void noWinNumber(NoGuessedNumberEvent event){
         playSound(R.raw.wrong_number);
         progressBar.startFailure();
-        new Handler().postDelayed(()->{progressBar.stopFailure();},3000);
+        new Handler().postDelayed(()->{
+                progressBar.stopFailure();
+                EventBus.getDefault().post(new NumberStopSpinEvent());
+            },3000);
     }
 
     @Subscribe

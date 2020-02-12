@@ -36,6 +36,7 @@ import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberRorateEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
+import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
@@ -81,6 +82,7 @@ public class PingoWindow extends Fragment {
     private Integer guessedNumber;
     private int[] redFishkas = new int[10];;
     private View mainView;
+    private float zOrder;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -92,6 +94,7 @@ public class PingoWindow extends Fragment {
         // Inflate the layout for this fragment
         mainView = inflater.inflate(R.layout.fragment_pingo_window, container, false);
         windowBackground = (ImageView) mainView.findViewById(R.id.window_background);
+        zOrder = mainView.getZ();
 
         fishka = (ImageView) mainView.findViewById(R.id.fishka);
 
@@ -500,8 +503,7 @@ public class PingoWindow extends Fragment {
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
             pingoParams.height = (int)(pingoParams.height * 1.06);
             pingoParams.width = (int)(pingoParams.width * 1.06);
-            float order = mainView.getZ();
-            mainView.setZ(order +1);
+            mainView.setZ(zOrder +1);
 
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
@@ -545,7 +547,6 @@ public class PingoWindow extends Fragment {
             new Handler().postDelayed(() -> {
                 pingoParams.height = (int)(pingoParams.height / 1.06);
                 pingoParams.width = (int)(pingoParams.width / 1.06);
-                mainView.setZ(order);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
@@ -554,6 +555,11 @@ public class PingoWindow extends Fragment {
 
             }, 5500);
         }
+    }
+
+    @Subscribe
+    public void onStopSpin(NumberStopSpinEvent event){
+        mainView.setZ(zOrder);
     }
 
     public boolean isGuessedNumber() {
@@ -571,9 +577,6 @@ public class PingoWindow extends Fragment {
 
         if(event.getPingoNumber() == pingoNumber) {
 
-            float order = mainView.getZ();
-            mainView.setZ(order +1);
-
             ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
             animation.setDuration(1000);
             animation.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -589,7 +592,9 @@ public class PingoWindow extends Fragment {
 
             //first tap
             winAnimation.start();
-            new Handler().postDelayed(()->{mainView.setZ(order);},totalDuration);
+
+            new Handler().postDelayed(()->{EventBus.getDefault().post(new NumberStopSpinEvent());},totalDuration);
+
         }
     }
 
