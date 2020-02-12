@@ -730,6 +730,7 @@ public class GameActivity extends PingoActivity {
         new Handler().postDelayed(()-> {
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
+                progressBar.startProgress();
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
                 playSound(R.raw.button);
             } else {

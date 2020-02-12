@@ -72,17 +72,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/shield_full"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shield_full"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
             android:id="@+id/pingo1_rays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -170,6 +159,17 @@
             app:layout_constraintLeft_toRightOf="@+id/pingo3"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.52" />
+
+        <ImageView
+            android:id="@+id/shield_full"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shield_full"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <fragment
             android:id="@+id/gameFragmentProgressBar"

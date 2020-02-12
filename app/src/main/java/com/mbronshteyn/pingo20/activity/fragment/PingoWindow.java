@@ -22,9 +22,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -83,6 +80,7 @@ public class PingoWindow extends Fragment {
     private PingoState pingoState;
     private Integer guessedNumber;
     private int[] redFishkas = new int[10];;
+    private View mainView;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -92,14 +90,14 @@ public class PingoWindow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_pingo_window, container, false);
-        windowBackground = (ImageView) view.findViewById(R.id.window_background);
+        mainView = inflater.inflate(R.layout.fragment_pingo_window, container, false);
+        windowBackground = (ImageView) mainView.findViewById(R.id.window_background);
 
-        fishka = (ImageView) view.findViewById(R.id.fishka);
+        fishka = (ImageView) mainView.findViewById(R.id.fishka);
 
         fingerTimer = new FingerTimer(2000,100);
 
-        touchBackground = (ImageView) view.findViewById(R.id.touchBackground);
+        touchBackground = (ImageView) mainView.findViewById(R.id.touchBackground);
         touchBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,11 +132,11 @@ public class PingoWindow extends Fragment {
         redFishkas[8] = R.drawable.red8;
         redFishkas[9] = R.drawable.red9;
 
-        scaleUi(view);
+        scaleUi(mainView);
         Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                 .skipMemoryCache( true ).into(windowBackground);
 
-        return view;
+        return mainView;
     }
 
     @Override
@@ -299,8 +297,9 @@ public class PingoWindow extends Fragment {
         public void onScrollingFinished(WheelView wheel) {
             int currentNumber = wheel.getCurrentItem();
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
+            // init scroll
             if (starting){
-
+                //winning window
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;
                     wheel.setCurrentItem(getNumberIndex(currentPingo),true);
@@ -311,12 +310,17 @@ public class PingoWindow extends Fragment {
                     fishka.setVisibility(View.VISIBLE);
                 }
                 else{
-                    if (pingoNumber == 4){
+                    //if first try and last window then initiate blink sequence
+                    if (pingoNumber == 4 && Game.attemptCounter ==4){
                         EventBus.getDefault().post(new BlinkEvent(1));
+                    }
+                    else if (hasFinger){
+                        fingerTimer.start();
                     }
                 }
                 starting = false;
             }
+            //touch scroll
             else {
                 fishka.setImageResource(greenFishkas[currentPingo]);
                 rockFishka(fishka);
@@ -435,6 +439,7 @@ public class PingoWindow extends Fragment {
         if(event.getPingoNumber() != pingoNumber){
             Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                     .skipMemoryCache( true ).into(windowBackground);
+            //if all windows blinked
             if(event.getPingoNumber() > 4){
                 if (hasFinger){
                     fingerTimer.start();
@@ -492,6 +497,12 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
+            ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
+            pingoParams.height = (int)(pingoParams.height * 1.06);
+            pingoParams.width = (int)(pingoParams.width * 1.06);
+            float order = mainView.getZ();
+            mainView.setZ(order +1);
+
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
             EventBus.getDefault().post(new SpinEvent(pingoNumber));
@@ -532,6 +543,9 @@ public class PingoWindow extends Fragment {
 
             //restore window state
             new Handler().postDelayed(() -> {
+                pingoParams.height = (int)(pingoParams.height / 1.06);
+                pingoParams.width = (int)(pingoParams.width / 1.06);
+                mainView.setZ(order);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
@@ -557,6 +571,9 @@ public class PingoWindow extends Fragment {
 
         if(event.getPingoNumber() == pingoNumber) {
 
+            float order = mainView.getZ();
+            mainView.setZ(order +1);
+
             ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
             animation.setDuration(1000);
             animation.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -572,6 +589,7 @@ public class PingoWindow extends Fragment {
 
             //first tap
             winAnimation.start();
+            new Handler().postDelayed(()->{mainView.setZ(order);},totalDuration);
         }
     }
 
