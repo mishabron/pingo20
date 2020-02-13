@@ -559,7 +559,10 @@ public class PingoWindow extends Fragment {
 
     @Subscribe
     public void onStopSpin(NumberStopSpinEvent event){
-        mainView.setZ(zOrder);
+
+        if(event.getPingoNumber() == pingoNumber){
+            mainView.setZ(zOrder);
+        }
     }
 
     public boolean isGuessedNumber() {
@@ -593,7 +596,7 @@ public class PingoWindow extends Fragment {
             //first tap
             winAnimation.start();
 
-            new Handler().postDelayed(()->{EventBus.getDefault().post(new NumberStopSpinEvent());},totalDuration);
+            new Handler().postDelayed(()->{EventBus.getDefault().post(new NumberStopSpinEvent(pingoNumber));},totalDuration);
 
         }
     }

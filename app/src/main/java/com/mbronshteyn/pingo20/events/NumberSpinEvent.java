@@ -8,13 +8,11 @@ public class NumberSpinEvent {
 
     int pingoNumber;
     Integer numberGuesed;
-    ConstraintLayout pingo;
     PingoState pingoState;
 
-    public NumberSpinEvent(int pingoNumber, Integer numberGuesed, ConstraintLayout pingo) {
+    public NumberSpinEvent(int pingoNumber, Integer numberGuesed) {
         this.pingoNumber = pingoNumber;
         this.numberGuesed = numberGuesed;
-        this.pingo = pingo;
     }
 
     public int getPingoNumber() {
@@ -23,14 +21,6 @@ public class NumberSpinEvent {
 
     public void setPingoNumber(int pingoNumber) {
         this.pingoNumber = pingoNumber;
-    }
-
-    public ConstraintLayout getPingo() {
-        return pingo;
-    }
-
-    public void setPingo(ConstraintLayout pingo) {
-        this.pingo = pingo;
     }
 
     public PingoState getPingoState() {

@@ -348,11 +348,11 @@ public class GameActivity extends PingoActivity {
         balance.setTextColor(Color.BLACK);
         balance.setTag(balance.getText());
         new Handler().postDelayed(()->{
-                balance.setTextColor(Color.parseColor("#00FF00"));
+                balance.setTextColor(Color.WHITE);
                 balance.setText("GOOD LUCK! ");
             },1500);
         new Handler().postDelayed(()->{
-                balance.setTextColor(Color.BLACK);
+                balance.setTextColor(Color.WHITE);
                 balance.setText((String)balance.getTag());
             },5000);
 
@@ -405,7 +405,7 @@ public class GameActivity extends PingoActivity {
             card = response.body();
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
-            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+            EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
             Game.attemptCounter--;
             flippToCounter(Game.attemptCounter);
         }else{
@@ -525,7 +525,7 @@ public class GameActivity extends PingoActivity {
         progressBar.startFailure();
         new Handler().postDelayed(()->{
                 progressBar.stopFailure();
-                EventBus.getDefault().post(new NumberStopSpinEvent());
+                EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
             },3000);
     }
 
@@ -735,7 +735,7 @@ public class GameActivity extends PingoActivity {
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
                 progressBar.startProgress();
-                EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow), getPingoWindow(activeWindow)));
+                EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
                 playSound(R.raw.button);
             } else {
                 if(isWinningCard()){
@@ -910,28 +910,6 @@ public class GameActivity extends PingoActivity {
                 numbersIter.remove();              // it will remove element from collection
             }
         }
-    }
-
-    private ConstraintLayout getPingoWindow(int pingoNumber){
-
-        ConstraintLayout pingoWindow = null;
-
-        switch(pingoNumber){
-            case 1:
-                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo1);
-                break;
-            case 2:
-                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo2);
-                break;
-            case 3:
-                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo3);
-                break;
-            case 4:
-                pingoWindow = (ConstraintLayout) findViewById(R.id.pingo4);
-                break;
-        }
-
-        return pingoWindow;
     }
 
     private String getCardReward(){

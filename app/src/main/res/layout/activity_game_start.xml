@@ -115,7 +115,7 @@
             app:pingoNumber="1"
             app:hasFinger="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintRight_toLeftOf="@+id/pingo2"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toTopOf="parent"
