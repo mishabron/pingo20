@@ -545,8 +545,6 @@ public class PingoWindow extends Fragment {
 
             //restore window state
             new Handler().postDelayed(() -> {
-                pingoParams.height = (int)(pingoParams.height / 1.06);
-                pingoParams.width = (int)(pingoParams.width / 1.06);
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
@@ -562,6 +560,9 @@ public class PingoWindow extends Fragment {
 
         if(event.getPingoNumber() == pingoNumber){
             mainView.setZ(zOrder);
+            ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
+            pingoParams.height = (int)(pingoParams.height / 1.06);
+            pingoParams.width = (int)(pingoParams.width / 1.06);
         }
     }
 
