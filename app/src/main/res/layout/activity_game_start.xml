@@ -71,42 +71,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/pingo1_rays"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/pingo1"
-            app:layout_constraintTop_toTopOf="@id/pingo1"
-            app:srcCompat="@drawable/gree_rays"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo2_rays"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/pingo2"
-            app:layout_constraintTop_toTopOf="@id/pingo2"
-            app:srcCompat="@drawable/gree_rays"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo3_rays"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/pingo3"
-            app:layout_constraintTop_toTopOf="@id/pingo3"
-            app:srcCompat="@drawable/gree_rays"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo4_rays"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/pingo4"
-            app:layout_constraintTop_toTopOf="@id/pingo4"
-            app:srcCompat="@drawable/gree_rays"
-            android:visibility="invisible" />
-
         <fragment
             android:id="@+id/pingo1"
             android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
@@ -115,11 +79,11 @@
             app:pingoNumber="1"
             app:hasFinger="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintRight_toLeftOf="@+id/pingo2"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52" />
+            app:layout_constraintHorizontal_bias="0.15"/>
 
         <fragment
             android:id="@+id/pingo2"
@@ -129,10 +93,11 @@
             app:pingoNumber="2"
             app:hasFinger="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/pingo1"
-            app:layout_constraintRight_toLeftOf="@+id/pingo3"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52" />
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.384" />
 
         <fragment
             android:id="@+id/pingo3"
@@ -142,10 +107,11 @@
             app:pingoNumber="3"
             app:hasFinger="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/pingo2"
-            app:layout_constraintRight_toLeftOf="@+id/pingo4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52" />
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.617" />
 
         <fragment
             android:id="@+id/pingo4"
@@ -155,10 +121,11 @@
             app:pingoNumber="4"
             app:hasFinger="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
-            app:layout_constraintLeft_toRightOf="@+id/pingo3"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52" />
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.85" />
 
         <ImageView
             android:id="@+id/shield_full"
@@ -235,119 +202,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.835" />
 
-        <ImageView
-            android:id="@+id/pingo1_glow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="@id/pingo1"
-            app:layout_constraintTop_toBottomOf="@id/pingo1"
-            app:srcCompat="@drawable/blueglow"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo2_glow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="@id/pingo2"
-            app:layout_constraintTop_toBottomOf="@id/pingo2"
-            app:srcCompat="@drawable/blueglow"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo3_glow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="@id/pingo3"
-            app:layout_constraintTop_toBottomOf="@id/pingo3"
-            app:srcCompat="@drawable/blueglow"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/pingo4_glow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="@id/pingo4"
-            app:layout_constraintTop_toBottomOf="@id/pingo4"
-            app:srcCompat="@drawable/blueglow"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/free_game"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/free_game_app"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.50"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.94" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/left_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintGuide_percent="0.12"/>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/right_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintGuide_percent="0.878"/>
-
-        <ImageView
-            android:id="@+id/spiral"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/spiral_blue2"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/popup_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/overlay_stars"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/win_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$500"
-            android:textColor="@android:color/white"
-            android:textSize="200sp"
-            android:gravity="center"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
@@ -359,6 +213,63 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/free_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/free_game_app"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.94" />
+
+    <ImageView
+        android:id="@+id/spiral"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spiral_blue2"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/popup_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/overlay_stars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/win_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$500"
+        android:textColor="@android:color/white"
+        android:textSize="200sp"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/footer"

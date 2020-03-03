@@ -104,6 +104,8 @@ public class GameActivity extends PingoActivity {
 
         root = findViewById(R.id.coordinatorLayoutGame);
 
+        scaleUi();
+
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);
 
         if(card.isFreeGame()){
@@ -180,8 +182,6 @@ public class GameActivity extends PingoActivity {
                 //do nothing
             }
         });
-
-        scaleUi();
     }
 
     @Override
@@ -220,7 +220,6 @@ public class GameActivity extends PingoActivity {
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                scaleUi();
                 new Handler().postDelayed(() -> {initState(true); }, 100);
             }
 
@@ -318,27 +317,6 @@ public class GameActivity extends PingoActivity {
                 pingo2.getCurrentPingo().toString()+
                 pingo3.getCurrentPingo().toString()+
                 pingo4.getCurrentPingo().toString());
-
-        ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
-        if(!pingo1.isGuessedNumber()) {
-            Glide.with(this).load(R.drawable.blueglow).into(glow1);
-        }
-        glow1.setVisibility(View.VISIBLE);
-        ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
-        if(!pingo2.isGuessedNumber()) {
-            Glide.with(this).load(R.drawable.blueglow).into(glow2);
-        }
-        glow2.setVisibility(View.VISIBLE);
-        ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
-        if(!pingo3.isGuessedNumber()) {
-            Glide.with(this).load(R.drawable.blueglow).into(glow3);
-        }
-        glow3.setVisibility(View.VISIBLE);
-        ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
-        if(!pingo4.isGuessedNumber()) {
-            Glide.with(this).load(R.drawable.blueglow).into(glow4);
-        }
-        glow4.setVisibility(View.VISIBLE);
 
         ImageView shield = (ImageView) findViewById(R.id.shield_full);
         shield.setVisibility(View.VISIBLE);
@@ -542,41 +520,6 @@ public class GameActivity extends PingoActivity {
                 playSound(R.raw.right_number);
                 //start blinking winning backgound
                 EventBus.getDefault().post(new WinAnimation(event.getPingoNumber()));
-
-                //set winning windows rays
-                ImageView rays = null;
-                switch (event.getPingoNumber()) {
-                    case 1:
-                        rays = (ImageView) findViewById(R.id.pingo1_rays);
-                        break;
-                    case 2:
-                        rays = (ImageView) findViewById(R.id.pingo2_rays);
-                        break;
-                    case 3:
-                        rays = (ImageView) findViewById(R.id.pingo3_rays);
-                        break;
-                    case 4:
-                        rays = (ImageView) findViewById(R.id.pingo4_rays);
-                        break;
-                }
-                rays.setVisibility(View.VISIBLE);
-                Animation raysAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rays_animation);
-                raysAnim.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        progressBar.startSaccess();
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        progressBar.stopSuccess();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                rays.startAnimation(raysAnim);
             },delay);
         }
         else if(isWinningCard() && Game.attemptCounter != 0 ){
@@ -686,33 +629,15 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void spinEnd(NumberSpinEndEvent event){
 
-        ImageView glow = null;
-        switch(event.getPingoNumber()){
-            case 1:
-                glow = (ImageView) findViewById(R.id.pingo1_glow);
-                break;
-            case 2:
-                glow = (ImageView) findViewById(R.id.pingo2_glow);
-                break;
-            case 3:
-                glow = (ImageView) findViewById(R.id.pingo3_glow);
-                break;
-            case 4:
-                glow = (ImageView) findViewById(R.id.pingo4_glow);
-                break;
-        }
-
         int duration = 0;
         progressBar.stopProgress();
 
         //wrong nummber
         if(!event.isGuessed()){
             duration = 3000;
-            Glide.with(this).load(R.drawable.orangeglow).into(glow);
         }
         //right number
         else {
-            Glide.with(this).load(R.drawable.greenglow).into(glow);
             //half there popup for non free game
             if(!card.isFreeGame() && Game.guessedCount == 2){
                 duration = 9000;
@@ -742,16 +667,6 @@ public class GameActivity extends PingoActivity {
                     processWin(event.getPingoNumber());
                 }
                 else{
-                    //turn off glows
-                    ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
-                    glow1.setVisibility(View.INVISIBLE);
-                    ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
-                    glow2.setVisibility(View.INVISIBLE);
-                    ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
-                    glow3.setVisibility(View.INVISIBLE);
-                    ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
-                    glow4.setVisibility(View.INVISIBLE);
-
                     //remove sheilds
                     ImageView shield = (ImageView) findViewById(R.id.shield_full);
                     shield.setVisibility(View.INVISIBLE);
@@ -1026,44 +941,6 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
         nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
         nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
-
-        //scale glows
-        ImageView glow1 = (ImageView) findViewById(R.id.pingo1_glow);
-        ViewGroup.LayoutParams glow1Params = glow1.getLayoutParams();
-        glow1Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView glow2 = (ImageView) findViewById(R.id.pingo2_glow);
-        ViewGroup.LayoutParams glow2Params = glow2.getLayoutParams();
-        glow2Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView glow3 = (ImageView) findViewById(R.id.pingo3_glow);
-        ViewGroup.LayoutParams glow3Params = glow3.getLayoutParams();
-        glow3Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView glow4 = (ImageView) findViewById(R.id.pingo4_glow);
-        ViewGroup.LayoutParams glow4Params = glow4.getLayoutParams();
-        glow4Params.width = (int)(newBmapHeight*pingoSize);
-
-        //scale green rays
-        ImageView ray1 = (ImageView) findViewById(R.id.pingo1_rays);
-        ViewGroup.LayoutParams ray1Params = ray1.getLayoutParams();
-        ray1Params.height = (int)(newBmapHeight*pingoSize);
-        ray1Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView ray2 = (ImageView) findViewById(R.id.pingo2_rays);
-        ViewGroup.LayoutParams ray2Params = ray2.getLayoutParams();
-        ray2Params.height = (int)(newBmapHeight*pingoSize);
-        ray2Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView ray3 = (ImageView) findViewById(R.id.pingo3_rays);
-        ViewGroup.LayoutParams ray3Params = ray3.getLayoutParams();
-        ray3Params.height = (int)(newBmapHeight*pingoSize);
-        ray3Params.width = (int)(newBmapHeight*pingoSize);
-
-        ImageView ray4 = (ImageView) findViewById(R.id.pingo4_rays);
-        ViewGroup.LayoutParams ray4Params = ray4.getLayoutParams();
-        ray4Params.height = (int)(newBmapHeight*pingoSize);
-        ray4Params.width = (int)(newBmapHeight*pingoSize);
 
         //scale free game
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);

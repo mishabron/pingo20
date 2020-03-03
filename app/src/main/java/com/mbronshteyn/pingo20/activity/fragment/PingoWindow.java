@@ -13,6 +13,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -91,9 +92,14 @@ public class PingoWindow extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         mainView = inflater.inflate(R.layout.fragment_pingo_window, container, false);
+
+        scaleUi(mainView);
+
         windowBackground = (ImageView) mainView.findViewById(R.id.window_background);
+        Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(windowBackground);
         zOrder = mainView.getZ();
 
         fishka = (ImageView) mainView.findViewById(R.id.fishka);
@@ -134,10 +140,6 @@ public class PingoWindow extends Fragment {
         redFishkas[7] = R.drawable.red7;
         redFishkas[8] = R.drawable.red8;
         redFishkas[9] = R.drawable.red9;
-
-        scaleUi(mainView);
-        Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                .skipMemoryCache( true ).into(windowBackground);
 
         return mainView;
     }
@@ -277,9 +279,9 @@ public class PingoWindow extends Fragment {
             for(Integer playedNumber: playedNumbers){
                 removeNumber(numbers,playedNumber);
             }
+            //Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(windowBackground);
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.blue_window,null));
             wheel.setCurrentItem(0);
-            Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                    .skipMemoryCache( true ).into(windowBackground);
         }
         wheel.setInterpolator(new AccelerateDecelerateInterpolator());
         wheel.scroll(-(numbers.size()*2+1), 3000+spinDelay);
@@ -646,5 +648,12 @@ public class PingoWindow extends Fragment {
         ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
         spinParams.width =(int)(newBmapWidth*0.1513F*1.18);
         spinParams.height =(int)(newBmapHeight*0.2588F*1.18);
+
+        //scale window
+        float pingoSize = 0.3203F;
+        ImageView window = (ImageView) mainView.findViewById(R.id.window_background);
+        ViewGroup.LayoutParams pingoParams = window.getLayoutParams();
+        pingoParams.height = (int)(newBmapHeight*pingoSize);
+        pingoParams.width = (int)(newBmapHeight*pingoSize);
     }
 }
