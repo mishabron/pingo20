@@ -524,6 +524,7 @@ public class GameActivity extends PingoActivity {
         }
         else if(isWinningCard() && Game.attemptCounter != 0 ){
             doWinningFlash();
+            EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
         }
     }
 
@@ -695,6 +696,10 @@ public class GameActivity extends PingoActivity {
     }
 
     private void processWin(int pingoNumber) {
+
+        //remove sheilds
+        ImageView shield = (ImageView) findViewById(R.id.shield_full);
+        shield.setVisibility(View.INVISIBLE);
 
         //first pair
         int window1 = pingoNumber;

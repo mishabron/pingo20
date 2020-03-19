@@ -84,6 +84,7 @@ public class PingoWindow extends Fragment {
     private int[] redFishkas = new int[10];;
     private View mainView;
     private float zOrder;
+    private boolean zoomedIn;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -506,6 +507,7 @@ public class PingoWindow extends Fragment {
             pingoParams.height = (int)(pingoParams.height * 1.06);
             pingoParams.width = (int)(pingoParams.width * 1.06);
             mainView.setZ(zOrder +1);
+            zoomedIn = true;
 
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
@@ -531,8 +533,6 @@ public class PingoWindow extends Fragment {
                 spinAnimation.stop();
                 if(guessedNumber != null){
                     Game.guessedCount++;
-                    Glide.with(this).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                            .skipMemoryCache( true ).into(windowBackground);
                     pingoState = PingoState.WIN;
                     touchBackground.setOnClickListener(null);
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
@@ -560,11 +560,13 @@ public class PingoWindow extends Fragment {
     @Subscribe
     public void onStopSpin(NumberStopSpinEvent event){
 
-        if(event.getPingoNumber() == pingoNumber){
+        if(zoomedIn){
             mainView.setZ(zOrder);
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
             pingoParams.height = (int)(pingoParams.height / 1.06);
             pingoParams.width = (int)(pingoParams.width / 1.06);
+
+            zoomedIn = false;
         }
     }
 
@@ -596,7 +598,7 @@ public class PingoWindow extends Fragment {
                 totalDuration += winAnimation.getDuration(i);
             }
 
-            //first tap
+            //blink
             winAnimation.start();
 
             new Handler().postDelayed(()->{EventBus.getDefault().post(new NumberStopSpinEvent(pingoNumber));},totalDuration);

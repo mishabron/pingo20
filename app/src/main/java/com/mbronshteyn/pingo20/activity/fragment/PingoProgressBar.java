@@ -183,7 +183,7 @@ public class PingoProgressBar extends Fragment {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
 
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
@@ -192,7 +192,7 @@ public class PingoProgressBar extends Fragment {
                             dot3.setImageResource(defaultDot);
                         }
                     });
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
@@ -201,7 +201,7 @@ public class PingoProgressBar extends Fragment {
                             dot3.setImageResource(defaultDot);
                         }
                     });
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                     view.post(new Runnable() {
                         @Override
                         public void run() {
