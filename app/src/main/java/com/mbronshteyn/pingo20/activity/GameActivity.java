@@ -883,8 +883,6 @@ public class GameActivity extends PingoActivity {
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
         set.constrainWidth(iView.getId(), newBmapWidth);
-        //set.centerVertically(R.id.gameBacgroundimageView, 0);
-        //set.centerHorizontally(R.id.gameBacgroundimageView, 0);
         set.applyTo(layout);
 
         //scale game background
