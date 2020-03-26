@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayoutGame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_vertical|center_horizontal"
     android:orientation="horizontal">
 
@@ -202,17 +202,31 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.835" />
 
-        <ImageView
-            android:id="@+id/overlay_blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
     </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WARNING: ALL RIGHTS RESERVED.  INT-L PATENTS PENDING. NO &quot;ME TOO&quot; COPYCATTING.                                                                                  MADE IN USA"
+        android:textColor="@android:color/white"
+        android:textSize="6sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.991"/>
+
+    <ImageView
+        android:id="@+id/overlay_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintTop_toTopOf="@+id/coordinatorLayoutGame" />
 
     <ImageView
         android:id="@+id/free_game"
@@ -270,18 +284,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WARNING: ALL RIGHTS RESERVED.  INT-L PATENTS PENDING. NO &quot;ME TOO&quot; COPYCATTING.                                                                                  MADE IN USA"
-        android:textColor="@android:color/white"
-        android:textSize="6sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.991"/>
 
 </android.support.constraint.ConstraintLayout>

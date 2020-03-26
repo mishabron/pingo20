@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.BlinkEvent;
+import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
@@ -474,6 +475,13 @@ public class PingoWindow extends Fragment {
     }
 
     @Subscribe
+    public void onBonusPin(BonusPinEvent event){
+
+        touchBackground.setEnabled(false);
+        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.yellow_regular_bright,null));
+    }
+
+    @Subscribe
     public void flashWin(WinFlashEvent event){
         touchBackground.setEnabled(true);
         if (event.getWindow() == pingoNumber) {
@@ -591,7 +599,14 @@ public class PingoWindow extends Fragment {
             new Handler().postDelayed(()->{animation.start();},1000);
             new Handler().postDelayed(()->{animation.start();},4000);
 
-            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation, null));
+            int background;
+            if(event.getColor().equals(WinAnimation.colorType.GREEN)){
+                background = R.drawable.win_animation;
+            }
+            else{
+                background = R.drawable.bonuspin_animation;
+            }
+            windowBackground.setImageDrawable(getResources().getDrawable(background, null));
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
             long totalDuration = 0;
             for (int i = 0; i < winAnimation.getNumberOfFrames(); i++) {

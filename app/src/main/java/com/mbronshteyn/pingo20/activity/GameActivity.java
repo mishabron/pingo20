@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.CardHitDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
@@ -38,6 +39,7 @@ import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
@@ -519,7 +521,7 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(()-> {
                 playSound(R.raw.right_number);
                 //start blinking winning backgound
-                EventBus.getDefault().post(new WinAnimation(event.getPingoNumber()));
+                EventBus.getDefault().post(new WinAnimation(event.getPingoNumber(),WinAnimation.colorType.GREEN));
             },delay);
         }
         else if(isWinningCard() && Game.attemptCounter != 0 ){
@@ -562,6 +564,44 @@ public class GameActivity extends PingoActivity {
             initState(false);
         }
 
+    }
+
+    private void gotoToBonus() {
+
+        //bonus pingos background
+        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        Glide.with(this).load(R.drawable.bonuspin_background).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
+        EventBus.getDefault().post(new BonusPinEvent());
+
+        new Handler().postDelayed(() -> {
+            EventBus.getDefault().post(new WinAnimation(1,WinAnimation.colorType.GOLD));
+            EventBus.getDefault().post(new WinAnimation(3,WinAnimation.colorType.GOLD));
+        }, 1000);
+
+        //rotate pingos
+        new Handler().postDelayed(() -> {
+            EventBus.getDefault().post(new WinAnimation(2,WinAnimation.colorType.GOLD));
+            EventBus.getDefault().post(new WinAnimation(4,WinAnimation.colorType.GOLD));
+        }, 2000);
+
+        //move up the game interface
+        new Handler().postDelayed(()->{
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(this, R.layout.activity_game_end);
+
+            ChangeBounds transition = new ChangeBounds();
+            transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+            transition.setDuration(1000);
+            TransitionManager.beginDelayedTransition(root, transition);
+            constraintSet.applyTo(root);
+
+        },7500);
+
+
+        //Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
+        //startActivity(intent);
+        //Activity activity = (Activity) context;
+        //activity.finish();
     }
 
     private void doWinningFlash(){
@@ -663,7 +703,9 @@ public class GameActivity extends PingoActivity {
                 progressBar.startProgress();
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
                 playSound(R.raw.button);
-            } else {
+            }
+            //end of attempt
+            else {
                 if(isWinningCard()){
                     processWin(event.getPingoNumber());
                 }
@@ -676,7 +718,12 @@ public class GameActivity extends PingoActivity {
                     balance.setTextColor(Color.WHITE);
                     balance.setText(getCardReward());
                     EventBus.getDefault().post(new InitBackgroundEvent());
-                    attemptTransition();
+                    if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
+                        gotoToBonus();
+                    }
+                    else {
+                        attemptTransition();
+                    }
                     //check end of game
                     if (Game.attemptCounter == 0) {
                         //show winning pin
