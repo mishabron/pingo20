@@ -92,8 +92,6 @@ public class GameActivity extends PingoActivity {
     private boolean flippedToGo;
     private Iterator<Integer> pingoIterator;
     private HashMap<Integer, Integer> buttonMap;
-    private int newBmapHeight;
-    private int newBmapWidth;
     private TextView balance;
     private GameActivity context;
     private boolean spinning;
@@ -597,11 +595,12 @@ public class GameActivity extends PingoActivity {
 
         },7500);
 
-
-        //Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
-        //startActivity(intent);
-        //Activity activity = (Activity) context;
-        //activity.finish();
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
+            startActivity(intent);
+            Activity activity = (Activity) context;
+            activity.finish();
+        }, 8000);
     }
 
     private void doWinningFlash(){
@@ -920,8 +919,8 @@ public class GameActivity extends PingoActivity {
             ratioMultiplier = hRatio;
         }
 
-        newBmapWidth = (int) (bmapWidth * ratioMultiplier);
-        newBmapHeight = (int) (bmapHeight * ratioMultiplier);
+        int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
+        int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.coordinatorLayoutGame);
