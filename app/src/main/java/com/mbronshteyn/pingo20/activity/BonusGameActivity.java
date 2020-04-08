@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
@@ -15,6 +16,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
+import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
 
 import java.util.HashMap;
 
@@ -26,11 +29,18 @@ public class BonusGameActivity extends PingoActivity {
     private AnimatorSet mSetLeftIn;
     private Button buttonCounter1;
     private Button buttonCounter2;
+    private BonusPinWondow pingo1;
+    private BonusPinWondow pingo2;
+    private BonusPinWondow pingo3;
+    private Button fingerButton;
+    private boolean heads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bonus_game);
+
+        scaleUi();
 
         //setup ui
         ImageView backgroundView = (ImageView) findViewById(R.id.gameBacgroundimageView);
@@ -41,14 +51,12 @@ public class BonusGameActivity extends PingoActivity {
         Glide.with(this).load(R.drawable.bonus_logo_background).into(backgroundView);
         backgroundView = (ImageView) findViewById(R.id.playTextBackground);
         Glide.with(this).load(R.drawable.play_text_background).into(backgroundView);
-        scaleUi();
 
-        Button fingerButton = (Button) findViewById(R.id.bonusButtonGo);
+        fingerButton = (Button) findViewById(R.id.bonusButtonGo);
         fingerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 transitionToPlay();
-                fingerButton.setEnabled(false);
             }
         });
 
@@ -71,6 +79,17 @@ public class BonusGameActivity extends PingoActivity {
         buttonCounter1.setCameraDistance(scale);
         buttonCounter2.setCameraDistance(scale);
 
+        pingo1 = (BonusPinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusPingo1);
+        pingo2 = (BonusPinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusPingo2);
+        pingo3 = (BonusPinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusPingo3);
+
+        heads = false;
+
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
     }
 
     private void transitionToPlay() {
@@ -79,34 +98,41 @@ public class BonusGameActivity extends PingoActivity {
         ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
         playText.setVisibility(View.INVISIBLE);
 
+        pingo1.initPingo();
+        pingo2.initPingo();
+        pingo3.initPingo();
+
         buttonCounter1.setVisibility(View.VISIBLE);
         buttonCounter2.setVisibility(View.VISIBLE);
 
         buttonCounter1.setBackground(getResources().getDrawable(buttonMap.get(attemptCounter),this.getTheme()));
 
-        buttonCounter1.setOnClickListener(new View.OnClickListener() {
+        fingerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(R.raw.button);
                 if(attemptCounter >0) {
-                    buttonCounter1.setEnabled(false);
-                    buttonCounter2.setEnabled(true);
-                    flippToCounter(attemptCounter--,buttonCounter1,buttonCounter2);
+                    spinPingos();
+                    attemptCounter--;
+                    if(!heads) {
+                        flippToCounter(attemptCounter, buttonCounter1, buttonCounter2);
+                        heads = true;
+                    }
+                    else {
+                        flippToCounter(attemptCounter, buttonCounter2, buttonCounter1);
+                        heads = false;
+                    }
+                }
+                else {
+                    fingerButton.setEnabled(false);
                 }
             }
         });
+    }
 
-        buttonCounter2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playSound(R.raw.button);
-                if(attemptCounter >0) {
-                    buttonCounter2.setEnabled(false);
-                    buttonCounter1.setEnabled(true);
-                    flippToCounter(attemptCounter--,buttonCounter2,buttonCounter1);
-                }
-            }
-        });
+    public void spinPingos(){
+        pingo1.spinPingo();
+        pingo2.spinPingo();
+        pingo3.spinPingo();
     }
 
     public void flippToCounter(int counter, Button from, Button to) {
@@ -212,6 +238,22 @@ public class BonusGameActivity extends PingoActivity {
         buttonParamsCounter2.height = buttonSizeGo;
         buttonParamsCounter2.width = buttonSizeGo;
 
+        //scale pingo windows
+        float pingoSize = 0.2803F;
+        ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.bonusPingo1);
+        ViewGroup.LayoutParams pingoParams1 = pingo1.getLayoutParams();
+        pingoParams1.height = (int)(newBmapHeight*pingoSize);
+        pingoParams1.width = (int)(newBmapHeight*pingoSize);
+
+        ConstraintLayout pingo2 = (ConstraintLayout) findViewById(R.id.bonusPingo2);
+        ViewGroup.LayoutParams pingoParams2 = pingo2.getLayoutParams();
+        pingoParams2.height = (int)(newBmapHeight*pingoSize);
+        pingoParams2.width = (int)(newBmapHeight*pingoSize);
+
+        ConstraintLayout pingo3 = (ConstraintLayout) findViewById(R.id.bonusPingo3);
+        ViewGroup.LayoutParams pingoParams3 = pingo3.getLayoutParams();
+        pingoParams3.height = (int)(newBmapHeight*pingoSize);
+        pingoParams3.width = (int)(newBmapHeight*pingoSize);
     }
 
 }
