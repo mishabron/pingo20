@@ -5,12 +5,21 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.transition.ChangeBounds;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -18,8 +27,15 @@ import com.bumptech.glide.Glide;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.LuckySevenEvent;
+import com.mbronshteyn.pingo20.events.ScrollEnd;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class BonusGameActivity extends PingoActivity {
 
@@ -34,11 +50,16 @@ public class BonusGameActivity extends PingoActivity {
     private BonusPinWondow pingo3;
     private Button fingerButton;
     private boolean heads;
+    private char[] luckyState =  {'0','0','0'};
+    private FingerTimer fingerTimer;
+    private ConstraintLayout bonusRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bonus_game);
+        setContentView(R.layout.activity_bonus_game_start);
+
+        bonusRoot = findViewById(R.id.bonusLayoutGame);
 
         scaleUi();
 
@@ -56,6 +77,7 @@ public class BonusGameActivity extends PingoActivity {
         fingerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fingerTimer.cancel();
                 transitionToPlay();
             }
         });
@@ -85,26 +107,126 @@ public class BonusGameActivity extends PingoActivity {
 
         heads = false;
 
+        fingerTimer = new FingerTimer(2000,100);
+        fingerTimer.start();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        new Handler().postDelayed(() -> { transitionLayout(); }, 500);
+    }
+
+    private void transitionLayout(){
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(this, R.layout.activity_bonus_game);
+
+        ChangeBounds transition = new ChangeBounds();
+        transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+        transition.setDuration(1000);
+        transition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(@NonNull Transition transition) {
+            }
+
+            @Override
+            public void onTransitionCancel(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(@NonNull Transition transition) {
+
+            }
+        });
+
+        TransitionManager.beginDelayedTransition(bonusRoot, transition);
+        constraintSet.applyTo(bonusRoot);
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onScrollEnd(ScrollEnd event){
+        playSound(R.raw.wheel_stop);
+        if (event.getPingoNumber() ==3 ){
+            stopPlaySound(R.raw.wheel_spinning);
+            fingerButton.setEnabled(true);
+        }
+        if(attemptCounter == 0){
+            gotoNoWin();
+        }
+    }
+
+    @Subscribe
+    public void onLuckySeven(LuckySevenEvent event){
+        luckyState[event.getPingoNumber() - 1] = '1';
+        int state = Integer.parseInt(String.valueOf(luckyState),2);
+        if(state == 4 || state == 6 || state == 7) {
+            playSound(R.raw.luckyseven);
+        }
+
+        if (state == 7){
+            gotoToWin();
+        }
+    }
+
+    private void gotoToWin() {
+        fingerButton.setEnabled(false);
     }
 
     private void transitionToPlay() {
+
         ImageView backgroundView = (ImageView) findViewById(R.id.gameBacgroundimageView);
         Glide.with(this).load(R.drawable.bonuspin_background_play).into(backgroundView);
-        ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
-        playText.setVisibility(View.INVISIBLE);
 
-        pingo1.initPingo();
-        pingo2.initPingo();
-        pingo3.initPingo();
+        ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
+        Animation transAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        transAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                playText.setVisibility(View.INVISIBLE);
+                playSound(R.raw.wheel_spinning);
+                fingerButton.setEnabled(false);
+                pingo1.initPingo();
+                pingo2.initPingo();
+                pingo3.initPingo();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        playText.startAnimation(transAnimation);
 
         buttonCounter1.setVisibility(View.VISIBLE);
         buttonCounter2.setVisibility(View.VISIBLE);
-
         buttonCounter1.setBackground(getResources().getDrawable(buttonMap.get(attemptCounter),this.getTheme()));
 
         fingerButton.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +234,11 @@ public class BonusGameActivity extends PingoActivity {
             public void onClick(View v) {
                 if(attemptCounter >0) {
                     spinPingos();
+                    playSound(R.raw.short_button_turn);
                     attemptCounter--;
+                    if(attemptCounter == 0){
+                        fingerButton.setOnClickListener(null);
+                    }
                     if(!heads) {
                         flippToCounter(attemptCounter, buttonCounter1, buttonCounter2);
                         heads = true;
@@ -122,14 +248,18 @@ public class BonusGameActivity extends PingoActivity {
                         heads = false;
                     }
                 }
-                else {
-                    fingerButton.setEnabled(false);
-                }
             }
         });
     }
 
+    private void gotoNoWin() {
+        fingerButton.setEnabled(false);
+    }
+
     public void spinPingos(){
+        luckyState =  new char[]{'0','0','0'};
+        fingerButton.setEnabled(false);
+        playSound(R.raw.wheel_spinning);
         pingo1.spinPingo();
         pingo2.spinPingo();
         pingo3.spinPingo();
@@ -161,6 +291,26 @@ public class BonusGameActivity extends PingoActivity {
         });
         mSetRightOut.start();
         mSetLeftIn.start();
+    }
+
+    private class FingerTimer extends CountDownTimer {
+        public FingerTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+        @Override
+        public void onTick(long l) {
+        }
+
+        @Override
+        public void onFinish() {
+            fingerButton.setPressed(true);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},100);
+            new Handler().postDelayed(()->{fingerButton.setPressed(true);},200);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},300);
+            new Handler().postDelayed(()->{fingerButton.setPressed(true);},400);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},500);
+            playSound(R.raw.knocking_on_glass);
+        }
     }
 
     private void scaleUi() {
@@ -227,7 +377,7 @@ public class BonusGameActivity extends PingoActivity {
 
         //scale counter  button1
         Button counterButton1 = (Button) findViewById(R.id.counterButton1);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2406F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.2006F);
         ViewGroup.LayoutParams buttonParamsCounter1 = counterButton1.getLayoutParams();
         buttonParamsCounter1.height = buttonSizeGo;
         buttonParamsCounter1.width = buttonSizeGo;

@@ -1,7 +1,10 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,7 +17,9 @@ import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -23,37 +28,59 @@ public class PingoActivity extends AppCompatActivity {
     protected static MediaPlayer mediaPlayer;
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
+    protected SoundPool soundPool;
+    protected Map<Integer,Integer> soundMap = new HashMap<>();
+    protected Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
 
-    protected void stopPlaySound() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        try {
-            try {
-                if (mediaPlayer != null && (mediaPlayer.isPlaying() || mediaPlayer.isLooping())) {
+        soundPool = new SoundPool.Builder().setMaxStreams(5).build();
 
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                }
-            } catch (Exception e) {
+        //load all sounds
+        int soindId = soundPool.load(this, R.raw.button, 1);
+        soundMap.put(R.raw.button,soindId);
+        soindId = soundPool.load(this, R.raw.error_short, 1);
+        soundMap.put(R.raw.error_short,soindId);
+        soindId = soundPool.load(this, R.raw.knocking_on_glass, 1);
+        soundMap.put(R.raw.knocking_on_glass,soindId);
+        soindId = soundPool.load(this, R.raw.right_number, 1);
+        soundMap.put(R.raw.right_number,soindId);
+        soindId = soundPool.load(this, R.raw.short_button_turn, 1);
+        soundMap.put(R.raw.short_button_turn,soindId);
+        soindId = soundPool.load(this, R.raw.wheel_spinning, 1);
+        soundMap.put(R.raw.wheel_spinning,soindId);
+        soindId = soundPool.load(this, R.raw.wheel_stop, 1);
+        soundMap.put(R.raw.wheel_stop,soindId);
+        soindId = soundPool.load(this, R.raw.wrong_number, 1);
+        soundMap.put(R.raw.wrong_number,soindId);
+        soindId = soundPool.load(this, R.raw.luckyseven, 1);
+        soundMap.put(R.raw.luckyseven,soindId);
 
-            }
-        } catch (IllegalStateException e) {
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        soundPool.release();
+        soundPool = null;
+    }
+
+    protected void stopPlaySound(int sound) {
+
+        Integer soundId = soundsInPlayMap.get(sound);
+
+        if (soundId != null){
+            soundPool.stop(soundId);
         }
     }
 
     protected void playSound(int sound) {
 
-        stopPlaySound();
-
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-        });
-        mediaPlayer.start();
+        Integer soundId = soundMap.get(sound);
+        int soundPlaying = soundPool.play(soundId, 1, 1, 0, 0, 1);
+        soundsInPlayMap.put(sound,soundPlaying);
     }
 
     protected void popBaloon(final ImageView ballon, int duration){

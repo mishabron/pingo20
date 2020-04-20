@@ -307,7 +307,7 @@ public class LoginActivity extends PingoActivity {
             } else if (isWinningCard()) {
                 intent = new Intent(getApplicationContext(), WinActivity.class);
             } else {
-                intent = new Intent(getApplicationContext(), GameActivity.class);
+                intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             }
 
             startActivity(intent);

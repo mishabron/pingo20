@@ -3,6 +3,8 @@ package com.mbronshteyn.pingo20.activity.fragment;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -22,12 +24,16 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.events.LuckySevenEvent;
+import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
+import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SpinEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -44,6 +50,7 @@ public class BonusPinWondow  extends Fragment {
     private int newBmapHeight;
     private Integer currentPingo;
     private int pingoNumber;
+    private ArrayList<ImageView> pingoNumbers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,58 +121,58 @@ public class BonusPinWondow  extends Fragment {
         Random rand = new Random();
         new Handler().postDelayed(()->{
             wheel.setInterpolator(new AccelerateDecelerateInterpolator());
-            wheel.scroll(-(numbers.size()*2+(rand.nextInt(10))), 3000*pingoNumber);
-        },500*pingoNumber);
+            wheel.scroll(-(numbers.size()*pingoNumber*1+(rand.nextInt(10+pingoNumber))), 2000+(pingoNumber*1000));
+        },0);
     }
 
     private List<ImageView> loadPingoNumbers() {
 
-        ArrayList<ImageView> pingoNumbers = new ArrayList<>();
+        pingoNumbers = new ArrayList<>();
 
         switch (pingoNumber){
             case 1:
-                pingoNumbers.add(loadNumber(0,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(2,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(3,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(4,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(6,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(8,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(9,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(10,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(0,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(2,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(3,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(4,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(6,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(8,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(9,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(10,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
                 break;
 
             case 2:
-                pingoNumbers.add(loadNumber(0,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(2,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(3,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(4,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(6,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(8,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(9,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(10,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(0,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(2,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(3,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(4,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(6,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(8,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(9,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(10,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
                 break;
 
             case 3:
-                pingoNumbers.add(loadNumber(0,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(2,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(3,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(4,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(6,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(8,R.drawable.bonuspin_7,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(9,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(10,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(0,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(1,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(2,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(3,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(4,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(5,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(6,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(7,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(8,R.drawable.bonus_7,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(9,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(10,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
+                pingoNumbers.add(loadNumber(11,R.drawable.bonuspin_chip,(int)(newBmapWidth*0.1650F), (int)(newBmapHeight*0.2888F)));
                 break;
         }
         return pingoNumbers;
@@ -181,6 +188,7 @@ public class BonusPinWondow  extends Fragment {
 
         Glide.with(this).load(image).diskCacheStrategy( DiskCacheStrategy.NONE )
                 .skipMemoryCache( true ).into(imageNumber);
+        imageNumber.setTag(image);
 
         return imageNumber;
     }
@@ -217,6 +225,24 @@ public class BonusPinWondow  extends Fragment {
         public void onScrollingFinished(WheelView wheel) {
             int currentNumber = wheel.getCurrentItem();
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
+            EventBus.getDefault().post(new ScrollEnd(pingoNumber));
+
+            //animate lucky seven
+            ImageView window = pingoNumbers.get(currentPingo);
+            if((int)window.getTag() == R.drawable.bonus_7){
+                ImageView spin = (ImageView) mainView.findViewById(R.id.seven);
+                spin.setVisibility(View.VISIBLE);
+                AnimationDrawable winAnimation = (AnimationDrawable) spin.getDrawable();
+                long totalDuration = 0;
+                for (int i = 0; i < winAnimation.getNumberOfFrames(); i++) {
+                    totalDuration += winAnimation.getDuration(i);
+                }
+                //blink
+                winAnimation.start();
+                new Handler().postDelayed(()->{ spin.setVisibility(View.INVISIBLE); },totalDuration);
+                winAnimation.start();
+                EventBus.getDefault().post(new LuckySevenEvent(pingoNumber));
+            }
         }
     };
 
@@ -247,5 +273,10 @@ public class BonusPinWondow  extends Fragment {
         newBmapWidth = (int) (bmapWidth * ratioMultiplier);
         newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
+        //scale spin
+        ImageView spin = (ImageView) mainView.findViewById(R.id.seven);
+        ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
+        spinParams.width =(int)(newBmapWidth*0.158F);
+        spinParams.height =(int)(newBmapHeight*0.2888F);
     }
 }

@@ -225,7 +225,7 @@ public class PingoWindow extends Fragment {
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
-                EventBus.getDefault().post(new StopPlayer());
+                EventBus.getDefault().post(new StopPlayer(R.raw.knocking_on_glass));
                 return false;
             }
         });

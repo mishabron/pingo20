@@ -455,7 +455,7 @@ public class GameActivity extends PingoActivity {
 
     @Subscribe
     public void onFingerTouch(StopPlayer event){
-        stopPlaySound();
+        stopPlaySound(event.getSound());
     }
 
     @Subscribe
@@ -593,14 +593,14 @@ public class GameActivity extends PingoActivity {
             TransitionManager.beginDelayedTransition(root, transition);
             constraintSet.applyTo(root);
 
-        },7500);
+        },5000);
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             startActivity(intent);
             Activity activity = (Activity) context;
             activity.finish();
-        }, 8000);
+        }, 6000);
     }
 
     private void doWinningFlash(){
