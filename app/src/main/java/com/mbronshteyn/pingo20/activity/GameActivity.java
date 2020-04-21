@@ -188,19 +188,38 @@ public class GameActivity extends PingoActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        if(Game.attemptCounter == 4 ) {
-            //display splash
+        int slideNo = 0;
+        int delay = 0;
+
+        switch(Game.attemptCounter){
+            case 4:
+                slideNo = R.drawable.load_screen;
+                delay = 4000;
+                break;
+            case 3:
+                slideNo = R.drawable.to2;
+                delay = 4000;
+                break;
+            case 2:
+                slideNo = R.drawable.to3;
+                delay = 4000;
+                break;
+            case 1:
+                slideNo = R.drawable.to4;
+                delay = 4000;
+                break;
+        }
+
+        if(slideNo > 0) {
             ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
             Glide.with(context).clear(overlayBlue);
-            Glide.with(this).load(R.drawable.load_screen).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
             overlayBlue.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> {
                 overlayBlue.setVisibility(View.INVISIBLE);
-            }, 4000);
-            new Handler().postDelayed(() -> { transitionLayout(); }, 4100);
-        }else{
-            new Handler().postDelayed(() -> { transitionLayout(); }, 500);
+            }, delay);
         }
+        new Handler().postDelayed(() -> { transitionLayout(); }, delay+100);
 
     }
 
@@ -450,6 +469,7 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void onScrollEnd(ScrollEnd event){
         playSound(R.raw.wheel_stop);
+        stopPlaySound(R.raw.wheel_spinning);
         spinning = false;
     }
 

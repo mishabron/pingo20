@@ -225,6 +225,7 @@ public class PingoWindow extends Fragment {
                 play.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
+                touchBackground.setEnabled(true);
                 EventBus.getDefault().post(new StopPlayer(R.raw.knocking_on_glass));
                 return false;
             }
@@ -235,6 +236,9 @@ public class PingoWindow extends Fragment {
         for(int i = 0; i< fingerAnimation.getNumberOfFrames();i++){
             totalDuration += fingerAnimation.getDuration(i);
         }
+
+        touchBackground.setEnabled(false);
+        new Handler().postDelayed(()->{touchBackground.setEnabled(true);},totalDuration);
 
         //first tap
         EventBus.getDefault().post(new FingerTap());
@@ -295,6 +299,7 @@ public class PingoWindow extends Fragment {
         public void onScrollingStarted(WheelView wheel) {
             new Handler().postDelayed(()->{wheel.setVisibility(View.VISIBLE);},350);
             if(starting) {
+                touchBackground.setEnabled(false);
                 new Handler().postDelayed(() -> {
                     EventBus.getDefault().post(new ScrollStart(pingoNumber));
                 }, 300);
@@ -306,6 +311,7 @@ public class PingoWindow extends Fragment {
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
             // init scroll
             if (starting){
+                touchBackground.setEnabled(true);
                 //winning window
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;

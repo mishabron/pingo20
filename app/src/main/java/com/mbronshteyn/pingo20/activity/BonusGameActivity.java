@@ -3,6 +3,8 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -61,12 +63,8 @@ public class BonusGameActivity extends PingoActivity {
 
         bonusRoot = findViewById(R.id.bonusLayoutGame);
 
-        scaleUi();
-
         //setup ui
-        ImageView backgroundView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        Glide.with(this).load(R.drawable.bonuspin_background).into(backgroundView);
-        backgroundView = (ImageView) findViewById(R.id.bubbleBackground);
+        ImageView backgroundView = (ImageView) findViewById(R.id.bubbleBackground);
         Glide.with(this).load(R.drawable.bubble_background).into(backgroundView);
         backgroundView = (ImageView) findViewById(R.id.logoBackground);
         Glide.with(this).load(R.drawable.bonus_logo_background).into(backgroundView);
@@ -109,6 +107,8 @@ public class BonusGameActivity extends PingoActivity {
 
         fingerTimer = new FingerTimer(2000,100);
         fingerTimer.start();
+
+        scaleUi();
     }
 
     @Override
@@ -173,7 +173,7 @@ public class BonusGameActivity extends PingoActivity {
             stopPlaySound(R.raw.wheel_spinning);
             fingerButton.setEnabled(true);
         }
-        if(attemptCounter == 0){
+        if(attemptCounter == 0 && event.getPingoNumber() == 3){
             gotoNoWin();
         }
     }
@@ -196,9 +196,6 @@ public class BonusGameActivity extends PingoActivity {
     }
 
     private void transitionToPlay() {
-
-        ImageView backgroundView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        Glide.with(this).load(R.drawable.bonuspin_background_play).into(backgroundView);
 
         ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
         Animation transAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -253,7 +250,16 @@ public class BonusGameActivity extends PingoActivity {
     }
 
     private void gotoNoWin() {
+
         fingerButton.setEnabled(false);
+
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+            startActivity(intent);
+            Activity activity = (Activity) BonusGameActivity.this;
+            activity.finish();
+            Runtime.getRuntime().gc();
+        },3000);
     }
 
     public void spinPingos(){
@@ -342,7 +348,7 @@ public class BonusGameActivity extends PingoActivity {
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.bonusLayoutGame);
-        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        ImageView iView = (ImageView) findViewById(R.id.bonusGameBacgroundimageView);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
