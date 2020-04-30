@@ -26,9 +26,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
+import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 
@@ -173,7 +175,12 @@ public class BonusGameActivity extends PingoActivity {
             stopPlaySound(R.raw.wheel_spinning);
             fingerButton.setEnabled(true);
         }
-        if(attemptCounter == 0 && event.getPingoNumber() == 3){
+
+        int state = Integer.parseInt(String.valueOf(luckyState),2);
+        if (state == 7){
+            gotoToWin();
+        }
+        else if(attemptCounter == 0 && event.getPingoNumber() == 3){
             gotoNoWin();
         }
     }
@@ -185,17 +192,36 @@ public class BonusGameActivity extends PingoActivity {
         if(state == 4 || state == 6 || state == 7) {
             playSound(R.raw.luckyseven);
         }
-
-        if (state == 7){
-            gotoToWin();
-        }
     }
 
     private void gotoToWin() {
+
+        ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
+        backgroundView.setVisibility(View.INVISIBLE);
         fingerButton.setEnabled(false);
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlayWin);
+        Glide.with(this).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.bonus_win).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+        playSound(R.raw.jackpot);
+
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+            startActivity(intent);
+            Activity activity = (Activity) BonusGameActivity.this;
+            activity.finish();
+            Runtime.getRuntime().gc();
+        },4000);
     }
 
     private void transitionToPlay() {
+
+        playSoundLoop(R.raw.bonus_background);
+
+        //bonus pingos background
+        ImageView iView = (ImageView) findViewById(R.id.bonusGameBacgroundimageView);
+        Glide.with(this).load(R.drawable.bonuspin_background_play).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
+        EventBus.getDefault().post(new BonusPinEvent());
 
         ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
         Animation transAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -251,7 +277,17 @@ public class BonusGameActivity extends PingoActivity {
 
     private void gotoNoWin() {
 
+        ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
+        backgroundView.setVisibility(View.INVISIBLE);
         fingerButton.setEnabled(false);
+        fingerButton.setVisibility(View.INVISIBLE);
+        playSound(R.raw.bonus_nowin);
+        stopPlaySound(R.raw.bonus_background);
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
+        Glide.with(this).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.bonus_nowin_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
 
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
@@ -259,7 +295,7 @@ public class BonusGameActivity extends PingoActivity {
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },3000);
+        },5000);
     }
 
     public void spinPingos(){
@@ -410,6 +446,18 @@ public class BonusGameActivity extends PingoActivity {
         ViewGroup.LayoutParams pingoParams3 = pingo3.getLayoutParams();
         pingoParams3.height = (int)(newBmapHeight*pingoSize);
         pingoParams3.width = (int)(newBmapHeight*pingoSize);
+
+        //scale blue overlay
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
+        ViewGroup.LayoutParams overlayBlueParams = overlayBlue.getLayoutParams();
+        overlayBlueParams.width = newBmapWidth;
+        overlayBlueParams.height = newBmapHeight;
+
+        //scale bonusOverlayWin
+        ImageView bonusOverlayWin = (ImageView) findViewById(R.id.bonusOverlayWin);
+        ViewGroup.LayoutParams bonusOverlayWinParams = bonusOverlayWin.getLayoutParams();
+        bonusOverlayWinParams.width = newBmapWidth;
+        bonusOverlayWinParams.height = newBmapHeight;
     }
 
 }

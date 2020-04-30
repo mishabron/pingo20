@@ -602,6 +602,33 @@ public class GameActivity extends PingoActivity {
             EventBus.getDefault().post(new WinAnimation(4,WinAnimation.colorType.GOLD));
         }, 2000);
 
+        //pop up dark overlay and bonus logo
+        new Handler().postDelayed(()->{
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(R.drawable.dark_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+
+            //popup logo
+            ImageView logo = (ImageView) findViewById(R.id.spiral);
+            Glide.with(context).clear(logo);
+            Glide.with(this).load(R.drawable.bonus_logo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo);
+            Animation zoomRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_out);
+            zoomRotate.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    logo.setVisibility(View.INVISIBLE);
+                    overlayBlue.setVisibility(View.INVISIBLE);
+                    logo.clearAnimation();
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            logo.startAnimation(zoomRotate);
+        },3000);
+
         //move up the game interface
         new Handler().postDelayed(()->{
             ConstraintSet constraintSet = new ConstraintSet();
@@ -615,12 +642,13 @@ public class GameActivity extends PingoActivity {
 
         },5000);
 
+        //transition to bonus activity
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             startActivity(intent);
             Activity activity = (Activity) context;
             activity.finish();
-        }, 6000);
+        }, 7000);
     }
 
     private void doWinningFlash(){

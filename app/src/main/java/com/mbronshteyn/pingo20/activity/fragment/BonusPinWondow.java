@@ -223,9 +223,9 @@ public class BonusPinWondow  extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+
             int currentNumber = wheel.getCurrentItem();
             currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
-            EventBus.getDefault().post(new ScrollEnd(pingoNumber));
 
             //animate lucky seven
             ImageView window = pingoNumbers.get(currentPingo);
@@ -241,8 +241,11 @@ public class BonusPinWondow  extends Fragment {
                 winAnimation.start();
                 new Handler().postDelayed(()->{ spin.setVisibility(View.INVISIBLE); },totalDuration);
                 winAnimation.start();
+
                 EventBus.getDefault().post(new LuckySevenEvent(pingoNumber));
             }
+
+            EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
 

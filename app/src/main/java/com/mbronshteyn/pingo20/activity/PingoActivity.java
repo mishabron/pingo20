@@ -57,6 +57,12 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.wrong_number,soindId);
         soindId = soundPool.load(this, R.raw.luckyseven, 1);
         soundMap.put(R.raw.luckyseven,soindId);
+        soindId = soundPool.load(this, R.raw.bonus_nowin, 1);
+        soundMap.put(R.raw.bonus_nowin,soindId);
+        soindId = soundPool.load(this, R.raw.bonus_background, 1);
+        soundMap.put(R.raw.bonus_background,soindId);
+        soindId = soundPool.load(this, R.raw.jackpot, 1);
+        soundMap.put(R.raw.jackpot,soindId);
 
     }
 
@@ -80,6 +86,13 @@ public class PingoActivity extends AppCompatActivity {
 
         Integer soundId = soundMap.get(sound);
         int soundPlaying = soundPool.play(soundId, 1, 1, 0, 0, 1);
+        soundsInPlayMap.put(sound,soundPlaying);
+    }
+
+    protected void playSoundLoop(int sound) {
+
+        Integer soundId = soundMap.get(sound);
+        int soundPlaying = soundPool.play(soundId, 1, 1, 0, -1, 1);
         soundsInPlayMap.put(sound,soundPlaying);
     }
 
