@@ -99,17 +99,6 @@
             app:layout_constraintHorizontal_bias="0.831"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/bonusOverlayWin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <fragment
             android:id="@+id/bonusPingo1"
@@ -159,8 +148,46 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:scaleType="fitCenter"
-        app:layout_constraintLeft_toLeftOf="@+id/bonusLayoutGame"
-        app:layout_constraintRight_toRightOf="@+id/bonusLayoutGame"
-        app:layout_constraintTop_toTopOf="@+id/bonusLayoutGame" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/seven1"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/bonus_7_animation"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintVertical_bias="0.59"/>
+
+    <ImageView
+        android:id="@+id/seven2"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/bonus_7_animation"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.59"/>
+
+    <ImageView
+        android:id="@+id/seven3"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/bonus_7_animation"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.812"
+        app:layout_constraintVertical_bias="0.59"/>
 
 </android.support.constraint.ConstraintLayout>

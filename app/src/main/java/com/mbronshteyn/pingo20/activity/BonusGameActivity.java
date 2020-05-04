@@ -3,9 +3,11 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -19,6 +21,7 @@ import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
@@ -27,9 +30,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
-import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
 import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
@@ -37,9 +40,7 @@ import com.mbronshteyn.pingo20.events.ScrollEnd;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class BonusGameActivity extends PingoActivity {
 
@@ -178,7 +179,7 @@ public class BonusGameActivity extends PingoActivity {
 
         int state = Integer.parseInt(String.valueOf(luckyState),2);
         if (state == 7){
-            gotoToWin();
+            gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
             gotoNoWin();
@@ -194,16 +195,54 @@ public class BonusGameActivity extends PingoActivity {
         }
     }
 
-    private void gotoToWin() {
+    private void gotoWin() {
 
         ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
         backgroundView.setVisibility(View.INVISIBLE);
         fingerButton.setEnabled(false);
-        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlayWin);
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
         Glide.with(this).clear(overlayBlue);
         Glide.with(this).load(R.drawable.bonus_win).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
         playSound(R.raw.jackpot);
+
+        ImageView seven1 = (ImageView) findViewById(R.id.seven1);
+        ImageView seven2 = (ImageView) findViewById(R.id.seven2);
+        ImageView seven3 = (ImageView) findViewById(R.id.seven3);
+        seven1.setVisibility(View.VISIBLE);
+        seven2.setVisibility(View.VISIBLE);
+        seven3.setVisibility(View.VISIBLE);
+
+        AnimationDrawable winAnimation2 = (AnimationDrawable) seven2.getDrawable();
+        long totalDuration = 0;
+        for (int i = 0; i < winAnimation2.getNumberOfFrames(); i++) {
+            totalDuration += winAnimation2.getDuration(i);
+        }
+        winAnimation2.start();
+
+        ObjectAnimator animation1 = ObjectAnimator.ofFloat(seven1,"rotationY", 0,360);
+        animation1.setDuration(totalDuration);
+        animation1.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation1.start();
+
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(seven3,"rotationY", 0,360);
+        animation3.setDuration(totalDuration);
+        animation3.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation3.start();
+
+        long finalTotalDuration = totalDuration;
+        new Handler().postDelayed(()->{
+            AnimationDrawable winAnimation1 = (AnimationDrawable) seven1.getDrawable();
+            winAnimation1.start();
+            AnimationDrawable winAnimation3 = (AnimationDrawable) seven3.getDrawable();
+            winAnimation3.start();
+
+            ObjectAnimator animation2 = ObjectAnimator.ofFloat(seven2,"rotationY", 0,360);
+            animation2.setDuration(finalTotalDuration);
+            animation2.setInterpolator(new AccelerateDecelerateInterpolator());
+            animation2.start();
+
+        },totalDuration);
 
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
@@ -220,8 +259,8 @@ public class BonusGameActivity extends PingoActivity {
 
         //bonus pingos background
         ImageView iView = (ImageView) findViewById(R.id.bonusGameBacgroundimageView);
-        Glide.with(this).load(R.drawable.bonuspin_background_play).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
-        EventBus.getDefault().post(new BonusPinEvent());
+        Glide.with(this).load(R.drawable.bonuspin_background_play).diskCacheStrategy(DiskCacheStrategy.NONE).
+                skipMemoryCache(true).transition(DrawableTransitionOptions.withCrossFade()).into(iView);
 
         ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
         Animation transAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -295,7 +334,7 @@ public class BonusGameActivity extends PingoActivity {
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },5000);
+        },7000);
     }
 
     public void spinPingos(){
@@ -453,11 +492,21 @@ public class BonusGameActivity extends PingoActivity {
         overlayBlueParams.width = newBmapWidth;
         overlayBlueParams.height = newBmapHeight;
 
-        //scale bonusOverlayWin
-        ImageView bonusOverlayWin = (ImageView) findViewById(R.id.bonusOverlayWin);
-        ViewGroup.LayoutParams bonusOverlayWinParams = bonusOverlayWin.getLayoutParams();
-        bonusOverlayWinParams.width = newBmapWidth;
-        bonusOverlayWinParams.height = newBmapHeight;
+        //scal sevens
+        ImageView seven1 = (ImageView) findViewById(R.id.seven1);
+        ViewGroup.LayoutParams seven1Params = seven1.getLayoutParams();
+        seven1Params.width = (int) (newBmapWidth * 0.2267F);;
+        seven1Params.height = (int) (newBmapHeight * 0.3971F);;
+
+        ImageView seven2 = (ImageView) findViewById(R.id.seven2);
+        ViewGroup.LayoutParams seven2Params = seven2.getLayoutParams();
+        seven2Params.width = seven1Params.width;
+        seven2Params.height = seven1Params.height;
+
+        ImageView seven3 = (ImageView) findViewById(R.id.seven3);
+        ViewGroup.LayoutParams seven3Params = seven3.getLayoutParams();
+        seven3Params.width = seven1Params.width;
+        seven3Params.height = seven1Params.height;
     }
 
 }

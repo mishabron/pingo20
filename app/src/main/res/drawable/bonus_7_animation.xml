@@ -4,12 +4,15 @@
 
     <item
         android:drawable="@drawable/bonus_7b"
-        android:duration="300"/>>
+        android:duration="300"/>
     <item
         android:drawable="@drawable/bonus_7"
         android:duration="300"/>
     <item
         android:drawable="@drawable/bonus_7b"
-        android:duration="300"/>>
+        android:duration="300"/>
+    <item
+        android:drawable="@drawable/bonus_7"
+        android:duration="300"/>
 
 </animation-list>

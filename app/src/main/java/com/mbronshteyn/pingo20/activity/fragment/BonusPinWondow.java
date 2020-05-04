@@ -240,7 +240,6 @@ public class BonusPinWondow  extends Fragment {
                 //blink
                 winAnimation.start();
                 new Handler().postDelayed(()->{ spin.setVisibility(View.INVISIBLE); },totalDuration);
-                winAnimation.start();
 
                 EventBus.getDefault().post(new LuckySevenEvent(pingoNumber));
             }
