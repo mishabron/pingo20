@@ -194,19 +194,19 @@ public class GameActivity extends PingoActivity {
         switch(Game.attemptCounter){
             case 4:
                 slideNo = R.drawable.load_screen;
-                delay = 4000;
+                delay = 5000;
                 break;
             case 3:
                 slideNo = R.drawable.to2;
-                delay = 4000;
+                delay = 5000;
                 break;
             case 2:
                 slideNo = R.drawable.to3;
-                delay = 4000;
+                delay = 5000;
                 break;
             case 1:
                 slideNo = R.drawable.to4;
-                delay = 4000;
+                delay = 5000;
                 break;
         }
 
@@ -585,6 +585,8 @@ public class GameActivity extends PingoActivity {
     }
 
     private void gotoToBonus() {
+
+        playSound(R.raw.jackpot);
 
         //bonus pingos background
         ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
