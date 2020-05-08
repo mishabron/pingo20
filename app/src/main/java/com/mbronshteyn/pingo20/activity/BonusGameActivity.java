@@ -3,7 +3,6 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -21,7 +20,6 @@ import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
@@ -33,7 +31,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
-import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 
@@ -291,6 +288,7 @@ public class BonusGameActivity extends PingoActivity {
         fingerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fingerTimer.cancel();
                 if(attemptCounter >0) {
                     spinPingos();
                     playSound(R.raw.short_button_turn);
@@ -320,10 +318,27 @@ public class BonusGameActivity extends PingoActivity {
         playSound(R.raw.bonus_nowin);
         stopPlaySound(R.raw.bonus_background);
 
+        //ballon background
         ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
         Glide.with(this).clear(overlayBlue);
         Glide.with(this).load(R.drawable.bonus_nowin_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
+
+        //first banner
+        ImageView noWinBanner = (ImageView) findViewById(R.id.noWinBanner);
+        Glide.with(this).clear(noWinBanner);
+        Glide.with(this).load(R.drawable.no_win_yellow_bubble_text1).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(noWinBanner);
+        noWinBanner.setVisibility(View.VISIBLE);
+        final Animation[] noWinBannerAnimation = {AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_bonus_no_win)};
+        noWinBanner.startAnimation(noWinBannerAnimation[0]);
+
+        new Handler().postDelayed(()->{
+            Glide.with(this).clear(noWinBanner);
+            Glide.with(this).load(R.drawable.no_win_yellow_bubble_text2).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(noWinBanner);
+            noWinBanner.setVisibility(View.VISIBLE);
+            noWinBannerAnimation[0] = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_bonus_no_win);
+            noWinBanner.startAnimation(noWinBannerAnimation[0]);
+        },3500);
 
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
@@ -331,7 +346,7 @@ public class BonusGameActivity extends PingoActivity {
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },7000);
+        },5200);
     }
 
     public void spinPingos(){
@@ -447,8 +462,8 @@ public class BonusGameActivity extends PingoActivity {
 
         //scale finger  button
         Button fingerButton = (Button) findViewById(R.id.bonusButtonGo);
-        int fingerButtonHeight = (int) (newBmapHeight * 0.3827F);
-        int fingerButtonWidt = (int) (newBmapWidth * 0.2530F);
+        int fingerButtonHeight = (int) (newBmapHeight * 0.4359F);
+        int fingerButtonWidt = (int) (newBmapWidth * 0.2800F);
         ViewGroup.LayoutParams buttonParamsFinger = fingerButton.getLayoutParams();
         buttonParamsFinger.height = fingerButtonHeight;
         buttonParamsFinger.width = fingerButtonWidt;
@@ -504,6 +519,12 @@ public class BonusGameActivity extends PingoActivity {
         ViewGroup.LayoutParams seven3Params = seven3.getLayoutParams();
         seven3Params.width = seven1Params.width;
         seven3Params.height = seven1Params.height;
+
+        //no winn banner
+        ImageView noWinBanner = (ImageView) findViewById(R.id.noWinBanner);
+        ViewGroup.LayoutParams noWinBannerParams = noWinBanner.getLayoutParams();
+        noWinBannerParams.width = (int) (newBmapWidth * 0.5454F);;
+        noWinBannerParams.height = (int) (newBmapHeight * 0.1710F);;
     }
 
 }
