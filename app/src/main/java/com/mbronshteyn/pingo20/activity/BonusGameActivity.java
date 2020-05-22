@@ -29,10 +29,12 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
+import com.mbronshteyn.pingo20.model.Game;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -154,6 +156,7 @@ public class BonusGameActivity extends PingoActivity {
         TransitionManager.beginDelayedTransition(bonusRoot, transition);
         constraintSet.applyTo(bonusRoot);
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -180,7 +183,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoNoWin();
+            gotoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -235,6 +238,8 @@ public class BonusGameActivity extends PingoActivity {
         AnimatorSet sevenAnim3 = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.seven_rotation_first);
         sevenAnim3.setTarget(seven3);
         sevenAnim3.start();
+
+        Game.bonusHit = Bonus.BONUSPIN;
 
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
@@ -346,7 +351,7 @@ public class BonusGameActivity extends PingoActivity {
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },5200);
+        },6500);
     }
 
     public void spinPingos(){

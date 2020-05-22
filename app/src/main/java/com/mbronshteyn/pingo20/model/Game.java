@@ -2,6 +2,8 @@ package com.mbronshteyn.pingo20.model;
 
 import android.os.Build;
 
+import com.mbronshteyn.gameserver.dto.game.Bonus;
+
 public class Game {
 
     public static final String GAMEID = "Pingo";
@@ -20,6 +22,8 @@ public class Game {
     public static int guessedCount;
 
     private static Game game = new Game();
+
+    public static Bonus bonusHit = null;
 
     private Game() {
     }

@@ -29,8 +29,8 @@ public class PingoActivity extends AppCompatActivity {
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
     protected SoundPool soundPool;
-    protected Map<Integer,Integer> soundMap = new HashMap<>();
-    protected Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
+    protected static Map<Integer,Integer> soundMap = new HashMap<>();
+    protected static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

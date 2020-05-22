@@ -109,11 +109,16 @@ public class GameActivity extends PingoActivity {
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);
 
         if(card.isFreeGame()){
-            Game.attemptCounter = 3 - card.getNumberOfHits();
+            Game.attemptCounter = 3 - card.getHits().size();
         }
         else {
-            Game.attemptCounter = 4 - card.getNumberOfHits();
+            Game.attemptCounter = 4 - card.getHits().size();
             freeGame.setVisibility(View.INVISIBLE);
+        }
+
+        //if bonus hit increase counter
+        if(Game.bonusHit != null && Game.bonusHit.equals(Bonus.BONUSPIN)){
+            Game.attemptCounter ++;
         }
 
         context = this;
@@ -192,10 +197,6 @@ public class GameActivity extends PingoActivity {
         int delay = 0;
 
         switch(Game.attemptCounter){
-            case 4:
-                slideNo = R.drawable.load_screen;
-                delay = 5000;
-                break;
             case 3:
                 slideNo = R.drawable.to2;
                 delay = 5000;
@@ -373,6 +374,9 @@ public class GameActivity extends PingoActivity {
         cardHitDto.setHit2(pingo2.getCurrentPingo());
         cardHitDto.setHit3(pingo3.getCurrentPingo());
         cardHitDto.setHit4(pingo4.getCurrentPingo());
+        cardHitDto.setBonus(Game.bonusHit);
+        //reset bonus
+        Game.bonusHit = null;
 
         Call<CardDto> call = service.hitCard(cardHitDto);
         call.enqueue(new Callback<CardDto>() {
@@ -770,6 +774,9 @@ public class GameActivity extends PingoActivity {
                     if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
                         gotoToBonus();
                     }
+                    if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
+                        gotoToSpinBonus();
+                    }
                     else {
                         attemptTransition();
                     }
@@ -789,6 +796,30 @@ public class GameActivity extends PingoActivity {
                 }
             }
         },duration);
+    }
+
+    private void gotoToSpinBonus() {
+
+        //move up the game interface
+        new Handler().postDelayed(()->{
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(this, R.layout.activity_game_end);
+
+            ChangeBounds transition = new ChangeBounds();
+            transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+            transition.setDuration(1000);
+            TransitionManager.beginDelayedTransition(root, transition);
+            constraintSet.applyTo(root);
+
+        },2000);
+
+        //transition to bonus activity
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(getApplicationContext(), BonusSpinActivity.class);
+            startActivity(intent);
+            Activity activity = (Activity) context;
+            activity.finish();
+        }, 3000);
     }
 
     private void processWin(int pingoNumber) {
