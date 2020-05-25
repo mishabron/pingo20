@@ -178,8 +178,8 @@ public class BonusSpinActivity extends PingoActivity{
         overlayBubbleParams.height = newBmapHeight;
 
         //scale pingo windows
-        float pingoWidth = 0.2002F;
-        float pingoHeight = 0.4444F;
+        float pingoWidth = 0.1987F;
+        float pingoHeight = 0.3277F;
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.bonusSpinPingo1);
         ViewGroup.LayoutParams pingoParams1 = pingo1.getLayoutParams();
         pingoParams1.height = (int)(newBmapHeight*pingoHeight);

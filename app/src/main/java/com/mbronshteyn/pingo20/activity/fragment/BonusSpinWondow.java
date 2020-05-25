@@ -111,7 +111,7 @@ public class BonusSpinWondow extends Fragment {
         wheel.setEnabled(false);
         wheel.setDrawShadows(false);
         wheel.setCurrentItem(11);
-        wheel.setVisibility(View.INVISIBLE);
+        wheel.setVisibility(View.VISIBLE);
     }
 
     public void initPingo(Bundle pingoBundle){
@@ -202,9 +202,6 @@ public class BonusSpinWondow extends Fragment {
     OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
         @Override
         public void onScrollingStarted(WheelView wheel) {
-            ImageView spin = (ImageView) mainView.findViewById(R.id.sevenSpin);
-            spin.setVisibility(View.INVISIBLE);
-            new Handler().postDelayed(()->{wheel.setVisibility(View.VISIBLE);},350);
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
@@ -252,10 +249,5 @@ public class BonusSpinWondow extends Fragment {
         newBmapWidth = (int) (bmapWidth * ratioMultiplier);
         newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
-        //scale spin
-        ImageView spin = (ImageView) mainView.findViewById(R.id.sevenSpin);
-        ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
-        spinParams.width =(int)(newBmapWidth*0.1987F);
-        spinParams.height =(int)(newBmapHeight*0.3577F);
     }
 }
