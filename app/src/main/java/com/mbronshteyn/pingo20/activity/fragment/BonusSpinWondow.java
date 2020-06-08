@@ -3,7 +3,6 @@ package com.mbronshteyn.pingo20.activity.fragment;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -22,8 +21,8 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
+import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
 import com.mbronshteyn.pingo20.events.SpinEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.AbstractWheelAdapter;
@@ -46,6 +46,11 @@ public class BonusSpinWondow extends Fragment {
     private int newBmapWidth;
     private int newBmapHeight;
     private Integer currentPingo;
+    private float pingoHeight;
+    private float pingoWidth;
+    private boolean guessed;
+    private int slotNumber;
+    private int spinCount;
 
     public int getPingoNumber() {
         return pingoNumber;
@@ -64,6 +69,7 @@ public class BonusSpinWondow extends Fragment {
         scaleUi(mainView);
 
         return mainView;
+
     }
 
     @Override
@@ -86,6 +92,17 @@ public class BonusSpinWondow extends Fragment {
     @Subscribe
     public void onSpinEvent(SpinEvent event){
 
+    }
+
+    @Subscribe
+    public void onSelecForSpinEvent(SelecForSpinEvent event){
+        ImageView yellowBackground = (ImageView) mainView.findViewById(R.id.yellowBonusSpinBackground);
+        if(event.getPingo() == pingoNumber){
+            yellowBackground.setVisibility(View.VISIBLE);
+        }
+        else{
+            yellowBackground.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -116,48 +133,67 @@ public class BonusSpinWondow extends Fragment {
 
     public void initPingo(Bundle pingoBundle){
 
-        ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
-        for(Integer playedNumber: playedNumbers){
-            removeNumber(numbers,playedNumber);
-        }
+        guessed = pingoBundle.getBoolean("guessed");
 
-        wheel.setCurrentItem(1);
-        wheel.setInterpolator(new AccelerateDecelerateInterpolator());
-        wheel.scroll(-(numbers.size()*2), 3000+pingoNumber*200);
+        if(!guessed) {
+            ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
+            for (Integer playedNumber : playedNumbers) {
+                removeNumber(numbers, playedNumber);
+                //remove corresponding pingo
+                removeNumber(numbers, playedNumber+100);
+            }
+            Random r = new Random();
+            slotNumber = Math.abs(r.nextInt()) % pingoNumbers.size();
+            currentPingo = pingoNumbers.get(slotNumber).getId();
+
+            wheel.setCurrentItem(1);
+            wheel.setInterpolator(new AccelerateDecelerateInterpolator());
+            wheel.scroll(-(numbers.size() * 2), 3000 + pingoNumber * 200);
+        }
+        else{
+            currentPingo = (Integer)pingoBundle.getSerializable("guessedNumber");
+            wheel.setVisibility(View.INVISIBLE);
+            ImageView spin = (ImageView) mainView.findViewById(R.id.nonSpin);
+            spin.setVisibility(View.VISIBLE);
+        }
     }
 
     public void spinPingo(){
-        Random rand = new Random();
-        new Handler().postDelayed(()->{
-            wheel.setInterpolator(new AccelerateDecelerateInterpolator());
-            wheel.scroll(-(numbers.size()*pingoNumber*1+(rand.nextInt(10+pingoNumber))), 2000+(pingoNumber*1000));
-        },0);
+
+        if(!guessed) {
+            wheel.addChangingListener(changedListener);
+            Random rand = new Random();
+            new Handler().postDelayed(() -> {
+                wheel.setInterpolator(new AccelerateDecelerateInterpolator());
+                wheel.scroll(-(numbers.size()*4 + (rand.nextInt(10))), 8000);
+            }, 0);
+        }
     }
 
     private List<ImageView> loadPingoNumbers() {
 
         pingoNumbers = new ArrayList<>();
 
-        pingoNumbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(101,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(102,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(2,R.drawable.two,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(103,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(104,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(105,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(106,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(107,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(108,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(109,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));
-        pingoNumbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*0.158F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(10,R.drawable.pingo_spin,(int)(newBmapWidth*0.1987F), (int)(newBmapHeight*0.3577F)));;
+        pingoNumbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(100,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(101,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(2,R.drawable.two,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(102,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(103,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(104,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(105,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(106,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(107,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(108,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));
+        pingoNumbers.add(loadNumber(109,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth), (int)(newBmapHeight*pingoHeight)));;
 
         return pingoNumbers;
     }
@@ -174,6 +210,10 @@ public class BonusSpinWondow extends Fragment {
                 .skipMemoryCache( true ).into(imageNumber);
 
         return imageNumber;
+    }
+
+    public Integer getCurrentPingo() {
+        return currentPingo;
     }
 
     /**
@@ -205,11 +245,18 @@ public class BonusSpinWondow extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+            EventBus.getDefault().post(new ScrollEnd(pingoNumber));
+        }
+    };
 
-            int currentNumber = wheel.getCurrentItem();
-            currentPingo = (Integer) wheel.getViewAdapter().getItem(currentNumber, null, null).getId();
-
-            //EventBus.getDefault().post(new ScrollEnd(pingoNumber));
+    OnWheelChangedListener changedListener = new OnWheelChangedListener() {
+        @Override
+        public void onChanged(WheelView wheel, int oldValue, int newValue) {
+            if (newValue == slotNumber && spinCount > 3) {
+                wheel.stopScrolling();
+                wheel.setCurrentItem(slotNumber,true);
+            }
+            spinCount++;
         }
     };
 
@@ -248,6 +295,15 @@ public class BonusSpinWondow extends Fragment {
 
         newBmapWidth = (int) (bmapWidth * ratioMultiplier);
         newBmapHeight = (int) (bmapHeight * ratioMultiplier);
+
+        pingoHeight = 0.2906F;
+        pingoWidth = 0.1907F;
+
+        //scale spin
+        ImageView spin = (ImageView) mainView.findViewById(R.id.nonSpin);
+        ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
+        spinParams.width =(int)(newBmapWidth*pingoWidth);
+        spinParams.height =(int)(newBmapHeight*pingoHeight);
 
     }
 }

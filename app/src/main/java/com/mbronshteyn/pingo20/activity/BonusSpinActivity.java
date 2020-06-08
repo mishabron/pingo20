@@ -2,6 +2,7 @@ package com.mbronshteyn.pingo20.activity;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,18 +12,37 @@ import android.support.transition.ChangeBounds;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.mbronshteyn.gameserver.dto.game.Bonus;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.dto.game.CardHitDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusSpinWondow;
+import com.mbronshteyn.pingo20.events.ScrollEnd;
+import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
+import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BonusSpinActivity extends PingoActivity{
 
@@ -31,6 +51,10 @@ public class BonusSpinActivity extends PingoActivity{
     private BonusSpinWondow pingo2;
     private BonusSpinWondow pingo3;
     private BonusSpinWondow pingo4;
+    private Button fingerButton;
+    private ArrayList<Integer> acctivePingos = new ArrayList<>();
+    private ArrayList<Integer> pingosInPlay = new ArrayList<>();
+    private FingerTimer fingerTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +68,11 @@ public class BonusSpinActivity extends PingoActivity{
         pingo3 = (BonusSpinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusSpinPingo3);
         pingo4 = (BonusSpinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusSpinPingo4);
 
+        fingerButton = (Button) findViewById(R.id.bonusButtonGo);
+        fingerButton.setEnabled(false);
+
+        fingerTimer = new BonusSpinActivity.FingerTimer(2000,100);
+
         scaleUi();
     }
 
@@ -51,6 +80,19 @@ public class BonusSpinActivity extends PingoActivity{
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         new Handler().postDelayed(() -> { transitionLayout(); }, 500);
+        Game.bonusHit = Bonus.SUPERPIN;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void transitionLayout() {
@@ -93,10 +135,13 @@ public class BonusSpinActivity extends PingoActivity{
     }
 
     private void transitionToPlay() {
+        playSound(R.raw.wheel_spinning);
         initPingos(pingo1);
         initPingos(pingo2);
         initPingos(pingo3);
         initPingos(pingo4);
+
+        hitCard();
     }
 
     private void initPingos(BonusSpinWondow pingo){
@@ -104,6 +149,15 @@ public class BonusSpinActivity extends PingoActivity{
         Bundle pingoBundle = new Bundle();
         pingoBundle.putSerializable("pingoState", PingoState.ACTIVE);
         pingoBundle.putIntegerArrayList("playedNumbers",loadNumbersPlayed(pingo.getPingoNumber()));
+        pingoBundle.putSerializable("guessedNumber",loadNumberGuessed(pingo.getPingoNumber()));
+
+        boolean guessed = loadNumberGuessed(pingo.getPingoNumber()) != null;
+        pingoBundle.putBoolean("guessed", guessed);
+        if(!guessed){
+            acctivePingos.add(pingo.getPingoNumber());
+            pingosInPlay.add(pingo.getPingoNumber());
+        }
+
         pingo.initPingo(pingoBundle);
     }
 
@@ -133,6 +187,106 @@ public class BonusSpinActivity extends PingoActivity{
             }
         }
         return numbersPlayed;
+    }
+
+    @Subscribe
+    public void onInitScrollEnd(ScrollEnd event){
+
+        playSound(R.raw.wheel_stop);
+
+        acctivePingos.remove(Integer.valueOf(event.getPingoNumber()));
+        //all pingos stoped srolling
+        if (acctivePingos.isEmpty()){
+
+            stopPlaySound(R.raw.wheel_spinning);
+            fingerButton.setEnabled(true);
+            fingerTimer.start();
+
+            EventBus.getDefault().post(new SelecForSpinEvent(pingosInPlay.get(0)));
+            fingerButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fingerTimer.cancel();
+                    spinPingos(pingosInPlay.get(0));
+                }
+            });
+
+        }
+    }
+
+    private class FingerTimer extends CountDownTimer {
+        public FingerTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+        @Override
+        public void onTick(long l) {
+        }
+
+        @Override
+        public void onFinish() {
+            fingerButton.setPressed(true);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},100);
+            new Handler().postDelayed(()->{fingerButton.setPressed(true);},200);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},300);
+            new Handler().postDelayed(()->{fingerButton.setPressed(true);},400);
+            new Handler().postDelayed(()->{fingerButton.setPressed(false);},500);
+            playSound(R.raw.knocking_on_glass);
+        }
+    }
+
+    public void spinPingos(Integer integer){
+        fingerButton.setEnabled(false);
+        playSound(R.raw.wheel_spinning);
+        pingo1.spinPingo();
+        pingo2.spinPingo();
+        pingo3.spinPingo();
+        pingo4.spinPingo();
+    }
+
+    private void hitCard(){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PingoRemoteService.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+
+        String card = Game.cardNumber;
+        card = card.replaceAll("[^\\d]", "");
+        CardHitDto cardHitDto = new CardHitDto();
+        cardHitDto.setCardNumber(Long.parseLong(card));
+        cardHitDto.setDeviceId(Game.devicedId);
+        cardHitDto.setGame(Game.getGAMEID());
+
+        cardHitDto.setHit1(pingo1.getCurrentPingo());
+        cardHitDto.setHit2(pingo2.getCurrentPingo());
+        cardHitDto.setHit3(pingo3.getCurrentPingo());
+        cardHitDto.setHit4(pingo4.getCurrentPingo());
+        cardHitDto.setBonus(Game.bonusHit);
+        cardHitDto.setBonusHit(Game.bonusHit != null);
+
+        //reset bonus
+        Game.bonusHit = null;
+
+        Call<CardDto> call = service.hitCard(cardHitDto);
+        call.enqueue(new Callback<CardDto>() {
+            @Override
+            public void onResponse(Call<CardDto> call, Response<CardDto> response) {
+                processHitResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<CardDto> call, Throwable t) {
+                new Handler().postDelayed(()->{ playSound(R.raw.error_short);},100);
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
+                rightSmallBaloon.startAnimation(zoomIntAnimation);
+                rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
+                popBaloon(rightSmallBaloon,4000);
+            }
+        });
+    }
+
+    private void processHitResponse(Response<CardDto> response) {
     }
 
     private void scaleUi() {
@@ -178,8 +332,8 @@ public class BonusSpinActivity extends PingoActivity{
         overlayBubbleParams.height = newBmapHeight;
 
         //scale pingo windows
-        float pingoWidth = 0.1987F;
-        float pingoHeight = 0.3277F;
+        float pingoWidth = 0.2008F;
+        float pingoHeight = 0.2901F;
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.bonusSpinPingo1);
         ViewGroup.LayoutParams pingoParams1 = pingo1.getLayoutParams();
         pingoParams1.height = (int)(newBmapHeight*pingoHeight);
@@ -202,8 +356,8 @@ public class BonusSpinActivity extends PingoActivity{
 
         //scale finger  button
         Button fingerButton = (Button) findViewById(R.id.bonusButtonGo);
-        int fingerButtonHeight = (int) (newBmapHeight * 0.4059F);
-        int fingerButtonWidt = (int) (newBmapWidth * 0.2500F);
+        int fingerButtonHeight = (int) (newBmapHeight * 0.4239F);
+        int fingerButtonWidt = (int) (newBmapWidth * 0.2600F);
         ViewGroup.LayoutParams buttonParamsFinger = fingerButton.getLayoutParams();
         buttonParamsFinger.height = fingerButtonHeight;
         buttonParamsFinger.width = fingerButtonWidt;

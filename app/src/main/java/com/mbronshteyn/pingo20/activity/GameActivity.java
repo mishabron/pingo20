@@ -109,10 +109,10 @@ public class GameActivity extends PingoActivity {
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);
 
         if(card.isFreeGame()){
-            Game.attemptCounter = 3 - card.getHits().size();
+            Game.attemptCounter = 3 - card.getNonBonusHits().size();
         }
         else {
-            Game.attemptCounter = 4 - card.getHits().size();
+            Game.attemptCounter = 4 - card.getNonBonusHits().size();
             freeGame.setVisibility(View.INVISIBLE);
         }
 
@@ -368,13 +368,13 @@ public class GameActivity extends PingoActivity {
         cardHitDto.setCardNumber(Long.parseLong(card));
         cardHitDto.setDeviceId(Game.devicedId);
         cardHitDto.setGame(Game.getGAMEID());
-        cardHitDto.setBonusHit(false);
 
         cardHitDto.setHit1(pingo1.getCurrentPingo());
         cardHitDto.setHit2(pingo2.getCurrentPingo());
         cardHitDto.setHit3(pingo3.getCurrentPingo());
         cardHitDto.setHit4(pingo4.getCurrentPingo());
         cardHitDto.setBonus(Game.bonusHit);
+        cardHitDto.setBonusHit(Game.bonusHit != null);
         //reset bonus
         Game.bonusHit = null;
 
