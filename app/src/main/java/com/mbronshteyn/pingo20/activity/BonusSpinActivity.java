@@ -196,7 +196,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         acctivePingos.remove(Integer.valueOf(event.getPingoNumber()));
         //all pingos stoped srolling
-        if (acctivePingos.isEmpty()){
+        if (acctivePingos.isEmpty() && !pingosInPlay.isEmpty()){
 
             stopPlaySound(R.raw.wheel_spinning);
             fingerButton.setEnabled(true);
@@ -208,6 +208,7 @@ public class BonusSpinActivity extends PingoActivity{
                 public void onClick(View v) {
                     fingerTimer.cancel();
                     spinPingos(pingosInPlay.get(0));
+                    pingosInPlay.remove(0);
                 }
             });
 
@@ -237,10 +238,21 @@ public class BonusSpinActivity extends PingoActivity{
     public void spinPingos(Integer integer){
         fingerButton.setEnabled(false);
         playSound(R.raw.wheel_spinning);
-        pingo1.spinPingo();
-        pingo2.spinPingo();
-        pingo3.spinPingo();
-        pingo4.spinPingo();
+
+        switch (integer){
+            case 1:
+                pingo1.spinPingo();
+                break;
+            case 2:
+                pingo2.spinPingo();
+                break;
+            case 3:
+                pingo3.spinPingo();
+                break;
+            case 4:
+                pingo4.spinPingo();
+                break;
+        }
     }
 
     private void hitCard(){
@@ -331,9 +343,15 @@ public class BonusSpinActivity extends PingoActivity{
         overlayBubbleParams.width = newBmapWidth;
         overlayBubbleParams.height = newBmapHeight;
 
+        //scale spin banner
+        ImageView spinBannerw = (ImageView) findViewById(R.id.spinBannerw);
+        ViewGroup.LayoutParams spinBannerwParams = spinBannerw.getLayoutParams();
+        spinBannerwParams.width = newBmapWidth;
+        spinBannerwParams.height = newBmapHeight;
+
         //scale pingo windows
         float pingoWidth = 0.2008F;
-        float pingoHeight = 0.2901F;
+        float pingoHeight = 0.3558F;
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.bonusSpinPingo1);
         ViewGroup.LayoutParams pingoParams1 = pingo1.getLayoutParams();
         pingoParams1.height = (int)(newBmapHeight*pingoHeight);
@@ -356,8 +374,8 @@ public class BonusSpinActivity extends PingoActivity{
 
         //scale finger  button
         Button fingerButton = (Button) findViewById(R.id.bonusButtonGo);
-        int fingerButtonHeight = (int) (newBmapHeight * 0.4239F);
-        int fingerButtonWidt = (int) (newBmapWidth * 0.2600F);
+        int fingerButtonHeight = (int) (newBmapHeight * 0.4039F);
+        int fingerButtonWidt = (int) (newBmapWidth * 0.2400F);
         ViewGroup.LayoutParams buttonParamsFinger = fingerButton.getLayoutParams();
         buttonParamsFinger.height = fingerButtonHeight;
         buttonParamsFinger.width = fingerButtonWidt;
