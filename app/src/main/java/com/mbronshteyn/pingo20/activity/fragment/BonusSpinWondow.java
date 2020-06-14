@@ -131,7 +131,7 @@ public class BonusSpinWondow extends Fragment {
         wheel.setEnabled(false);
         wheel.setDrawShadows(false);
         wheel.setCurrentItem(1);
-        wheel.setVisibility(View.VISIBLE);
+        wheel.setVisibility(View.INVISIBLE);
     }
 
     public void initPingo(Bundle pingoBundle){
@@ -139,6 +139,7 @@ public class BonusSpinWondow extends Fragment {
         guessed = pingoBundle.getBoolean("guessed");
 
         if(!guessed) {
+            wheel.setVisibility(View.VISIBLE);
             ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
             for (Integer playedNumber : playedNumbers) {
                 removeNumber(numbers, playedNumber);
@@ -151,7 +152,7 @@ public class BonusSpinWondow extends Fragment {
 
             wheel.setCurrentItem(1);
             wheel.setInterpolator(new AccelerateDecelerateInterpolator());
-            wheel.scroll(-(numbers.size() * 2), 3000 + pingoNumber * 200);
+            new Handler().postDelayed(()->{wheel.scroll(-(numbers.size() * 2), 3000 + pingoNumber * 200);},1000);
         }
         else{
             currentPingo = (Integer)pingoBundle.getSerializable("guessedNumber");
@@ -245,9 +246,13 @@ public class BonusSpinWondow extends Fragment {
     OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
         @Override
         public void onScrollingStarted(WheelView wheel) {
+            ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
+            blueBackground.setVisibility(View.INVISIBLE);
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+            ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
+            blueBackground.setVisibility(View.VISIBLE);
             EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
