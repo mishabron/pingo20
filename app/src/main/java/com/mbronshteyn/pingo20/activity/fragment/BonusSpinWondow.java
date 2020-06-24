@@ -26,6 +26,7 @@ import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
 import com.mbronshteyn.pingo20.events.SpinEvent;
+import com.mbronshteyn.pingo20.events.SpinScrollEnd;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -280,7 +281,7 @@ public class BonusSpinWondow extends Fragment {
             }
             new Handler().postDelayed(()->{
                 doResetSpecialEffects();
-                EventBus.getDefault().post(new ScrollEnd(pingoNumber));
+                EventBus.getDefault().post(new SpinScrollEnd(pingoNumber));
             },5000);
         }
     };

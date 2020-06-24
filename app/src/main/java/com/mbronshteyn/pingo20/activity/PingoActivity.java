@@ -61,8 +61,6 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.luckyseven,soindId);
         soindId = soundPool.load(this, R.raw.bonus_nowin, 1);
         soundMap.put(R.raw.bonus_nowin,soindId);
-        soindId = soundPool.load(this, R.raw.bonus_background, 1);
-        soundMap.put(R.raw.bonus_background,soindId);
         soindId = soundPool.load(this, R.raw.jackpot, 1);
         soundMap.put(R.raw.jackpot,soindId);
         soindId = soundPool.load(this, R.raw.bonusspin_1, 1);
@@ -149,6 +147,15 @@ public class PingoActivity extends AppCompatActivity {
                 mediaPlayer1.setNextMediaPlayer(mediaPlayer2);
             }
         });
+    }
+
+    protected void stopPplayInBackground(){
+        if(mediaPlayer1.isPlaying()){
+            mediaPlayer1.stop();
+        }
+        if(mediaPlayer2.isPlaying()){
+            mediaPlayer2.stop();
+        }
     }
 
     protected void popBaloon(final ImageView ballon, int duration){

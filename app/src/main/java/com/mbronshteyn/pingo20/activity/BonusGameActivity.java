@@ -210,7 +210,7 @@ public class BonusGameActivity extends PingoActivity {
         Glide.with(this).clear(overlayBlue);
         Glide.with(this).load(R.drawable.bonus_win).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
-        stopPlaySound(R.raw.bonus_background);
+        stopPplayInBackground();
         playSound(R.raw.jackpot);
 
         ImageView seven1 = (ImageView) findViewById(R.id.seven1);
@@ -252,7 +252,7 @@ public class BonusGameActivity extends PingoActivity {
 
     private void transitionToPlay() {
 
-        playSoundLoop(R.raw.bonus_background);
+        playInBackground(R.raw.bonus_background);
 
         fingerButton.setBackground(getResources().getDrawable(R.drawable.btn_bonus_finger_play,this.getTheme()));
 
@@ -321,7 +321,7 @@ public class BonusGameActivity extends PingoActivity {
         fingerButton.setEnabled(false);
         fingerButton.setVisibility(View.INVISIBLE);
         playSound(R.raw.bonus_nowin);
-        stopPlaySound(R.raw.bonus_background);
+        stopPplayInBackground();
 
         //ballon background
         ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);

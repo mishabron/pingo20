@@ -30,6 +30,7 @@ import com.mbronshteyn.pingo20.activity.fragment.BonusSpinWondow;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
+import com.mbronshteyn.pingo20.events.SpinScrollEnd;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -200,13 +201,20 @@ public class BonusSpinActivity extends PingoActivity{
     public void onInitScrollEnd(ScrollEnd event){
 
         acctivePingos.remove(Integer.valueOf(event.getPingoNumber()));
+        playSound(R.raw.wheel_stop);
+
         //all pingos stoped srolling
-        if (acctivePingos.isEmpty() && !pingosInPlay.isEmpty()){
+        if (acctivePingos.isEmpty()){
+
+            //start finger timer
             fingerButton.setEnabled(true);
             fingerTimer.start();
 
+            //put yellow frame on first window
             EventBus.getDefault().post(new SelecForSpinEvent(pingosInPlay.get(0)));
             playSound(R.raw.button);
+
+            //attach new finger button listiner
             fingerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -216,10 +224,19 @@ public class BonusSpinActivity extends PingoActivity{
                     pingosInPlay.remove(0);
                 }
             });
-
         }
-        else{
-            playSound(R.raw.wheel_stop);
+    }
+
+    @Subscribe
+    public void onSpinScrollEnd(SpinScrollEnd event){
+        if(!pingosInPlay.isEmpty()) {
+
+            //start finger timer
+            fingerButton.setEnabled(true);
+            fingerTimer.start();
+
+            EventBus.getDefault().post(new SelecForSpinEvent(pingosInPlay.get(0)));
+            playSound(R.raw.button);
         }
     }
 
