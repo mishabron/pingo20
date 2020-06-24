@@ -24,20 +24,24 @@ import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.CardHitDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
+import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusSpinWondow;
+import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,6 +85,7 @@ public class BonusSpinActivity extends PingoActivity{
         super.onPostCreate(savedInstanceState);
         new Handler().postDelayed(() -> { transitionLayout(); }, 500);
         Game.bonusHit = Bonus.SUPERPIN;
+        new Handler().postDelayed(()->{ playInBackground(R.raw.bonusspin_background);},0);
     }
 
     @Override
@@ -111,7 +116,7 @@ public class BonusSpinActivity extends PingoActivity{
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                new Handler().postDelayed(()->{transitionToPlay();},1000);
+                new Handler().postDelayed(()->{transitionToPlay();},500);
             }
 
             @Override
@@ -135,7 +140,9 @@ public class BonusSpinActivity extends PingoActivity{
     }
 
     private void transitionToPlay() {
+
         playSound(R.raw.wheel_spinning);
+
         initPingos(pingo1);
         initPingos(pingo2);
         initPingos(pingo3);
@@ -182,7 +189,7 @@ public class BonusSpinActivity extends PingoActivity{
                     playedNumber = hit.getNumber_4().getNumber();
                     break;
             }
-            if(playedNumber != null) {
+            if(playedNumber != null && playedNumber <100) {
                 numbersPlayed.add(playedNumber);
             }
         }
@@ -192,26 +199,27 @@ public class BonusSpinActivity extends PingoActivity{
     @Subscribe
     public void onInitScrollEnd(ScrollEnd event){
 
-        playSound(R.raw.wheel_stop);
-
         acctivePingos.remove(Integer.valueOf(event.getPingoNumber()));
         //all pingos stoped srolling
         if (acctivePingos.isEmpty() && !pingosInPlay.isEmpty()){
-
-            stopPlaySound(R.raw.wheel_spinning);
             fingerButton.setEnabled(true);
             fingerTimer.start();
 
             EventBus.getDefault().post(new SelecForSpinEvent(pingosInPlay.get(0)));
+            playSound(R.raw.button);
             fingerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    playSound(R.raw.short_button_turn);
                     fingerTimer.cancel();
                     spinPingos(pingosInPlay.get(0));
                     pingosInPlay.remove(0);
                 }
             });
 
+        }
+        else{
+            playSound(R.raw.wheel_stop);
         }
     }
 
@@ -237,20 +245,23 @@ public class BonusSpinActivity extends PingoActivity{
 
     public void spinPingos(Integer integer){
         fingerButton.setEnabled(false);
-        playSound(R.raw.wheel_spinning);
 
         switch (integer){
             case 1:
-                pingo1.spinPingo();
+                playSound(R.raw.bonusspin_1);
+                pingo1.spinPingo(loadNumberGuessed(1));
                 break;
             case 2:
-                pingo2.spinPingo();
+                playSound(R.raw.bonusspin_1);
+                pingo2.spinPingo(loadNumberGuessed(2));
                 break;
             case 3:
-                pingo3.spinPingo();
+                playSound(R.raw.bonusspin_1);
+                pingo3.spinPingo(loadNumberGuessed(3));
                 break;
             case 4:
-                pingo4.spinPingo();
+                playSound(R.raw.bonusspin_1);
+                pingo4.spinPingo(loadNumberGuessed(4));
                 break;
         }
     }
@@ -299,6 +310,22 @@ public class BonusSpinActivity extends PingoActivity{
     }
 
     private void processHitResponse(Response<CardDto> response) {
+
+        Headers headers = response.headers();
+        String message = headers.get("message");
+
+        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+            card = response.body();
+        }else{
+            playSound(R.raw.error_short);
+            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
+            switch(errorCode){
+                case SERVERERROR:
+                    rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
+                    popBaloon(rightSmallBaloon,4000);
+                    break;
+            }
+        }
     }
 
     private void scaleUi() {

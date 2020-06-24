@@ -1,11 +1,13 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,12 +22,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class PingoActivity extends AppCompatActivity {
 
-    protected static MediaPlayer mediaPlayer;
+    protected MediaPlayer mediaPlayer1;
+    protected MediaPlayer mediaPlayer2;
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
     protected SoundPool soundPool;
@@ -63,7 +65,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.bonus_background,soindId);
         soindId = soundPool.load(this, R.raw.jackpot, 1);
         soundMap.put(R.raw.jackpot,soindId);
-
+        soindId = soundPool.load(this, R.raw.bonusspin_1, 1);
+        soundMap.put(R.raw.bonusspin_1,soindId);
     }
 
     @Override
@@ -71,6 +74,15 @@ public class PingoActivity extends AppCompatActivity {
         super.onStop();
         soundPool.release();
         soundPool = null;
+
+        if(mediaPlayer1 != null) {
+            mediaPlayer1.release();
+            mediaPlayer1 = null;
+        }
+        if(mediaPlayer2 != null) {
+            mediaPlayer2.release();
+            mediaPlayer2 = null;
+        }
     }
 
     protected void stopPlaySound(int sound) {
@@ -94,6 +106,49 @@ public class PingoActivity extends AppCompatActivity {
         Integer soundId = soundMap.get(sound);
         int soundPlaying = soundPool.play(soundId, 1, 1, 0, -1, 1);
         soundsInPlayMap.put(sound,soundPlaying);
+    }
+
+    protected void playInBackground(int sound){
+
+        final AssetFileDescriptor afd = getResources().openRawResourceFd(sound);
+        mediaPlayer1 = MediaPlayer.create(this,sound);
+        mediaPlayer2 = MediaPlayer.create(this,sound);
+
+        mediaPlayer1.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        mediaPlayer1.start();
+        mediaPlayer1.setNextMediaPlayer(mediaPlayer2);
+
+        mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                try {
+                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mediaPlayer.prepare();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer2.setNextMediaPlayer(mediaPlayer1);
+            }
+        });
+
+        mediaPlayer2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                try {
+                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mediaPlayer.prepare();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer1.setNextMediaPlayer(mediaPlayer2);
+            }
+        });
     }
 
     protected void popBaloon(final ImageView ballon, int duration){
