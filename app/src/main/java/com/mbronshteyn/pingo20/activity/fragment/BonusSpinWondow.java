@@ -26,7 +26,9 @@ import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
 import com.mbronshteyn.pingo20.events.SpinEvent;
+import com.mbronshteyn.pingo20.events.SpinResultEvent;
 import com.mbronshteyn.pingo20.events.SpinScrollEnd;
+import com.mbronshteyn.pingo20.model.BonusSpinResult;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -279,6 +281,9 @@ public class BonusSpinWondow extends Fragment {
             if(currentPingo < 100){
                 doSpecialEffects();
             }
+            else{
+                EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.TOKEN));
+            }
             new Handler().postDelayed(()->{
                 doResetSpecialEffects();
                 EventBus.getDefault().post(new SpinScrollEnd(pingoNumber));
@@ -311,6 +316,7 @@ public class BonusSpinWondow extends Fragment {
     private void doSpecialEffects(){
 
         if(winNumber == currentPingo){
+            EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.RIGHT));
             ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
             blueBackground.setVisibility(View.INVISIBLE);
             ImageView windowBackground = (ImageView) mainView.findViewById(R.id.spin_window_background);
@@ -320,6 +326,7 @@ public class BonusSpinWondow extends Fragment {
             winAnimation.start();
         }
         else{
+            EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.WRONG));
             ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
             blueBackground.setVisibility(View.INVISIBLE);
             ImageView windowBackground = (ImageView) mainView.findViewById(R.id.spin_window_background);

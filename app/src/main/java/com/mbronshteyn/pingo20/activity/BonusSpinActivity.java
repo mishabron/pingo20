@@ -30,6 +30,7 @@ import com.mbronshteyn.pingo20.activity.fragment.BonusSpinWondow;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
+import com.mbronshteyn.pingo20.events.SpinResultEvent;
 import com.mbronshteyn.pingo20.events.SpinScrollEnd;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
@@ -206,6 +207,8 @@ public class BonusSpinActivity extends PingoActivity{
         //all pingos stoped srolling
         if (acctivePingos.isEmpty()){
 
+            stopPlaySound(R.raw.wheel_spinning);
+
             //start finger timer
             fingerButton.setEnabled(true);
             fingerTimer.start();
@@ -218,7 +221,6 @@ public class BonusSpinActivity extends PingoActivity{
             fingerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    playSound(R.raw.short_button_turn);
                     fingerTimer.cancel();
                     spinPingos(pingosInPlay.get(0));
                     pingosInPlay.remove(0);
@@ -238,6 +240,26 @@ public class BonusSpinActivity extends PingoActivity{
             EventBus.getDefault().post(new SelecForSpinEvent(pingosInPlay.get(0)));
             playSound(R.raw.button);
         }
+    }
+
+    @Subscribe
+    public void onSpinResultEvent(SpinResultEvent event){
+
+        int sound = 0;;
+
+        switch(event.getResult()){
+            case RIGHT:
+                sound = R.raw.right_number_winner;
+                break;
+            case WRONG:
+                sound = R.raw.wrong_try_again;
+                break;
+            case TOKEN:
+                sound = R.raw.token_try_again;
+                break;
+        }
+        int finalSound = sound;
+        new Handler().postDelayed(()->{playSound(finalSound);},1000);
     }
 
     private class FingerTimer extends CountDownTimer {
@@ -269,15 +291,15 @@ public class BonusSpinActivity extends PingoActivity{
                 pingo1.spinPingo(loadNumberGuessed(1));
                 break;
             case 2:
-                playSound(R.raw.bonusspin_1);
+                playSound(R.raw.bonusspin_2);
                 pingo2.spinPingo(loadNumberGuessed(2));
                 break;
             case 3:
-                playSound(R.raw.bonusspin_1);
+                playSound(R.raw.bonusspin_3);
                 pingo3.spinPingo(loadNumberGuessed(3));
                 break;
             case 4:
-                playSound(R.raw.bonusspin_1);
+                playSound(R.raw.bonusspin_4);
                 pingo4.spinPingo(loadNumberGuessed(4));
                 break;
         }
