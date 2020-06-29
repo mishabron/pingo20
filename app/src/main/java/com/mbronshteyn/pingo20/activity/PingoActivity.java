@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.model.Game;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -260,5 +261,21 @@ public class PingoActivity extends AppCompatActivity {
         }
         return goessedCount;
     }
-    
+
+    public String getCardReward(){
+
+        String reward = "";
+
+        if(card.getBalance() != 0) {
+            reward = getString(R.string.card_balance) + " $" +(int) card.getBalance()+ " ";
+        }
+        else if(Game.attemptCounter == 0){
+            reward = "GAME OVER ";
+        }
+        else{
+            reward = "WIN FREE GAME ";
+        }
+
+        return reward;
+    }
 }

@@ -959,23 +959,6 @@ public class GameActivity extends PingoActivity {
         }
     }
 
-    private String getCardReward(){
-
-        String reward = "";
-
-        if(card.getBalance() != 0) {
-            reward = getString(R.string.card_balance) + " $" +(int) card.getBalance()+ " ";
-        }
-        else if(Game.attemptCounter == 0){
-            reward = "GAME OVER ";
-        }
-        else{
-            reward = "WIN FREE GAME ";
-        }
-
-        return reward;
-    }
-
     public void scaleUi() {
 
         // scale the screen

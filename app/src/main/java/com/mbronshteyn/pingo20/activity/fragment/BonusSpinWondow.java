@@ -1,5 +1,6 @@
 package com.mbronshteyn.pingo20.activity.fragment;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
@@ -316,6 +317,7 @@ public class BonusSpinWondow extends Fragment {
     private void doSpecialEffects(){
 
         if(winNumber == currentPingo){
+            //blink background
             EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.RIGHT));
             ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
             blueBackground.setVisibility(View.INVISIBLE);
@@ -324,6 +326,11 @@ public class BonusSpinWondow extends Fragment {
             windowBackground.setVisibility(View.VISIBLE);
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
             winAnimation.start();
+            //rotate number
+            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,720);
+            animation.setDuration(3000);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            new Handler().postDelayed(()->{animation.start();},1000);
         }
         else{
             EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.WRONG));

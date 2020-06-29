@@ -1,6 +1,10 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -19,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
@@ -61,6 +66,7 @@ public class BonusSpinActivity extends PingoActivity{
     private ArrayList<Integer> acctivePingos = new ArrayList<>();
     private ArrayList<Integer> pingosInPlay = new ArrayList<>();
     private FingerTimer fingerTimer;
+    private TextView balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +83,13 @@ public class BonusSpinActivity extends PingoActivity{
         fingerButton = (Button) findViewById(R.id.bonusButtonGo);
         fingerButton.setEnabled(false);
 
-        fingerTimer = new BonusSpinActivity.FingerTimer(2000,100);
+        fingerTimer = new BonusSpinActivity.FingerTimer(1000,100);
+
+        //balance
+        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
+        balance = (TextView) findViewById(R.id.spinBalance);
+        balance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
+        balance.setText(getCardReward());
 
         scaleUi();
     }
@@ -113,11 +125,17 @@ public class BonusSpinActivity extends PingoActivity{
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-
+                ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
+                lights.setImageDrawable(getResources().getDrawable(R.drawable.lights_with_light_1,null));
+                lights.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
+                ImageView spinBannerw = (ImageView) findViewById(R.id.spinBannerw);
+                AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.anim.rockbanner);
+                rockplay.setTarget(spinBannerw);
+                rockplay.start();
                 new Handler().postDelayed(()->{transitionToPlay();},500);
             }
 
@@ -208,6 +226,8 @@ public class BonusSpinActivity extends PingoActivity{
         if (acctivePingos.isEmpty()){
 
             stopPlaySound(R.raw.wheel_spinning);
+            ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
+            lights.setVisibility(View.INVISIBLE);
 
             //start finger timer
             fingerButton.setEnabled(true);
@@ -445,5 +465,11 @@ public class BonusSpinActivity extends PingoActivity{
         ViewGroup.LayoutParams buttonParamsFinger = fingerButton.getLayoutParams();
         buttonParamsFinger.height = fingerButtonHeight;
         buttonParamsFinger.width = fingerButtonWidt;
+
+        //scale lighta
+        ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
+        ViewGroup.LayoutParams lightsParams = lights.getLayoutParams();
+        lightsParams.width = newBmapWidth;
+        lightsParams.height = newBmapHeight;
     }
 }
