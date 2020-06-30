@@ -121,6 +121,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
+            android:visibility="invisible"
             android:background="@drawable/spin_banner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

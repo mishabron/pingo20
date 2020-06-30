@@ -12,16 +12,34 @@
         android:drawable="@drawable/lights_with_light_2"
         android:duration="430"/>
     <item
-        android:drawable="@drawable/lights_with_light_3"
+        android:drawable="@drawable/lights_with_light_1"
         android:duration="430"/>
     <item
-        android:drawable="@drawable/lights_with_light_4"
+        android:drawable="@drawable/lights_with_light_2"
         android:duration="430"/>
     <item
-        android:drawable="@drawable/lights_with_light_5"
+        android:drawable="@drawable/lights_with_light_1"
         android:duration="430"/>
     <item
-        android:drawable="@drawable/lights_with_light_6"
+        android:drawable="@drawable/lights_with_light_2"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_1"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_2"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_1"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_2"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_1"
+        android:duration="430"/>
+    <item
+        android:drawable="@drawable/lights_with_light_2"
         android:duration="430"/>
 
 </animation-list>

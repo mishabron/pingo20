@@ -125,17 +125,16 @@ public class BonusSpinActivity extends PingoActivity{
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-                ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
-                lights.setImageDrawable(getResources().getDrawable(R.drawable.lights_with_light_1,null));
-                lights.setVisibility(View.VISIBLE);
+                searchLights();
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
+
                 ImageView spinBannerw = (ImageView) findViewById(R.id.spinBannerw);
-                AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.anim.rockbanner);
-                rockplay.setTarget(spinBannerw);
-                rockplay.start();
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+                spinBannerw.startAnimation(zoomIntAnimation);
+
                 new Handler().postDelayed(()->{transitionToPlay();},500);
             }
 
@@ -157,6 +156,14 @@ public class BonusSpinActivity extends PingoActivity{
 
         TransitionManager.beginDelayedTransition(root, transition);
         constraintSet.applyTo(root);
+    }
+
+    private void searchLights() {
+        ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
+        lights.setImageDrawable(getResources().getDrawable(R.drawable.lights_animation,null));
+        lights.setVisibility(View.VISIBLE);
+        AnimationDrawable winAnimation = (AnimationDrawable) lights.getDrawable();
+        winAnimation.start();
     }
 
     private void transitionToPlay() {
@@ -225,10 +232,6 @@ public class BonusSpinActivity extends PingoActivity{
         //all pingos stoped srolling
         if (acctivePingos.isEmpty()){
 
-            stopPlaySound(R.raw.wheel_spinning);
-            ImageView lights = (ImageView) findViewById(R.id.bonusSpinLights);
-            lights.setVisibility(View.INVISIBLE);
-
             //start finger timer
             fingerButton.setEnabled(true);
             fingerTimer.start();
@@ -269,6 +272,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         switch(event.getResult()){
             case RIGHT:
+                searchLights();
                 sound = R.raw.right_number_winner;
                 break;
             case WRONG:
