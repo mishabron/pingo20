@@ -46,6 +46,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Headers;
@@ -67,6 +68,7 @@ public class BonusSpinActivity extends PingoActivity{
     private ArrayList<Integer> pingosInPlay = new ArrayList<>();
     private FingerTimer fingerTimer;
     private TextView balance;
+    private List<Integer> spinSounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,8 @@ public class BonusSpinActivity extends PingoActivity{
         balance = (TextView) findViewById(R.id.spinBalance);
         balance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
         balance.setText(getCardReward());
+
+        spinSounds = new ArrayList(Arrays.asList(R.raw.bonusspin_1,R.raw.bonusspin_2,R.raw.bonusspin_3,R.raw.bonusspin_4));
 
         scaleUi();
     }
@@ -245,8 +249,9 @@ public class BonusSpinActivity extends PingoActivity{
                 @Override
                 public void onClick(View v) {
                     fingerTimer.cancel();
-                    spinPingos(pingosInPlay.get(0));
+                    spinPingos(pingosInPlay.get(0),spinSounds.get(0));
                     pingosInPlay.remove(0);
+                    spinSounds.remove(0);
                 }
             });
         }
@@ -306,24 +311,21 @@ public class BonusSpinActivity extends PingoActivity{
         }
     }
 
-    public void spinPingos(Integer integer){
-        fingerButton.setEnabled(false);
+    public void spinPingos(Integer pingoWindow, Integer spinSound){
 
-        switch (integer){
+        fingerButton.setEnabled(false);
+        playSound(spinSound);
+        switch (pingoWindow){
             case 1:
-                playSound(R.raw.bonusspin_1);
                 pingo1.spinPingo(loadNumberGuessed(1));
                 break;
             case 2:
-                playSound(R.raw.bonusspin_2);
                 pingo2.spinPingo(loadNumberGuessed(2));
                 break;
             case 3:
-                playSound(R.raw.bonusspin_3);
                 pingo3.spinPingo(loadNumberGuessed(3));
                 break;
             case 4:
-                playSound(R.raw.bonusspin_4);
                 pingo4.spinPingo(loadNumberGuessed(4));
                 break;
         }

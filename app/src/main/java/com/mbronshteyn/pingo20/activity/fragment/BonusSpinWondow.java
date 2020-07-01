@@ -134,7 +134,6 @@ public class BonusSpinWondow extends Fragment {
         wheel = getView().findViewById(R.id.bonusSpinSlot);
 
         wheel.setViewAdapter(new BonusSpinWondow.SlotMachineAdapter());
-        wheel.setCurrentItem(0,true);
 
         wheel.addScrollingListener(scrolledListener);
         wheel.setCyclic(true);
@@ -277,6 +276,7 @@ public class BonusSpinWondow extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+            wheel.setCurrentItem(slotNumber);
             ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
             blueBackground.setVisibility(View.VISIBLE);
             if(currentPingo < 100){
@@ -297,7 +297,6 @@ public class BonusSpinWondow extends Fragment {
         public void onChanged(WheelView wheel, int oldValue, int newValue) {
             if (newValue == slotNumber && spinCount > 5) {
                 wheel.stopScrolling();
-                wheel.setCurrentItem(slotNumber);
             }
             else if (newValue == slotNumber){
                 spinCount++;
