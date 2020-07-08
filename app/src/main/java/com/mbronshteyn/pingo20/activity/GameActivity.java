@@ -193,35 +193,43 @@ public class GameActivity extends PingoActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        int slideNo = 0;
-        int delay = 0;
-
-        switch(Game.attemptCounter){
-            case 3:
-                slideNo = R.drawable.to2;
-                delay = 5000;
-                break;
-            case 2:
-                slideNo = R.drawable.to3;
-                delay = 5000;
-                break;
-            case 1:
-                slideNo = R.drawable.to4;
-                delay = 5000;
-                break;
+        if(isWinningCard() && Game.attemptCounter != 0 ){
+            doWinningFlash();
+            new Handler().postDelayed(() -> {transitionLayout();}, 7100);
+            new Handler().postDelayed(()->{processWin(1);},14000);
         }
+        else {
+            int slideNo = 0;
+            int delay = 0;
 
-        if(slideNo > 0) {
-            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-            Glide.with(context).clear(overlayBlue);
-            Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-            overlayBlue.setVisibility(View.VISIBLE);
+            switch (Game.attemptCounter) {
+                case 3:
+                    slideNo = R.drawable.to2;
+                    delay = 5000;
+                    break;
+                case 2:
+                    slideNo = R.drawable.to3;
+                    delay = 5000;
+                    break;
+                case 1:
+                    slideNo = R.drawable.to4;
+                    delay = 5000;
+                    break;
+            }
+
+            if (slideNo > 0) {
+                ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+                Glide.with(context).clear(overlayBlue);
+                Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+                overlayBlue.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(() -> {
+                    overlayBlue.setVisibility(View.INVISIBLE);
+                }, delay);
+            }
             new Handler().postDelayed(() -> {
-                overlayBlue.setVisibility(View.INVISIBLE);
-            }, delay);
+                transitionLayout();
+            }, delay + 100);
         }
-        new Handler().postDelayed(() -> { transitionLayout(); }, delay+100);
-
     }
 
     private void transitionLayout(){

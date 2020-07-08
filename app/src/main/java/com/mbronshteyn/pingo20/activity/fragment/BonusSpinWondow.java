@@ -155,8 +155,8 @@ public class BonusSpinWondow extends Fragment {
                 //remove corresponding pingo
                 removeNumber(numbers, playedNumber+100);
             }
-            Random r = new Random();
-            slotNumber = Math.abs(r.nextInt()) % numbers.size();
+            Random random = new Random();
+            slotNumber = Math.abs(random.nextInt()) % numbers.size();
             currentPingo = numbers.get(slotNumber).getId();
 
             wheel.setCurrentItem(1);

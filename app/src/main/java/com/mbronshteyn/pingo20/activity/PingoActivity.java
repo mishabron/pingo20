@@ -78,6 +78,10 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.wrong_try_again,soindId);
         soindId = soundPool.load(this, R.raw.token_try_again, 1);
         soundMap.put(R.raw.token_try_again,soindId);
+        soindId = soundPool.load(this, R.raw.wrong_last, 1);
+        soundMap.put(R.raw.wrong_last,soindId);
+        soindId = soundPool.load(this, R.raw.token_last, 1);
+        soundMap.put(R.raw.token_last,soindId);
     }
 
     @Override

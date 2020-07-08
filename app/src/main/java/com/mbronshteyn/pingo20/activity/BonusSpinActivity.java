@@ -1,7 +1,7 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.CardHitDto;
@@ -32,7 +34,6 @@ import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusSpinWondow;
-import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.SelecForSpinEvent;
 import com.mbronshteyn.pingo20.events.SpinResultEvent;
@@ -115,6 +116,7 @@ public class BonusSpinActivity extends PingoActivity{
     @Override
     protected void onStop() {
         super.onStop();
+        fingerTimer.cancel();
         EventBus.getDefault().unregister(this);
     }
 
@@ -236,6 +238,8 @@ public class BonusSpinActivity extends PingoActivity{
         //all pingos stoped srolling
         if (acctivePingos.isEmpty()){
 
+            stopPlaySound(R.raw.wheel_spinning);
+
             //start finger timer
             fingerButton.setEnabled(true);
             fingerTimer.start();
@@ -277,18 +281,42 @@ public class BonusSpinActivity extends PingoActivity{
 
         switch(event.getResult()){
             case RIGHT:
+                ImageView lightsBackround = (ImageView) findViewById(R.id.winningLightsBackground);
+                Glide.with(this).load(R.drawable.gray_speed_layer).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(lightsBackround);
+                lightsBackround.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(()->{lightsBackround.setVisibility(View.INVISIBLE);},5500);
                 searchLights();
                 sound = R.raw.right_number_winner;
+                Game.guessedCount++;
                 break;
             case WRONG:
                 sound = R.raw.wrong_try_again;
+                if(pingosInPlay.isEmpty()){
+                    sound = R.raw.wrong_last;
+                }
                 break;
             case TOKEN:
                 sound = R.raw.token_try_again;
+                if(pingosInPlay.isEmpty()){
+                    sound = R.raw.token_last;
+                }
                 break;
         }
         int finalSound = sound;
         new Handler().postDelayed(()->{playSound(finalSound);},1000);
+
+        //end of bonus game
+        if(pingosInPlay.isEmpty()){
+            new Handler().postDelayed(()->{gotoMainGame();},7000);
+        }
+    }
+
+    private void gotoMainGame() {
+        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        startActivity(intent);
+        Activity activity = (Activity) BonusSpinActivity.this;
+        activity.finish();
+        Runtime.getRuntime().gc();
     }
 
     private class FingerTimer extends CountDownTimer {
@@ -477,5 +505,11 @@ public class BonusSpinActivity extends PingoActivity{
         ViewGroup.LayoutParams lightsParams = lights.getLayoutParams();
         lightsParams.width = newBmapWidth;
         lightsParams.height = newBmapHeight;
+
+        //scale lighta
+        ImageView lightsBackround = (ImageView) findViewById(R.id.winningLightsBackground);
+        ViewGroup.LayoutParams lightsBackroundParams = lightsBackround.getLayoutParams();
+        lightsBackroundParams.width = newBmapWidth;
+        lightsBackroundParams.height = newBmapHeight;
     }
 }
