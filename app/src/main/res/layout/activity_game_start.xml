@@ -128,14 +128,15 @@
             app:layout_constraintHorizontal_bias="0.85" />
 
         <ImageView
-            android:id="@+id/shield_full"
+            android:id="@+id/mainBanner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shield_full"
-            android:visibility="invisible"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/banner"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <fragment
@@ -147,7 +148,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_bias="0.735"
+            app:layout_constraintVertical_bias="0.715"
             app:initiak="progress_blk_ring"
             app:progress="progress_wht_ring"
             app:success="progress_wht_ring"
@@ -200,7 +201,7 @@
             app:layout_constraintHorizontal_bias="0.45"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.835" />
+            app:layout_constraintVertical_bias="0.777" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -246,7 +247,6 @@
         android:id="@+id/spiral"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/spiral_blue2"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

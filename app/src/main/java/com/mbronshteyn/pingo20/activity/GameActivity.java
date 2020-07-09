@@ -346,8 +346,6 @@ public class GameActivity extends PingoActivity {
                 pingo3.getCurrentPingo().toString()+
                 pingo4.getCurrentPingo().toString());
 
-        ImageView shield = (ImageView) findViewById(R.id.shield_full);
-        shield.setVisibility(View.VISIBLE);
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         nonTouchShield.setVisibility(View.VISIBLE);
 
@@ -700,13 +698,10 @@ public class GameActivity extends PingoActivity {
     }
 
     private void doHalfWayThere() {
+
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
         Glide.with(this).load(R.drawable.overlay_blue7).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
-
-        ImageView spiral = (ImageView) findViewById(R.id.spiral);
-        Animation zoomRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate);
-        spiral.startAnimation(zoomRotate);
 
         ImageView halfWay = (ImageView) findViewById(R.id.popup_logo);
         Glide.with(this).load(R.drawable.half_way).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(halfWay);
@@ -717,9 +712,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 overlayBlue.setVisibility(View.INVISIBLE);
-                spiral.clearAnimation();
                 halfWay.clearAnimation();
-                spiral.setVisibility(View.INVISIBLE);
                 Glide.with(context).clear(halfWay);
             }
             @Override
@@ -772,8 +765,6 @@ public class GameActivity extends PingoActivity {
                 }
                 else{
                     //remove sheilds
-                    ImageView shield = (ImageView) findViewById(R.id.shield_full);
-                    shield.setVisibility(View.INVISIBLE);
                     ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
                     nonTouchShield.setVisibility(View.INVISIBLE);
                     balance.setTextColor(Color.WHITE);
@@ -831,10 +822,6 @@ public class GameActivity extends PingoActivity {
     }
 
     private void processWin(int pingoNumber) {
-
-        //remove sheilds
-        ImageView shield = (ImageView) findViewById(R.id.shield_full);
-        shield.setVisibility(View.INVISIBLE);
 
         //first pair
         int window1 = pingoNumber;
@@ -1051,12 +1038,6 @@ public class GameActivity extends PingoActivity {
         pingoParams.height = (int)(newBmapHeight*pingoSize);
         pingoParams.width = (int)(newBmapHeight*pingoSize);
 
-        //scale shild
-        ImageView shield = (ImageView) findViewById(R.id.shield_full);
-        ViewGroup.LayoutParams shieldParams = shield.getLayoutParams();
-        shieldParams.width = newBmapWidth;
-        shieldParams.height = newBmapHeight;
-
         //scale nonTouchShield
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
@@ -1092,6 +1073,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams overlayBlueParams = overlayBlue.getLayoutParams();
         overlayBlueParams.width = newBmapWidth;
         overlayBlueParams.height = newBmapHeight;
+
+        //scale banner
+        ImageView mainBanner = (ImageView) findViewById(R.id.mainBanner);
+        ViewGroup.LayoutParams mainBannerParams = mainBanner.getLayoutParams();
+        mainBannerParams.width = newBmapWidth;
+        mainBannerParams.height = newBmapHeight;
 
     }
 }
