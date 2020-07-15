@@ -13,7 +13,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -29,7 +28,6 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.events.BlinkEvent;
 import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
@@ -101,7 +99,6 @@ public class PingoWindow extends Fragment {
         scaleUi(mainView);
 
         windowBackground = (ImageView) mainView.findViewById(R.id.window_background);
-        Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(windowBackground);
         zOrder = mainView.getZ();
 
         fishka = (ImageView) mainView.findViewById(R.id.fishka);
@@ -202,7 +199,7 @@ public class PingoWindow extends Fragment {
         pingoNumbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
         pingoNumbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
         pingoNumbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(10,R.drawable.pingo,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
+        pingoNumbers.add(loadNumber(10,R.drawable.pingo_spin,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
 
         return pingoNumbers;
     }
@@ -220,9 +217,8 @@ public class PingoWindow extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 windowBackground.setOnTouchListener(null);
-                Glide.with(getActivity()).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                        .skipMemoryCache( true ).into(windowBackground);
                 play.setVisibility(View.INVISIBLE);
+                windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.touch_window, null));
                 wheel.setVisibility(View.VISIBLE);
                 touchBackground.setVisibility(View.VISIBLE);
                 touchBackground.setEnabled(true);
@@ -266,6 +262,8 @@ public class PingoWindow extends Fragment {
 
     public void initPingo(Bundle pingoBundle) {
 
+        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.touch_window, null));
+
         touchBackground.setEnabled(true);
         starting = true;
         numbers = loadPingoNumbers();
@@ -285,8 +283,6 @@ public class PingoWindow extends Fragment {
             for(Integer playedNumber: playedNumbers){
                 removeNumber(numbers,playedNumber);
             }
-            //Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(windowBackground);
-            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.blue_window,null));
             wheel.setCurrentItem(0);
         }
         wheel.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -322,14 +318,8 @@ public class PingoWindow extends Fragment {
                     fishka.setImageResource(greenFishkas[currentPingo]);
                     fishka.setVisibility(View.VISIBLE);
                 }
-                else{
-                    //if first try and last window then initiate blink sequence
-                    if (pingoNumber == 4 && Game.attemptCounter ==4){
-                        EventBus.getDefault().post(new BlinkEvent(1));
-                    }
-                    else if (hasFinger){
-                        fingerTimer.start();
-                    }
+                else if (hasFinger){
+                    fingerTimer.start();
                 }
                 starting = false;
             }
@@ -445,27 +435,6 @@ public class PingoWindow extends Fragment {
 
     public Integer getCurrentPingo() {
         return currentPingo;
-    }
-
-    @Subscribe
-    public void onBlinkEvent(BlinkEvent event){
-        if(event.getPingoNumber() != pingoNumber){
-            Glide.with(this).load(R.drawable.blue_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                    .skipMemoryCache( true ).into(windowBackground);
-            //if all windows blinked
-            if(event.getPingoNumber() > 4){
-                if (hasFinger){
-                    fingerTimer.start();
-                }
-            }
-        }
-        else{
-            Glide.with(this).load(R.drawable.blue_window_blink).diskCacheStrategy( DiskCacheStrategy.NONE )
-                    .skipMemoryCache( true ).into(windowBackground);
-            new Handler().postDelayed(()->{
-                EventBus.getDefault().post(new BlinkEvent(pingoNumber+1));
-            },100);
-        }
     }
 
     @Subscribe

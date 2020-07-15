@@ -999,7 +999,7 @@ public class GameActivity extends PingoActivity {
         //scale progress bar
         FrameLayout progressBar = (FrameLayout) findViewById(R.id.gameFragmentProgressBar);
         ViewGroup.LayoutParams progressParams = progressBar.getLayoutParams();
-        progressParams.height = (int)(newBmapHeight*0.059F);
+        progressParams.height = (int)(newBmapHeight*0.042F);
         progressParams.width = (int)(newBmapWidth*0.1397F);
 
         //scale action18  button
