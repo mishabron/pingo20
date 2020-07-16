@@ -84,6 +84,11 @@ public class PingoWindow extends Fragment {
     private View mainView;
     private float zOrder;
     private boolean zoomedIn;
+    private float pingoHeight;
+    private float pingoWidth;
+    private float numberHeight;
+    private float numberWidth;
+    private int[] blueFishkas = new int[10];;;
 
     public PingoWindow() {
         // Required empty public constructor
@@ -140,6 +145,17 @@ public class PingoWindow extends Fragment {
         redFishkas[8] = R.drawable.red8;
         redFishkas[9] = R.drawable.red9;
 
+        blueFishkas[0] = R.drawable.blue0;
+        blueFishkas[1] = R.drawable.blue1;
+        blueFishkas[2] = R.drawable.blue2;
+        blueFishkas[3] = R.drawable.blue3;
+        blueFishkas[4] = R.drawable.blue4;
+        blueFishkas[5] = R.drawable.blue5;
+        blueFishkas[6] = R.drawable.blue6;
+        blueFishkas[7] = R.drawable.blue7;
+        blueFishkas[8] = R.drawable.blue8;
+        blueFishkas[9] = R.drawable.blue9;
+
         return mainView;
     }
 
@@ -157,6 +173,7 @@ public class PingoWindow extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        fingerTimer.cancel();
         EventBus.getDefault().unregister(this);
     }
 
@@ -189,17 +206,17 @@ public class PingoWindow extends Fragment {
     private List<ImageView> loadPingoNumbers() {
 
         ArrayList<ImageView> pingoNumbers = new ArrayList<>();
-        pingoNumbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*0.1313F), (int)(newBmapHeight*0.2888F)));
-        pingoNumbers.add(loadNumber(10,R.drawable.pingo_spin,(int)(newBmapWidth*0.1604F),(int)(newBmapWidth*0.1604F)));
+        pingoNumbers.add(loadNumber(0,R.drawable.zero,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(9,R.drawable.nine,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(8,R.drawable.eight,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(7,R.drawable.seven,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(6,R.drawable.six,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(5,R.drawable.five,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(4,R.drawable.four,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(3,R.drawable.three,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(2,R.drawable.two, (int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(1,R.drawable.one,(int)(newBmapWidth*numberWidth), (int)(newBmapHeight*numberHeight)));
+        pingoNumbers.add(loadNumber(10,R.drawable.pingo_spin,(int)(newBmapWidth*pingoWidth),(int)(newBmapHeight*pingoHeight)));
 
         return pingoNumbers;
     }
@@ -325,7 +342,7 @@ public class PingoWindow extends Fragment {
             }
             //touch scroll
             else {
-                fishka.setImageResource(greenFishkas[currentPingo]);
+                fishka.setImageResource(blueFishkas[currentPingo]);
                 rockFishka(fishka);
                 if(!pingoState.equals(PingoState.GAMEOVER)) {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
@@ -518,6 +535,7 @@ public class PingoWindow extends Fragment {
                     Game.guessedCount++;
                     pingoState = PingoState.WIN;
                     touchBackground.setOnClickListener(null);
+                    fishka.setImageResource(greenFishkas[ numbers.get(currentNumber).getId()]);
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
                 }
                 else{
@@ -635,17 +653,23 @@ public class PingoWindow extends Fragment {
         fishkaParams.width =(int)(newBmapWidth*0.1199F);
         fishkaParams.height =(int)(newBmapHeight*0.0835F);
 
+        pingoHeight = 0.3046F;
+        pingoWidth = 0.1827F;
+        numberHeight = pingoHeight;
+        numberWidth = pingoWidth;
+
         //scale spin
         ImageView spin = (ImageView) view.findViewById(R.id.spin);
         ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
-        spinParams.width =(int)(newBmapWidth*0.1513F*1.18);
-        spinParams.height =(int)(newBmapHeight*0.2588F*1.18);
+        spinParams.width =(int)(newBmapWidth*numberWidth*1.15);
+        spinParams.height =(int)(newBmapHeight*numberHeight*1.15);
 
         //scale window
-        float pingoSize = 0.3203F;
+        float pingoHeight = 0.3358F;
+        float pingoWidth = 0.3208F;
         ImageView window = (ImageView) mainView.findViewById(R.id.window_background);
         ViewGroup.LayoutParams pingoParams = window.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*pingoSize);
-        pingoParams.width = (int)(newBmapHeight*pingoSize);
+        pingoParams.height = (int)(newBmapHeight*pingoHeight);
+        pingoParams.width = (int)(newBmapHeight*pingoWidth);
     }
 }

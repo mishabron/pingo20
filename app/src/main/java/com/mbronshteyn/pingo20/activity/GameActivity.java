@@ -234,6 +234,10 @@ public class GameActivity extends PingoActivity {
 
     private void transitionLayout(){
 
+        ImageView banner = (ImageView) findViewById(R.id.mainBanner);
+        Animation zoomBanner = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_banner);
+        banner.startAnimation(zoomBanner);
+
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(this, R.layout.activity_game);
 
@@ -1017,26 +1021,28 @@ public class GameActivity extends PingoActivity {
         buttonParamsGo.width = buttonSizeGo;
 
         //scale pingo windows
-        float pingoSize = 0.3203F;
+        float pingoHeight = 0.3358F;
+        float pingoWidth = 0.3208F;
+
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.pingo1);
         ViewGroup.LayoutParams pingoParams = pingo1.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*pingoSize);
-        pingoParams.width = (int)(newBmapHeight*pingoSize);
+        pingoParams.height = (int)(newBmapHeight*pingoHeight);
+        pingoParams.width = (int)(newBmapHeight*pingoWidth);
 
         ConstraintLayout pingo2 = (ConstraintLayout) findViewById(R.id.pingo2);
         pingoParams = pingo2.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*pingoSize);
-        pingoParams.width = (int)(newBmapHeight*pingoSize);
+        pingoParams.height = (int)(newBmapHeight*pingoHeight);
+        pingoParams.width = (int)(newBmapHeight*pingoWidth);
 
         ConstraintLayout pingo3 = (ConstraintLayout) findViewById(R.id.pingo3);
         pingoParams = pingo3.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*pingoSize);
-        pingoParams.width = (int)(newBmapHeight*pingoSize);
+        pingoParams.height = (int)(newBmapHeight*pingoHeight);
+        pingoParams.width = (int)(newBmapHeight*pingoWidth);
 
         ConstraintLayout pingo4 = (ConstraintLayout) findViewById(R.id.pingo4);
         pingoParams = pingo4.getLayoutParams();
-        pingoParams.height = (int)(newBmapHeight*pingoSize);
-        pingoParams.width = (int)(newBmapHeight*pingoSize);
+        pingoParams.height = (int)(newBmapHeight*pingoHeight);
+        pingoParams.width = (int)(newBmapHeight*pingoWidth);
 
         //scale nonTouchShield
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);

@@ -16,6 +16,18 @@
         app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
         app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"/>
 
+    <ImageView
+        android:id="@+id/mainBanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:background="@drawable/banner"
+        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"/>
+
 
 
 </android.support.constraint.ConstraintLayout>
