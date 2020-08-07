@@ -64,6 +64,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.bonus_nowin,soindId);
         soindId = soundPool.load(this, R.raw.jackpot, 1);
         soundMap.put(R.raw.jackpot,soindId);
+        soindId = soundPool.load(this, R.raw.trans_to_777, 1);
+        soundMap.put(R.raw.trans_to_777,soindId);
         soindId = soundPool.load(this, R.raw.bonusspin_1, 1);
         soundMap.put(R.raw.bonusspin_1,soindId);
         soindId = soundPool.load(this, R.raw.bonusspin_2, 1);

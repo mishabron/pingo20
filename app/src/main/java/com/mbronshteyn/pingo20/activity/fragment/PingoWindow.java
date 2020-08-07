@@ -503,6 +503,9 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
+            //ImageView yellowBackground = (ImageView) mainView.findViewById(R.id.yellowBonusSpinBackground);
+            //yellowBackground.setVisibility(View.VISIBLE);
+
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
             pingoParams.height = (int)(pingoParams.height * 1.06);
             pingoParams.width = (int)(pingoParams.width * 1.06);
@@ -550,6 +553,7 @@ public class PingoWindow extends Fragment {
             new Handler().postDelayed(() -> {
                 spin.setVisibility(View.INVISIBLE);
                 wheel.setVisibility(View.VISIBLE);
+                //yellowBackground.setVisibility(View.INVISIBLE);
                 spin.setBackground(null);
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
@@ -653,10 +657,10 @@ public class PingoWindow extends Fragment {
         fishkaParams.width =(int)(newBmapWidth*0.1199F);
         fishkaParams.height =(int)(newBmapHeight*0.0835F);
 
-        pingoHeight = 0.3046F;
-        pingoWidth = 0.1827F;
-        numberHeight = pingoHeight;
-        numberWidth = pingoWidth;
+        pingoHeight = 0.3246F;
+        pingoWidth = 0.1927F;
+        numberHeight = 0.3046F;
+        numberWidth = 0.1827F;
 
         //scale spin
         ImageView spin = (ImageView) view.findViewById(R.id.spin);
@@ -665,7 +669,7 @@ public class PingoWindow extends Fragment {
         spinParams.height =(int)(newBmapHeight*numberHeight*1.15);
 
         //scale window
-        float pingoHeight = 0.3358F;
+        float pingoHeight = 0.3258F;
         float pingoWidth = 0.3208F;
         ImageView window = (ImageView) mainView.findViewById(R.id.window_background);
         ViewGroup.LayoutParams pingoParams = window.getLayoutParams();

@@ -39,7 +39,6 @@ import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
-import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
@@ -327,6 +326,20 @@ public class GameActivity extends PingoActivity {
         }
     }
 
+    private void doCheckGameOver() {
+
+        //show winning pin
+        flippToGo();
+        hitButtonGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playSound(R.raw.button);
+                doWinPinCheck();
+                hitButtonGo.setEnabled(false);
+            }
+        });
+    }
+
     private List<Integer> loadPingosInPlay(boolean pickNonWin) {
 
         List<Integer> pingosInPlay = new ArrayList<>();
@@ -600,63 +613,34 @@ public class GameActivity extends PingoActivity {
 
     private void gotoToBonus() {
 
-        playSound(R.raw.jackpot);
-
-        //bonus pingos background
-        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        Glide.with(this).load(R.drawable.bonuspin_background).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
-        EventBus.getDefault().post(new BonusPinEvent());
-
-        new Handler().postDelayed(() -> {
-            EventBus.getDefault().post(new WinAnimation(1,WinAnimation.colorType.GOLD));
-            EventBus.getDefault().post(new WinAnimation(3,WinAnimation.colorType.GOLD));
-        }, 1000);
-
-        //rotate pingos
-        new Handler().postDelayed(() -> {
-            EventBus.getDefault().post(new WinAnimation(2,WinAnimation.colorType.GOLD));
-            EventBus.getDefault().post(new WinAnimation(4,WinAnimation.colorType.GOLD));
-        }, 2000);
+        playSound(R.raw.trans_to_777);
 
         //pop up dark overlay and bonus logo
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.dark_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+
+        //popup logo
+        ImageView logo = (ImageView) findViewById(R.id.popup_logo);
+        Glide.with(this).load(R.drawable.bonus_logo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo);
+        Animation logoPopup = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_logo);
+        logo.startAnimation(logoPopup);
+
+        //spitral rays
+        ImageView rays = (ImageView) findViewById(R.id.spiral);
+        rays.setVisibility(View.VISIBLE);
+        Animation raysSiral = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate);
+        rays.startAnimation(raysSiral);
+
+        //drop cherry
         new Handler().postDelayed(()->{
-            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-            Glide.with(context).clear(overlayBlue);
-            Glide.with(this).load(R.drawable.dark_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-            overlayBlue.setVisibility(View.VISIBLE);
-
-            //popup logo
-            ImageView logo = (ImageView) findViewById(R.id.spiral);
-            Glide.with(context).clear(logo);
-            Glide.with(this).load(R.drawable.bonus_logo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo);
-            Animation zoomRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_out);
-            zoomRotate.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    logo.setVisibility(View.INVISIBLE);
-                    overlayBlue.setVisibility(View.INVISIBLE);
-                    logo.clearAnimation();
-                }
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-            });
-            logo.startAnimation(zoomRotate);
-        },3000);
-
-        //move up the game interface
-        new Handler().postDelayed(()->{
-            ConstraintSet constraintSet = new ConstraintSet();
-            constraintSet.clone(this, R.layout.activity_game_end);
-
-            ChangeBounds transition = new ChangeBounds();
-            transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
-            transition.setDuration(1000);
-            TransitionManager.beginDelayedTransition(root, transition);
-            constraintSet.applyTo(root);
-
-        },5000);
+            ImageView cherrys = (ImageView) findViewById(R.id.cherry);
+            cherrys.setVisibility(View.VISIBLE);
+            Animation cherryDrop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.from_top);
+            cherrys.startAnimation(cherryDrop);
+        },3600);
 
         //transition to bonus activity
         new Handler().postDelayed(() -> {
@@ -664,7 +648,7 @@ public class GameActivity extends PingoActivity {
             startActivity(intent);
             Activity activity = (Activity) context;
             activity.finish();
-        }, 7000);
+        }, 6100);
     }
 
     private void doWinningFlash(){
@@ -709,6 +693,7 @@ public class GameActivity extends PingoActivity {
 
         ImageView halfWay = (ImageView) findViewById(R.id.popup_logo);
         Glide.with(this).load(R.drawable.half_way).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(halfWay);
+        halfWay.setVisibility(View.VISIBLE);
         Animation zoomHalfWay = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_halfway);
         zoomHalfWay.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -777,7 +762,7 @@ public class GameActivity extends PingoActivity {
                     if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
                         gotoToBonus();
                     }
-                    if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
+                    else if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
                         gotoToSpinBonus();
                     }
                     else {
@@ -785,16 +770,7 @@ public class GameActivity extends PingoActivity {
                     }
                     //check end of game
                     if (Game.attemptCounter == 0) {
-                        //show winning pin
-                        flippToGo();
-                        hitButtonGo.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                playSound(R.raw.button);
-                                doWinPinCheck();
-                                hitButtonGo.setEnabled(false);
-                            }
-                        });
+                        doCheckGameOver();
                     }
                 }
             }
@@ -1021,7 +997,7 @@ public class GameActivity extends PingoActivity {
         buttonParamsGo.width = buttonSizeGo;
 
         //scale pingo windows
-        float pingoHeight = 0.3358F;
+        float pingoHeight = 0.3258F;
         float pingoWidth = 0.3208F;
 
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.pingo1);
@@ -1056,12 +1032,6 @@ public class GameActivity extends PingoActivity {
         freeGameParams.width =(int)(newBmapWidth*0.1641F);
         freeGameParams.height =(int)(newBmapHeight*0.06099F);
 
-        //scale spiral
-        ImageView spiral = (ImageView) findViewById(R.id.spiral);
-        ViewGroup.LayoutParams spiralParams = spiral.getLayoutParams();
-        //spiralParams.width =(int)(newBmapWidth*0.9174F);
-        spiralParams.height =(int)(newBmapHeight*0.9174F);
-
         //scale half way
         ImageView halfWay = (ImageView) findViewById(R.id.popup_logo);
         ViewGroup.LayoutParams halfWayParams = halfWay.getLayoutParams();
@@ -1085,6 +1055,18 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams mainBannerParams = mainBanner.getLayoutParams();
         mainBannerParams.width = newBmapWidth;
         mainBannerParams.height = newBmapHeight;
+
+        //scale rays
+        ImageView rays = (ImageView) findViewById(R.id.spiral);
+        ViewGroup.LayoutParams raysParams = rays.getLayoutParams();
+        raysParams.width =(int)(newBmapWidth*0.5020F);
+        raysParams.height =(int)(newBmapHeight*0.8896F);
+
+        //scale rays
+        ImageView cherrys = (ImageView) findViewById(R.id.cherry);
+        ViewGroup.LayoutParams cherrysParams = cherrys.getLayoutParams();
+        cherrysParams.width =(int)(newBmapWidth*0.2751);
+        cherrysParams.height =(int)(newBmapHeight*0.4003F);
 
     }
 }
