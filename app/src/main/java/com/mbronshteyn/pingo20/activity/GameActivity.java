@@ -616,14 +616,13 @@ public class GameActivity extends PingoActivity {
         playSound(R.raw.trans_to_777);
 
         //pop up dark overlay and bonus logo
-
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
         Glide.with(context).clear(overlayBlue);
         Glide.with(this).load(R.drawable.dark_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
 
         //popup logo
-        ImageView logo = (ImageView) findViewById(R.id.popup_logo);
+        ImageView logo = (ImageView) findViewById(R.id.popup_logo1);
         Glide.with(this).load(R.drawable.bonus_logo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo);
         Animation logoPopup = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_logo);
         logo.startAnimation(logoPopup);
@@ -657,7 +656,7 @@ public class GameActivity extends PingoActivity {
         Glide.with(context).clear(overlayBlue);
         Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
-        ImageView pingoWinner = (ImageView) findViewById(R.id.popup_logo);
+        ImageView pingoWinner = (ImageView) findViewById(R.id.popup_logo1);
         Glide.with(this).load(R.drawable.pingo_winner_logo).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(pingoWinner);
         pingoWinner.setVisibility(View.VISIBLE);
 
@@ -691,7 +690,7 @@ public class GameActivity extends PingoActivity {
         Glide.with(this).load(R.drawable.overlay_blue7).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
 
-        ImageView halfWay = (ImageView) findViewById(R.id.popup_logo);
+        ImageView halfWay = (ImageView) findViewById(R.id.popup_logo1);
         Glide.with(this).load(R.drawable.half_way).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(halfWay);
         halfWay.setVisibility(View.VISIBLE);
         Animation zoomHalfWay = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_halfway);
@@ -790,7 +789,40 @@ public class GameActivity extends PingoActivity {
             TransitionManager.beginDelayedTransition(root, transition);
             constraintSet.applyTo(root);
 
-        },2000);
+        },100);
+
+        //pop up dark overlay and bonus logo
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.dark_overlay_bonus).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+
+        //popup logo 1
+        new Handler().postDelayed(()->{
+            ImageView logo1 = (ImageView) findViewById(R.id.popup_logo1);
+            logo1.setVisibility(View.VISIBLE);
+            Glide.with(this).load(R.drawable.bonus_blue).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo1);
+            Animation logoPopup1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
+            logo1.startAnimation(logoPopup1);},200);
+
+        //popup logo 2
+        new Handler().postDelayed(()->{
+            ImageView logo2 = (ImageView) findViewById(R.id.popup_logo2);
+            logo2.setVisibility(View.VISIBLE);
+            Glide.with(this).load(R.drawable.bonus_yellow).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo2);
+            Animation logoPopup2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
+            logo2.startAnimation(logoPopup2);
+        },450);
+
+
+        //popup logo 3
+        new Handler().postDelayed(()->{
+            ImageView logo3 = (ImageView) findViewById(R.id.popup_logo3);
+            logo3.setVisibility(View.VISIBLE);
+            Glide.with(this).load(R.drawable.bonus_banner).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo3);
+            Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_banner);
+            logo3.startAnimation(logoPopup3);
+        },700);
 
         //transition to bonus activity
         new Handler().postDelayed(() -> {
@@ -1033,10 +1065,22 @@ public class GameActivity extends PingoActivity {
         freeGameParams.height =(int)(newBmapHeight*0.06099F);
 
         //scale half way
-        ImageView halfWay = (ImageView) findViewById(R.id.popup_logo);
+        ImageView halfWay = (ImageView) findViewById(R.id.popup_logo1);
         ViewGroup.LayoutParams halfWayParams = halfWay.getLayoutParams();
         halfWayParams.width =(int)(newBmapWidth*0.75F);
         halfWayParams.height =(int)(newBmapHeight*0.7722F);
+
+        //scale half way
+        ImageView halfWay2 = (ImageView) findViewById(R.id.popup_logo2);
+        ViewGroup.LayoutParams halfWay2Params = halfWay2.getLayoutParams();
+        halfWay2Params.width =(int)(newBmapWidth*0.75F);
+        halfWay2Params.height =(int)(newBmapHeight*0.7722F);
+
+        //scale half way
+        ImageView halfWay3 = (ImageView) findViewById(R.id.popup_logo3);
+        ViewGroup.LayoutParams halfWay3arams = halfWay3.getLayoutParams();
+        halfWay3arams.width =(int)(newBmapWidth*0.75F);
+        halfWay3arams.height =(int)(newBmapHeight*0.7722F);
 
         //scale stars overlay
         ImageView starsWin = (ImageView) findViewById(R.id.overlay_stars);
