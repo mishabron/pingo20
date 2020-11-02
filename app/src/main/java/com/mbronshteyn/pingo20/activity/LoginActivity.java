@@ -154,6 +154,10 @@ public class LoginActivity extends PingoActivity {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     @Subscribe
     public void onCardIdEnterEvent(CardIdEnterEvent event) {

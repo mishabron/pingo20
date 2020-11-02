@@ -18,6 +18,9 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.ChangeBounds;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,7 +196,6 @@ public class GameActivity extends PingoActivity {
         super.onPostCreate(savedInstanceState);
 
         if(isWinningCard() && Game.attemptCounter != 0 ){
-            doWinningFlash();
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
             new Handler().postDelayed(()->{processWin(1);},14000);
         }
@@ -216,7 +218,7 @@ public class GameActivity extends PingoActivity {
                     break;
             }
 
-            if (slideNo > 0) {
+            if (slideNo > 0 && !card.isFreeGame()) {
                 ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
                 Glide.with(context).clear(overlayBlue);
                 Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
@@ -485,6 +487,11 @@ public class GameActivity extends PingoActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     @Subscribe
     public void onScrollStart(ScrollStart event){
         if(!spinning){
@@ -570,7 +577,6 @@ public class GameActivity extends PingoActivity {
             },delay);
         }
         else if(isWinningCard() && Game.attemptCounter != 0 ){
-            doWinningFlash();
             EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
         }
     }
@@ -650,40 +656,6 @@ public class GameActivity extends PingoActivity {
         }, 6100);
     }
 
-    private void doWinningFlash(){
-
-        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
-        ImageView pingoWinner = (ImageView) findViewById(R.id.popup_logo1);
-        Glide.with(this).load(R.drawable.pingo_winner_logo).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(pingoWinner);
-        pingoWinner.setVisibility(View.VISIBLE);
-
-        ImageView winStarts = (ImageView) findViewById(R.id.overlay_stars);
-        winStarts.setImageDrawable(getResources().getDrawable(R.drawable.win_star_animation, null));
-        AnimationDrawable winAnimation = (AnimationDrawable) winStarts.getDrawable();
-        winAnimation.start();
-
-        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
-        TextView winBalance = (TextView) findViewById(R.id.win_amount);
-        winBalance.setText("$" +(int) card.getBalance()+" ");
-        winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
-        winBalance.setShadowLayer(30, 30, 30, 0xFF303030);
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-        new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},1000);
-
-        new Handler().postDelayed(()->{
-            overlayBlue.setVisibility(View.INVISIBLE);
-            pingoWinner.setVisibility(View.INVISIBLE);
-            Glide.with(context).clear(pingoWinner);
-            winBalance.setVisibility(View.INVISIBLE);
-            winBalance.clearAnimation();
-            winStarts.setVisibility(View.INVISIBLE);
-        },7000);
-
-    }
-
     private void doHalfWayThere() {
 
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
@@ -726,12 +698,8 @@ public class GameActivity extends PingoActivity {
                 duration = 9000;
             }
             //last guessed number when game is won / not frre game
-            else if(!pingoIterator.hasNext() && isWinningCard() && Game.attemptCounter > 0){
-                duration = 8000;
-            }
-            //last guessed number when game is won / frre game
-            else if(!pingoIterator.hasNext() && isWinningCard() && Game.attemptCounter == 0){
-                duration = 500;
+            else if(!pingoIterator.hasNext() && isWinningCard()){
+                duration = 700;
             }
             //flash ray animation for guessed number
             else {
@@ -835,41 +803,71 @@ public class GameActivity extends PingoActivity {
 
     private void processWin(int pingoNumber) {
 
-        //first pair
-        int window1 = pingoNumber;
-        int window2 = (window1 + 2) < 5 ? window1 + 2 : window1 + 2 - 4;
+        //move up the game interface
+        new Handler().postDelayed(()->{
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(this, R.layout.activity_game_end);
 
-        //second pair
-        int window3 = (window1 + 1) <= 4 ? window1 + 1 : 1;
-        int window4 = (window3 + 2) < 5 ? window3 + 2 : window3 + 2 - 4;
+            ChangeBounds transition = new ChangeBounds();
+            transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+            transition.setDuration(1000);
+            TransitionManager.beginDelayedTransition(root, transition);
+            constraintSet.applyTo(root);
 
-        EventBus.getDefault().post(new WinFlashEvent(window1));
-        EventBus.getDefault().post(new WinFlashEvent(window2));
-        EventBus.getDefault().post(new NumberRorateEvent(window3));
-        EventBus.getDefault().post(new NumberRorateEvent(window4));
+        },100);
 
-        new Handler().postDelayed(() -> {
-            EventBus.getDefault().post(new WinFlashEvent(window3));
-            EventBus.getDefault().post(new WinFlashEvent(window4));
-            EventBus.getDefault().post(new NumberRorateEvent(window1));
-            EventBus.getDefault().post(new NumberRorateEvent(window2));
-        }, 2000);
-
+        int duration;
         AtomicReference<Intent> intent  = new AtomicReference<>(new Intent());
-        new Handler().postDelayed(() -> {
-            if(Game.attemptCounter == 0 && isWinningCard() && !card.isFreeGame()){
-                intent.set(new Intent(getApplicationContext(), FreeGameActivity.class));
-            }
-            else{
-                intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
-            }
+        if(Game.attemptCounter == 0 && isWinningCard() && !card.isFreeGame()){
+            duration = 1200;
+            intent.set(new Intent(getApplicationContext(), FreeGameActivity.class));
+        }
+        else{
+            intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
+            duration = 7000;
+            doWinningFlash();
+        }
 
+        new Handler().postDelayed(() -> {
             startActivity(intent.get());
             Activity activity = (Activity) context;
             activity.finish();
-        }, 10000);
+        }, duration);
     }
 
+    private void doWinningFlash(){
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
+        overlayBlue.setVisibility(View.VISIBLE);
+
+        ImageView pingoWinner = (ImageView) findViewById(R.id.mainLogo);
+        ImageView logo4 = (ImageView) findViewById(R.id.popup_logo4);
+        TextView winBalance = (TextView) findViewById(R.id.win_amount);
+
+        new Handler().postDelayed(()->{
+            pingoWinner.setVisibility(View.VISIBLE);
+        },100);
+
+        //popup logo 2
+        new Handler().postDelayed(()->{
+            logo4.setVisibility(View.VISIBLE);
+        },200);
+
+
+        Spannable wordtoSpan = new SpannableString("$" +(int) card.getBalance()+"  ");
+        wordtoSpan.setSpan(new ForegroundColorSpan(Color.parseColor("#28b5ed")), 1, wordtoSpan.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wordtoSpan.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
+        winBalance.setText(wordtoSpan);
+        winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
+        winBalance.setShadowLayer(30, 20, 20, Color.BLACK);
+        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},300);
+
+    }
 
     private void doWinPinCheck() {
 
@@ -1082,11 +1080,11 @@ public class GameActivity extends PingoActivity {
         halfWay3arams.width =(int)(newBmapWidth*0.75F);
         halfWay3arams.height =(int)(newBmapHeight*0.7722F);
 
-        //scale stars overlay
-        ImageView starsWin = (ImageView) findViewById(R.id.overlay_stars);
-        ViewGroup.LayoutParams starsWinParams = starsWin.getLayoutParams();
-        starsWinParams.width = newBmapWidth;
-        starsWinParams.height = newBmapHeight;
+        //scale logo4
+        ImageView logo4 = (ImageView) findViewById(R.id.popup_logo4);
+        ViewGroup.LayoutParams logo4Params = logo4.getLayoutParams();
+        logo4Params.width =(int)(newBmapWidth*0.5971F);
+        logo4Params.height =(int)(newBmapHeight*0.4759F);
 
         //scale blue overlay
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
@@ -1111,6 +1109,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams cherrysParams = cherrys.getLayoutParams();
         cherrysParams.width =(int)(newBmapWidth*0.2751);
         cherrysParams.height =(int)(newBmapHeight*0.4003F);
+
+        //main logo
+        ImageView mainLogo = (ImageView) findViewById(R.id.mainLogo);
+        ViewGroup.LayoutParams mainLogoParams = mainLogo.getLayoutParams();
+        mainLogoParams.width = newBmapWidth;
+        mainLogoParams.height = newBmapHeight;
 
     }
 }

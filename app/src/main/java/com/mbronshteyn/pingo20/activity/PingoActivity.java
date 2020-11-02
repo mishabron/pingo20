@@ -87,8 +87,8 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         soundPool.release();
         soundPool = null;
 

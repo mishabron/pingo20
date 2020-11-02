@@ -116,8 +116,13 @@ public class BonusSpinActivity extends PingoActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        fingerTimer.cancel();
         EventBus.getDefault().unregister(this);
+        fingerTimer.cancel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private void transitionLayout() {

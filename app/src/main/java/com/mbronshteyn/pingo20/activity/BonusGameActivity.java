@@ -169,6 +169,11 @@ public class BonusGameActivity extends PingoActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     @Subscribe
     public void onScrollEnd(ScrollEnd event){
 
