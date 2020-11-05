@@ -1014,14 +1014,14 @@ public class GameActivity extends PingoActivity {
 
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
-        int buttonSize18 = (int) (newBmapHeight * 0.2406F);
+        int buttonSize18 = (int) (newBmapHeight * 0.2606F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonSize18;
         buttonParams18.width = buttonSize18;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2406F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.2606F);
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
         buttonParamsGo.height = buttonSizeGo;
         buttonParamsGo.width = buttonSizeGo;
