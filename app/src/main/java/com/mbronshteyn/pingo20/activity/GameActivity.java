@@ -28,7 +28,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,13 +39,11 @@ import com.mbronshteyn.gameserver.dto.game.CardHitDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.activity.fragment.PingoWindow;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
 import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
-import com.mbronshteyn.pingo20.events.NumberRorateEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
 import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
@@ -55,7 +52,6 @@ import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.events.StopPlayer;
 import com.mbronshteyn.pingo20.events.WinAnimation;
-import com.mbronshteyn.pingo20.events.WinFlashEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -80,7 +76,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class GameActivity extends PingoActivity {
 
-    private PingoProgressBar progressBar;
     private PingoWindow pingo1;
     private PingoWindow pingo2;
     private PingoWindow pingo3;
@@ -98,6 +93,8 @@ public class GameActivity extends PingoActivity {
     private GameActivity context;
     private boolean spinning;
     private ConstraintLayout root;
+    private AnimationDrawable dotsProgress;
+    private ImageView progressCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,8 +132,9 @@ public class GameActivity extends PingoActivity {
         balance.setText(getCardReward());
 
         flippedToGo = false;
-        
-        progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.gameFragmentProgressBar);
+
+        progressCounter = (ImageView) findViewById(R.id.progressCounter);
+        dotsProgress = (AnimationDrawable) progressCounter.getDrawable();
 
         pingo1 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo1);
         pingo2 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo2);
@@ -379,7 +377,7 @@ public class GameActivity extends PingoActivity {
                 balance.setText((String)balance.getTag());
             },5000);
 
-        progressBar.startProgress();
+        doProgress(true);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(PingoRemoteService.baseUrl)
@@ -413,7 +411,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onFailure(Call<CardDto> call, Throwable t) {
                 new Handler().postDelayed(()->{ playSound(R.raw.error_short);},100);
-                progressBar.stopProgress();
+                doProgress(false);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                 rightSmallBaloon.startAnimation(zoomIntAnimation);
                 rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
@@ -554,9 +552,7 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void noWinNumber(NoGuessedNumberEvent event){
         playSound(R.raw.wrong_number);
-        progressBar.startFailure();
         new Handler().postDelayed(()->{
-                progressBar.stopFailure();
                 EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
             },3000);
     }
@@ -685,7 +681,7 @@ public class GameActivity extends PingoActivity {
     public void spinEnd(NumberSpinEndEvent event){
 
         int duration = 0;
-        progressBar.stopProgress();
+        doProgress(false);
 
         //wrong nummber
         if(!event.isGuessed()){
@@ -710,7 +706,7 @@ public class GameActivity extends PingoActivity {
         new Handler().postDelayed(()-> {
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
-                progressBar.startProgress();
+                doProgress(true);
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
                 playSound(R.raw.button);
             }
@@ -887,7 +883,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 playSound(R.raw.error_short);
-                progressBar.stopProgress();
+                doProgress(false);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
                 rightSmallBaloon.startAnimation(zoomIntAnimation);
                 rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
@@ -1006,11 +1002,13 @@ public class GameActivity extends PingoActivity {
         mainBackgroundParams.width = newBmapWidth;
         mainBackgroundParams.height = newBmapHeight;
 
-        //scale progress bar
-        FrameLayout progressBar = (FrameLayout) findViewById(R.id.gameFragmentProgressBar);
-        ViewGroup.LayoutParams progressParams = progressBar.getLayoutParams();
-        progressParams.height = (int)(newBmapHeight*0.042F);
-        progressParams.width = (int)(newBmapWidth*0.1397F);
+        //scale dots progress
+        ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
+        int dotsProgressSize18 = (int) (newBmapHeight * 0.2606F);
+        ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
+        dotsProgressParams18.height = dotsProgressSize18;
+        dotsProgressParams18.width = dotsProgressSize18;
+
 
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
@@ -1027,8 +1025,8 @@ public class GameActivity extends PingoActivity {
         buttonParamsGo.width = buttonSizeGo;
 
         //scale pingo windows
-        float pingoHeight = 0.3258F;
-        float pingoWidth = 0.3208F;
+        float pingoHeight = 0.3618F;
+        float pingoWidth = 0.3428F;
 
         ConstraintLayout pingo1 = (ConstraintLayout) findViewById(R.id.pingo1);
         ViewGroup.LayoutParams pingoParams = pingo1.getLayoutParams();
@@ -1115,6 +1113,18 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams mainLogoParams = mainLogo.getLayoutParams();
         mainLogoParams.width = newBmapWidth;
         mainLogoParams.height = newBmapHeight;
+
+    }
+
+    private void doProgress(boolean startProgress){
+
+        if(startProgress){
+            progressCounter.setVisibility(View.VISIBLE);
+            dotsProgress.start();
+        }else{
+            progressCounter.setVisibility(View.INVISIBLE);
+            dotsProgress.stop();
+        }
 
     }
 }

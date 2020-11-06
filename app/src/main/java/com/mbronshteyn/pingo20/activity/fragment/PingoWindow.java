@@ -507,10 +507,7 @@ public class PingoWindow extends Fragment {
             //yellowBackground.setVisibility(View.VISIBLE);
 
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
-            pingoParams.height = (int)(pingoParams.height * 1.06);
-            pingoParams.width = (int)(pingoParams.width * 1.06);
-            mainView.setZ(zOrder +1);
-            zoomedIn = true;
+            zoomedIn = false;
 
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
@@ -657,10 +654,10 @@ public class PingoWindow extends Fragment {
         fishkaParams.width =(int)(newBmapWidth*0.1199F);
         fishkaParams.height =(int)(newBmapHeight*0.0835F);
 
-        pingoHeight = 0.3246F;
-        pingoWidth = 0.1927F;
-        numberHeight = 0.3046F;
-        numberWidth = 0.1827F;
+        pingoHeight = 0.3316F;
+        pingoWidth = 0.1807F;
+        numberHeight = 0.3316F;
+        numberWidth = 0.1807F;
 
         //scale spin
         ImageView spin = (ImageView) view.findViewById(R.id.spin);
@@ -669,8 +666,8 @@ public class PingoWindow extends Fragment {
         spinParams.height =(int)(newBmapHeight*numberHeight*1.15);
 
         //scale window
-        float pingoHeight = 0.3258F;
-        float pingoWidth = 0.3208F;
+        float pingoHeight = 0.3618F;
+        float pingoWidth = 0.3428F;
         ImageView window = (ImageView) mainView.findViewById(R.id.window_background);
         ViewGroup.LayoutParams pingoParams = window.getLayoutParams();
         pingoParams.height = (int)(newBmapHeight*pingoHeight);

@@ -59,18 +59,6 @@
         app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
         app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame">
 
-        <ImageView
-            android:id="@+id/mainGameBacgroundimageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
-            android:background="@drawable/game_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <fragment
             android:id="@+id/pingo1"
             android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
@@ -127,20 +115,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.86" />
 
-        <fragment
-            android:id="@+id/gameFragmentProgressBar"
-            android:name="com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar"
+        <ImageView
+            android:id="@+id/mainGameBacgroundimageView"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/game_background2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintVertical_bias="0.715"
-            app:initiak="progress_blk_ring"
-            app:progress="progress_wht_ring"
-            app:success="progress_wht_ring"
-            app:failure="progress_wht_ring"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/actionButtonGo"
@@ -152,7 +137,7 @@
             app:layout_constraintHorizontal_bias="0.731"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.90999997" />
+            app:layout_constraintVertical_bias="0.92999997" />
 
         <ImageView
             android:id="@+id/hitCounter"
@@ -163,7 +148,20 @@
             app:layout_constraintHorizontal_bias="0.731"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.90999997" />
+            app:layout_constraintVertical_bias="0.92999997" />
+
+        <ImageView
+            android:id="@+id/progressCounter"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/progress_animation"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.92999997" />
 
         <ImageView
             android:id="@+id/nonTouch_shield"
