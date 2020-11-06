@@ -955,6 +955,16 @@ public class GameActivity extends PingoActivity {
         }
     }
 
+    private void doProgress(boolean startProgress){
+        if(startProgress){
+            progressCounter.setVisibility(View.VISIBLE);
+            dotsProgress.start();
+        }else{
+            progressCounter.setVisibility(View.INVISIBLE);
+            dotsProgress.stop();
+        }
+    }
+
     public void scaleUi() {
 
         // scale the screen
@@ -1108,18 +1118,6 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams mainLogoParams = mainLogo.getLayoutParams();
         mainLogoParams.width = newBmapWidth;
         mainLogoParams.height = newBmapHeight;
-
     }
 
-    private void doProgress(boolean startProgress){
-
-        if(startProgress){
-            progressCounter.setVisibility(View.VISIBLE);
-            dotsProgress.start();
-        }else{
-            progressCounter.setVisibility(View.INVISIBLE);
-            dotsProgress.stop();
-        }
-
-    }
 }
