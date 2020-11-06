@@ -46,7 +46,6 @@ import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
 import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
-import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
@@ -552,9 +551,6 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void noWinNumber(NoGuessedNumberEvent event){
         playSound(R.raw.wrong_number);
-        new Handler().postDelayed(()->{
-                EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
-            },3000);
     }
 
     @Subscribe
@@ -571,9 +567,6 @@ public class GameActivity extends PingoActivity {
                 //start blinking winning backgound
                 EventBus.getDefault().post(new WinAnimation(event.getPingoNumber(),WinAnimation.colorType.GREEN));
             },delay);
-        }
-        else if(isWinningCard() && Game.attemptCounter != 0 ){
-            EventBus.getDefault().post(new NumberStopSpinEvent(event.getPingoNumber()));
         }
     }
 
@@ -681,7 +674,8 @@ public class GameActivity extends PingoActivity {
     public void spinEnd(NumberSpinEndEvent event){
 
         int duration = 0;
-        doProgress(false);
+        dotsProgress.stop();
+        dotsProgress.selectDrawable(0);
 
         //wrong nummber
         if(!event.isGuessed()){
@@ -712,6 +706,7 @@ public class GameActivity extends PingoActivity {
             }
             //end of attempt
             else {
+                doProgress(false);
                 if(isWinningCard()){
                     processWin(event.getPingoNumber());
                 }

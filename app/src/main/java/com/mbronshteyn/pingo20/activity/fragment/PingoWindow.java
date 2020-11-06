@@ -36,7 +36,6 @@ import com.mbronshteyn.pingo20.events.NoGuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.NumberRorateEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEndEvent;
 import com.mbronshteyn.pingo20.events.NumberSpinEvent;
-import com.mbronshteyn.pingo20.events.NumberStopSpinEvent;
 import com.mbronshteyn.pingo20.events.PingoEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
@@ -82,8 +81,6 @@ public class PingoWindow extends Fragment {
     private Integer guessedNumber;
     private int[] redFishkas = new int[10];;
     private View mainView;
-    private float zOrder;
-    private boolean zoomedIn;
     private float pingoHeight;
     private float pingoWidth;
     private float numberHeight;
@@ -102,9 +99,7 @@ public class PingoWindow extends Fragment {
         mainView = inflater.inflate(R.layout.fragment_pingo_window, container, false);
 
         scaleUi(mainView);
-
         windowBackground = (ImageView) mainView.findViewById(R.id.window_background);
-        zOrder = mainView.getZ();
 
         fishka = (ImageView) mainView.findViewById(R.id.fishka);
 
@@ -507,7 +502,6 @@ public class PingoWindow extends Fragment {
             //yellowBackground.setVisibility(View.VISIBLE);
 
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
-            zoomedIn = false;
 
             guessedNumber = event.getNumberGuesed();
             touchBackground.setEnabled(false);
@@ -559,19 +553,6 @@ public class PingoWindow extends Fragment {
         }
     }
 
-    @Subscribe
-    public void onStopSpin(NumberStopSpinEvent event){
-
-        if(zoomedIn){
-            mainView.setZ(zOrder);
-            ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
-            pingoParams.height = (int)(pingoParams.height / 1.06);
-            pingoParams.width = (int)(pingoParams.width / 1.06);
-
-            zoomedIn = false;
-        }
-    }
-
     public boolean isGuessedNumber() {
         return pingoState.equals(PingoState.WIN);
     }
@@ -609,9 +590,6 @@ public class PingoWindow extends Fragment {
 
             //blink
             winAnimation.start();
-
-            new Handler().postDelayed(()->{EventBus.getDefault().post(new NumberStopSpinEvent(pingoNumber));},totalDuration);
-
         }
     }
 
