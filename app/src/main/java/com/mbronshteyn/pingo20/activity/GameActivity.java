@@ -364,6 +364,8 @@ public class GameActivity extends PingoActivity {
 
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         nonTouchShield.setVisibility(View.VISIBLE);
+        ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
+        pinChekBackground.setVisibility(View.VISIBLE);
 
         balance.setTextColor(Color.BLACK);
         balance.setTag(balance.getText());
@@ -714,6 +716,8 @@ public class GameActivity extends PingoActivity {
                     //remove sheilds
                     ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
                     nonTouchShield.setVisibility(View.INVISIBLE);
+                    ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
+                    pinChekBackground.setVisibility(View.INVISIBLE);
                     balance.setTextColor(Color.WHITE);
                     balance.setText(getCardReward());
                     EventBus.getDefault().post(new InitBackgroundEvent());
@@ -1058,6 +1062,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
         nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
         nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
+
+        //scale pinChekBackground
+        ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
+        ViewGroup.LayoutParams pinChekBackgroundParams = pinChekBackground.getLayoutParams();
+        pinChekBackgroundParams.width = newBmapWidth;
+        pinChekBackgroundParams.height = newBmapHeight;
 
         //scale free game
         ImageView freeGame = (ImageView) findViewById(R.id.free_game);
