@@ -366,6 +366,8 @@ public class GameActivity extends PingoActivity {
         nonTouchShield.setVisibility(View.VISIBLE);
         ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
         pinChekBackground.setVisibility(View.VISIBLE);
+        Animation fadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+        pinChekBackground.startAnimation(fadeIn);
 
         balance.setTextColor(Color.BLACK);
         balance.setTag(balance.getText());
@@ -432,7 +434,6 @@ public class GameActivity extends PingoActivity {
             Integer activeWindow = pingoIterator.next();
             EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
             Game.attemptCounter--;
-            flippToCounter(Game.attemptCounter);
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
@@ -599,10 +600,13 @@ public class GameActivity extends PingoActivity {
 
             new Handler().postDelayed(() -> {
                 overlayBlue.setVisibility(View.INVISIBLE);
+                doProgress(false);
+                flippToCounter();
                 initState(false);
             }, 5000);
         }
         else{
+            flippToCounter();
             initState(false);
         }
 
@@ -708,7 +712,6 @@ public class GameActivity extends PingoActivity {
             }
             //end of attempt
             else {
-                doProgress(false);
                 if(isWinningCard()){
                     processWin(event.getPingoNumber());
                 }
@@ -897,7 +900,7 @@ public class GameActivity extends PingoActivity {
 
         if(StringUtils.isEmpty(headers.get("errorCode"))) {
             String winPin = response.body();
-            flippToCounter(Game.attemptCounter);
+            flippToCounter();
             pingo1.showWinPin(Integer.parseInt(winPin.substring(0,1)));
             pingo2.showWinPin(Integer.parseInt(winPin.substring(1,2)));
             pingo3.showWinPin(Integer.parseInt(winPin.substring(2,3)));
@@ -920,10 +923,10 @@ public class GameActivity extends PingoActivity {
         }
     }
 
-    public void flippToCounter(int counter) {
+    public void flippToCounter() {
 
         //flip button
-        Glide.with(this).load(buttonMap.get(counter)).into(buttonCounter);
+        Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
         mSetRightOut.setTarget(hitButtonGo);
         mSetLeftIn.setTarget(buttonCounter);
         mSetLeftIn.addListener(new Animator.AnimatorListener() {
