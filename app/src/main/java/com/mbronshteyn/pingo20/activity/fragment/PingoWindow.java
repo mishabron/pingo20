@@ -498,9 +498,6 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            //ImageView yellowBackground = (ImageView) mainView.findViewById(R.id.yellowBonusSpinBackground);
-            //yellowBackground.setVisibility(View.VISIBLE);
-
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
 
             guessedNumber = event.getNumberGuesed();
@@ -508,14 +505,19 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new SpinEvent(pingoNumber));
 
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
+            fishka.setVisibility(View.INVISIBLE);
             spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
 
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
+            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
+            animation.setDuration(5700);
+            animation.start();
 
             //spin cycle
+            windowBackground.setBackground(null);
             windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.spin_animation,null));
             AnimationDrawable spinAnimation = (AnimationDrawable) windowBackground.getDrawable();
             new Handler().postDelayed(()->{
@@ -525,6 +527,7 @@ public class PingoWindow extends Fragment {
             //stop spin
             new Handler().postDelayed(() -> {
                 spinAnimation.stop();
+                windowBackground.setBackgroundResource(R.drawable.window_background);
                 if(guessedNumber != null){
                     Game.guessedCount++;
                     pingoState = PingoState.WIN;
@@ -543,8 +546,8 @@ public class PingoWindow extends Fragment {
             //restore window state
             new Handler().postDelayed(() -> {
                 spin.setVisibility(View.INVISIBLE);
+                fishka.setVisibility(View.VISIBLE);
                 wheel.setVisibility(View.VISIBLE);
-                //yellowBackground.setVisibility(View.INVISIBLE);
                 spin.setBackground(null);
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
@@ -640,8 +643,8 @@ public class PingoWindow extends Fragment {
         //scale spin
         ImageView spin = (ImageView) view.findViewById(R.id.spin);
         ViewGroup.LayoutParams spinParams = spin.getLayoutParams();
-        spinParams.width =(int)(newBmapWidth*numberWidth*1.15);
-        spinParams.height =(int)(newBmapHeight*numberHeight*1.15);
+        spinParams.width =(int)(newBmapWidth*numberWidth*1);
+        spinParams.height =(int)(newBmapHeight*numberHeight*1);
 
         //scale window
         float pingoHeight = 0.3618F;
@@ -650,5 +653,6 @@ public class PingoWindow extends Fragment {
         ViewGroup.LayoutParams pingoParams = window.getLayoutParams();
         pingoParams.height = (int)(newBmapHeight*pingoHeight);
         pingoParams.width = (int)(newBmapHeight*pingoWidth);
+
     }
 }
