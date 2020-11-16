@@ -513,21 +513,23 @@ public class PingoWindow extends Fragment {
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
             ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
-            animation.setDuration(5700);
+            animation.setDuration(5750);
             animation.start();
 
             //spin cycle
             windowBackground.setBackground(null);
-            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.spin_animation,null));
-            AnimationDrawable spinAnimation = (AnimationDrawable) windowBackground.getDrawable();
             new Handler().postDelayed(()->{
-                spinAnimation.start();
-            },445);
+                    windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.spin_animation,null));
+            },500);
+            final AnimationDrawable[] spinAnimation = new AnimationDrawable[1];
+            new Handler().postDelayed(()->{
+                spinAnimation[0] = (AnimationDrawable) windowBackground.getDrawable();
+                spinAnimation[0].start();
+            },800);
 
             //stop spin
             new Handler().postDelayed(() -> {
-                spinAnimation.stop();
-                windowBackground.setBackgroundResource(R.drawable.window_background);
+                spinAnimation[0].stop();
                 if(guessedNumber != null){
                     Game.guessedCount++;
                     pingoState = PingoState.WIN;
@@ -536,8 +538,10 @@ public class PingoWindow extends Fragment {
                     EventBus.getDefault().post(new GuessedNumberEvent(pingoNumber));
                 }
                 else{
-                    Glide.with(this).load(R.drawable.red_window).diskCacheStrategy( DiskCacheStrategy.NONE )
-                            .skipMemoryCache( true ).into(windowBackground);
+                    windowBackground.setBackground(null);
+                    windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.wrong_animation,null));
+                    AnimationDrawable wrongAnimation = (AnimationDrawable) windowBackground.getDrawable();
+                    wrongAnimation.start();
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
@@ -551,7 +555,7 @@ public class PingoWindow extends Fragment {
                 spin.setBackground(null);
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
-
+                windowBackground.setBackgroundResource(R.drawable.window_background);
             }, 5500);
         }
     }
@@ -577,14 +581,7 @@ public class PingoWindow extends Fragment {
             new Handler().postDelayed(()->{animation.start();},1000);
             new Handler().postDelayed(()->{animation.start();},4000);
 
-            int background;
-            if(event.getColor().equals(WinAnimation.colorType.GREEN)){
-                background = R.drawable.win_animation;
-            }
-            else{
-                background = R.drawable.bonuspin_animation;
-            }
-            windowBackground.setImageDrawable(getResources().getDrawable(background, null));
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation, null));
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
             long totalDuration = 0;
             for (int i = 0; i < winAnimation.getNumberOfFrames(); i++) {

@@ -433,6 +433,7 @@ public class GameActivity extends PingoActivity {
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
             EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
+            activatePingoCheckWindow(activeWindow,View.VISIBLE);
             Game.attemptCounter--;
         }else{
             playSound(R.raw.error_short);
@@ -704,10 +705,12 @@ public class GameActivity extends PingoActivity {
         }
 
         new Handler().postDelayed(()-> {
+            activatePingoCheckWindow(event.getPingoNumber(),View.INVISIBLE);
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
                 doProgress(true);
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
+                activatePingoCheckWindow(activeWindow,View.VISIBLE);
                 playSound(R.raw.button);
             }
             //end of attempt
@@ -972,6 +975,27 @@ public class GameActivity extends PingoActivity {
         }
     }
 
+    private void activatePingoCheckWindow(int pingoNumber, int visibility){
+
+        //pingo check window
+        ImageView pingoCheck = null;
+        switch(pingoNumber){
+            case 1:
+                pingoCheck = (ImageView) findViewById(R.id.pingoCheck1);
+                break;
+            case 2:
+                pingoCheck = (ImageView) findViewById(R.id.pingoCheck2);
+                break;
+            case 3:
+                pingoCheck = (ImageView) findViewById(R.id.pingoCheck3);
+                break;
+            case 4:
+                pingoCheck = (ImageView) findViewById(R.id.pingoCheck4);
+                break;
+        }
+        pingoCheck.setVisibility(visibility);
+    }
+
     public void scaleUi() {
 
         // scale the screen
@@ -1131,6 +1155,26 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams mainLogoParams = mainLogo.getLayoutParams();
         mainLogoParams.width = newBmapWidth;
         mainLogoParams.height = newBmapHeight;
-    }
 
+        //sping check1
+        ImageView pingoCheck1 = (ImageView) findViewById(R.id.pingoCheck1);
+        ViewGroup.LayoutParams mpingoCheck1Params = pingoCheck1.getLayoutParams();
+        mpingoCheck1Params.width = (int)(newBmapHeight*pingoWidth*1.05);
+        mpingoCheck1Params.height = (int)(newBmapHeight*pingoHeight*1.05);
+        //sping check2
+        ImageView pingoCheck2 = (ImageView) findViewById(R.id.pingoCheck2);
+        ViewGroup.LayoutParams mpingoCheck2Params = pingoCheck2.getLayoutParams();
+        mpingoCheck2Params.width = mpingoCheck1Params.width;
+        mpingoCheck2Params.height = mpingoCheck1Params.height;
+        //sping check3
+        ImageView pingoCheck3 = (ImageView) findViewById(R.id.pingoCheck3);
+        ViewGroup.LayoutParams mpingoCheck3Params = pingoCheck3.getLayoutParams();
+        mpingoCheck3Params.width = mpingoCheck1Params.width;
+        mpingoCheck3Params.height = mpingoCheck1Params.height;
+        //sping check4
+        ImageView pingoCheck4 = (ImageView) findViewById(R.id.pingoCheck4);
+        ViewGroup.LayoutParams mpingoCheck4Params = pingoCheck4.getLayoutParams();
+        mpingoCheck4Params.width = mpingoCheck1Params.width;
+        mpingoCheck4Params.height = mpingoCheck1Params.height;
+    }
 }
