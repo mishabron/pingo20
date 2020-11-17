@@ -20,5 +20,14 @@
     <item
         android:drawable="@drawable/wrong_red_bolt"
         android:duration="250"/>
+    <item
+        android:drawable="@drawable/wrong_red"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/wrong_red_bolt"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/wrong_red"
+        android:duration="250"/>
 
 </animation-list>

@@ -4,7 +4,7 @@ public class WinAnimation {
 
     private final int pingoNumber;
 
-    public static  enum colorType{GREEN,GOLD};
+    public static  enum colorType{GREEN};
 
     private  colorType color;
 

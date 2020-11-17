@@ -28,7 +28,6 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.events.BonusPinEvent;
 import com.mbronshteyn.pingo20.events.FingerTap;
 import com.mbronshteyn.pingo20.events.GuessedNumberEvent;
 import com.mbronshteyn.pingo20.events.InitBackgroundEvent;
@@ -42,7 +41,7 @@ import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.events.SpinEvent;
 import com.mbronshteyn.pingo20.events.StopPlayer;
 import com.mbronshteyn.pingo20.events.WinAnimation;
-import com.mbronshteyn.pingo20.events.WinFlashEvent;
+import com.mbronshteyn.pingo20.events.WinStarsEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
 
@@ -462,27 +461,6 @@ public class PingoWindow extends Fragment {
     }
 
     @Subscribe
-    public void onBonusPin(BonusPinEvent event){
-
-        touchBackground.setEnabled(false);
-        windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.yellow_regular_bright,null));
-    }
-
-    @Subscribe
-    public void flashWin(WinFlashEvent event){
-        touchBackground.setEnabled(true);
-        if (event.getWindow() == pingoNumber) {
-            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation_endgame,null));
-            AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
-            long totalDuration = 0;
-            for(int i = 0; i< winAnimation.getNumberOfFrames();i++){
-                totalDuration += winAnimation.getDuration(i);
-            }
-            winAnimation.start();
-        }
-    }
-
-    @Subscribe
     public void numberRorate(NumberRorateEvent event){
         if (event.getWindow() == pingoNumber){
             ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
@@ -575,19 +553,12 @@ public class PingoWindow extends Fragment {
 
         if(event.getPingoNumber() == pingoNumber) {
 
-            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
-            animation.setDuration(1000);
-            animation.setInterpolator(new AccelerateDecelerateInterpolator());
-            new Handler().postDelayed(()->{animation.start();},1000);
-            new Handler().postDelayed(()->{animation.start();},4000);
-
-            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation, null));
+            windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.right_animation, null));
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
-            long totalDuration = 0;
-            for (int i = 0; i < winAnimation.getNumberOfFrames(); i++) {
-                totalDuration += winAnimation.getDuration(i);
-            }
-
+            int offsetWinStars = winAnimation.getDuration(0);
+            int durationWinStars = offsetWinStars + winAnimation.getDuration(1);
+            //flash win stars
+            EventBus.getDefault().post(new WinStarsEvent(offsetWinStars,durationWinStars,event.getPingoNumber()));
             //blink
             winAnimation.start();
         }
@@ -611,8 +582,6 @@ public class PingoWindow extends Fragment {
         float hRatio = height / bmapHeight;
 
         float ratioMultiplier = wRatio;
-        // Untested conditional though I expect this might work for landscape
-        // mode
         if (hRatio < wRatio) {
             ratioMultiplier = hRatio;
         }

@@ -182,6 +182,50 @@
             app:layout_constraintEnd_toEndOf="@+id/pingo4"
             app:layout_constraintBottom_toBottomOf="@+id/pingo4"/>
 
+        <ImageView
+            android:id="@+id/winStars1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo1"
+            app:layout_constraintTop_toTopOf="@+id/pingo1"
+            app:layout_constraintEnd_toEndOf="@+id/pingo1"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo1"/>
+
+        <ImageView
+            android:id="@+id/winStars2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo2"
+            app:layout_constraintTop_toTopOf="@+id/pingo2"
+            app:layout_constraintEnd_toEndOf="@+id/pingo2"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo2"/>
+
+        <ImageView
+            android:id="@+id/winStars3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo3"
+            app:layout_constraintTop_toTopOf="@+id/pingo3"
+            app:layout_constraintEnd_toEndOf="@+id/pingo3"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo3"/>
+
+        <ImageView
+            android:id="@+id/winStars4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo4"
+            app:layout_constraintTop_toTopOf="@+id/pingo4"
+            app:layout_constraintEnd_toEndOf="@+id/pingo4"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo4"/>
+
         <Button
             android:id="@+id/actionButtonGo"
             android:layout_width="100dp"

@@ -51,6 +51,7 @@ import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.events.ScrollStart;
 import com.mbronshteyn.pingo20.events.StopPlayer;
 import com.mbronshteyn.pingo20.events.WinAnimation;
+import com.mbronshteyn.pingo20.events.WinStarsEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 import com.mbronshteyn.pingo20.types.PingoState;
@@ -996,6 +997,31 @@ public class GameActivity extends PingoActivity {
         pingoCheck.setVisibility(visibility);
     }
 
+    @Subscribe
+    public void flashWinStars(WinStarsEvent event){
+
+        ImageView winFlash = null;
+        switch(event.getPingoNumber()){
+            case 1:
+                winFlash = (ImageView) findViewById(R.id.winStars1);
+                break;
+            case 2:
+                winFlash = (ImageView) findViewById(R.id.winStars2);
+                break;
+            case 3:
+                winFlash = (ImageView) findViewById(R.id.winStars3);
+                break;
+            case 4:
+                winFlash = (ImageView) findViewById(R.id.winStars4);
+                break;
+        }
+
+        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        ImageView finalWinFlash = winFlash;
+        new Handler().postDelayed(()->{ finalWinFlash.startAnimation(zoomIntAnimation);},event.getOffsetWinStars());
+        new Handler().postDelayed(()->{ finalWinFlash.clearAnimation();},event.getDurationWinStars());
+    }
+
     public void scaleUi() {
 
         // scale the screen
@@ -1176,5 +1202,26 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams mpingoCheck4Params = pingoCheck4.getLayoutParams();
         mpingoCheck4Params.width = mpingoCheck1Params.width;
         mpingoCheck4Params.height = mpingoCheck1Params.height;
+
+        //scale win stars1
+        ImageView winStars1 = (ImageView) findViewById(R.id.winStars1);
+        ViewGroup.LayoutParams winStars1Params = winStars1.getLayoutParams();
+        winStars1Params.width =(int)(newBmapWidth*0.3710F);
+        winStars1Params.height =(int)(newBmapHeight*0.6805F);
+        //scale win stars2
+        ImageView winStars2 = (ImageView) findViewById(R.id.winStars2);
+        ViewGroup.LayoutParams winStars2Params = winStars2.getLayoutParams();
+        winStars2Params.width = winStars1Params.width;
+        winStars2Params.height = winStars1Params.height;
+        //scale win stars3
+        ImageView winStars3 = (ImageView) findViewById(R.id.winStars3);
+        ViewGroup.LayoutParams winStars3Params = winStars3.getLayoutParams();
+        winStars3Params.width = winStars1Params.width;
+        winStars3Params.height = winStars1Params.height;
+        //scale win stars3
+        ImageView winStars4 = (ImageView) findViewById(R.id.winStars4);
+        ViewGroup.LayoutParams winStars4Params = winStars4.getLayoutParams();
+        winStars4Params.width = winStars1Params.width;
+        winStars4Params.height = winStars1Params.height;
     }
 }
