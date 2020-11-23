@@ -563,7 +563,7 @@ public class GameActivity extends PingoActivity {
 
         if(pingoIterator.hasNext() || !isWinningCard()) {
             int delay = 0;
-            if (Game.guessedCount == 2 && Game.attemptCounter > 0) {
+            if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
                 doHalfWayThere();
                 delay = 3000;
             }
@@ -692,7 +692,7 @@ public class GameActivity extends PingoActivity {
         //right number
         else {
             //half there popup for non free game
-            if(!card.isFreeGame() && Game.guessedCount == 2){
+            if(!card.isFreeGame() && Game.guessedCount == 2 && Game.attemptCounter > 0){
                 duration = 9000;
             }
             //last guessed number when game is won / not frre game
