@@ -45,6 +45,7 @@ import com.mbronshteyn.pingo20.events.WinAnimation;
 import com.mbronshteyn.pingo20.events.WinStarsEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
+import com.q42.android.scrollingimageview.ScrollingImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -491,25 +492,27 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,1160);
-            animation.setDuration(5750);
+            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,5400);
+            animation.setDuration(6400);
             animation.setInterpolator(new AccelerateInterpolator(1.0F));
             animation.start();
 
             //spin cycle
+            ScrollingImageView scrollingBackground = (ScrollingImageView) getView().findViewById(R.id.scrolling_background);
             windowBackground.setBackground(null);
             new Handler().postDelayed(()->{
-                    windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.spin_animation,null));
+                scrollingBackground.setVisibility(View.VISIBLE);
+                scrollingBackground.stop();
             },500);
             final AnimationDrawable[] spinAnimation = new AnimationDrawable[1];
             new Handler().postDelayed(()->{
-                spinAnimation[0] = (AnimationDrawable) windowBackground.getDrawable();
-                spinAnimation[0].start();
+                scrollingBackground.start();
             },800);
 
             //stop spin
             new Handler().postDelayed(() -> {
-                spinAnimation[0].stop();
+                scrollingBackground.stop();
+                scrollingBackground.setVisibility(View.INVISIBLE);
                 if(guessedNumber != null){
                     Game.guessedCount++;
                     pingoState = PingoState.WIN;
@@ -525,7 +528,7 @@ public class PingoWindow extends Fragment {
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
-            }, 5450);
+            }, 6450);
 
             //restore window state
             new Handler().postDelayed(() -> {
@@ -536,7 +539,7 @@ public class PingoWindow extends Fragment {
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
                 windowBackground.setBackgroundResource(R.drawable.window_background);
-            }, 5500);
+            }, 6500);
         }
     }
 
