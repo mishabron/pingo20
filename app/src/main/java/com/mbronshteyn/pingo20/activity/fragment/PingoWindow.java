@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -490,8 +491,9 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
+            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,1160);
             animation.setDuration(5750);
+            animation.setInterpolator(new AccelerateInterpolator(1.0F));
             animation.start();
 
             //spin cycle
