@@ -28,5 +28,33 @@
         android:duration="250"/>
     <item
         android:drawable="@drawable/right_green_expl"
+        android:duration="1000"/>
+
+    <item
+        android:drawable="@drawable/right_green_expl"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl_bolts2"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl_bolts2"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl_bolts2"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl_bolts2"
+        android:duration="250"/>
+    <item
+        android:drawable="@drawable/right_green_expl"
         android:duration="250"/>
 </animation-list>

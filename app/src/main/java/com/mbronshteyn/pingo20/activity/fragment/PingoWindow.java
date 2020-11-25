@@ -566,6 +566,14 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new WinStarsEvent(offsetWinStars,durationWinStars,event.getPingoNumber()));
             //blink
             winAnimation.start();
+
+            //rotate number
+            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
+            animation.setDuration(1000);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            new Handler().postDelayed(()->{animation.start();},1000);
+            new Handler().postDelayed(()->{animation.start();},4000);
+
         }
     }
 
