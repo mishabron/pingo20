@@ -105,13 +105,12 @@ public class GameActivity extends PingoActivity {
 
         scaleUi();
 
-        ImageView freeGame = (ImageView) findViewById(R.id.free_game);
-
         if(card.isFreeGame()){
             Game.attemptCounter = 3 - card.getNonBonusHits().size();
         }
         else {
             Game.attemptCounter = 4 - card.getNonBonusHits().size();
+            ImageView freeGame = (ImageView) findViewById(R.id.free_game);
             freeGame.setVisibility(View.INVISIBLE);
         }
 
@@ -251,7 +250,7 @@ public class GameActivity extends PingoActivity {
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                new Handler().postDelayed(() -> {initState(true); }, 100);
+                new Handler().postDelayed(() -> {initState(); }, 100);
             }
 
             @Override
@@ -274,14 +273,12 @@ public class GameActivity extends PingoActivity {
         constraintSet.applyTo(root);
     }
 
-    private void initState(boolean withWin) {
+    private void initState() {
 
         playPingos = loadPingosInPlay(true);
         List<Integer> winPingos = loadPingosInPlay(false);
         initPingos(playPingos,Game.attemptCounter != 0);
-        if(withWin) {
-            initPingos(winPingos, false);
-        }
+        initPingos(winPingos, false);
         for(Integer playPingo: playPingos){
             closedPingos.add(playPingo);
         }
@@ -565,7 +562,7 @@ public class GameActivity extends PingoActivity {
             int delay = 0;
             if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
                 doHalfWayThere();
-                delay = 3000;
+                delay = 2500;
             }
             new Handler().postDelayed(()-> {
                 playSound(R.raw.right_number);
@@ -590,7 +587,7 @@ public class GameActivity extends PingoActivity {
                 slideNo = R.drawable.to4;
                 break;
             case 0:
-                initState(false);
+                initState();
                 break;
         }
 
@@ -604,12 +601,12 @@ public class GameActivity extends PingoActivity {
                 overlayBlue.setVisibility(View.INVISIBLE);
                 doProgress(false);
                 flippToCounter();
-                initState(false);
+                initState();
             }, 5000);
         }
         else{
             flippToCounter();
-            initState(false);
+            initState();
         }
 
     }
@@ -1186,7 +1183,7 @@ public class GameActivity extends PingoActivity {
         ImageView pingoCheck1 = (ImageView) findViewById(R.id.pingoCheck1);
         ViewGroup.LayoutParams mpingoCheck1Params = pingoCheck1.getLayoutParams();
         mpingoCheck1Params.width = (int)(newBmapHeight*pingoWidth*1.05);
-        mpingoCheck1Params.height = (int)(newBmapHeight*pingoHeight*1.05);
+        mpingoCheck1Params.height = (int)(newBmapHeight*pingoHeight*1.03);
         //sping check2
         ImageView pingoCheck2 = (ImageView) findViewById(R.id.pingoCheck2);
         ViewGroup.LayoutParams mpingoCheck2Params = pingoCheck2.getLayoutParams();

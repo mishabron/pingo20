@@ -287,12 +287,12 @@ public class PingoWindow extends Fragment {
         int spinDelay = pingoBundle.getInt("spinDelay");
         ArrayList<Integer> playedNumbers = pingoBundle.getIntegerArrayList("playedNumbers");
 
+        fishka.setVisibility(View.INVISIBLE);
         if(guessedNumber != null){
             hasFinger =false;
             pingoState = PingoState.WIN;
         }
         else{
-            fishka.setVisibility(View.INVISIBLE);
             for(Integer playedNumber: playedNumbers){
                 removeNumber(numbers,playedNumber);
             }
@@ -324,8 +324,8 @@ public class PingoWindow extends Fragment {
                 //winning window
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;
-                    wheel.setCurrentItem(getNumberIndex(currentPingo),true);
-                    Glide.with(getActivity()).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    wheel.setCurrentItem(getNumberIndex(currentPingo),false);
+                    Glide.with(getActivity()).load(R.drawable.right_green_expl).diskCacheStrategy( DiskCacheStrategy.NONE )
                             .skipMemoryCache( true ).into(windowBackground);
                     disableWindow();
                     fishka.setImageResource(greenFishkas[currentPingo]);
@@ -570,7 +570,7 @@ public class PingoWindow extends Fragment {
             //rotate number
             ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,360);
             animation.setDuration(1000);
-            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            animation.setInterpolator(new AccelerateInterpolator(1.0F));
             new Handler().postDelayed(()->{animation.start();},1000);
             new Handler().postDelayed(()->{animation.start();},4000);
 
