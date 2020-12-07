@@ -13,7 +13,7 @@
         android:id="@+id/scrolling_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        scrolling_image_view:speed="9dp"
+        scrolling_image_view:speed="17dp"
         scrolling_image_view:src="@drawable/spin1"
         android:visibility="invisible"
         android:rotation="-90"

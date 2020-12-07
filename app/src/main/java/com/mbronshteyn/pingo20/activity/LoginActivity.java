@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -95,6 +96,9 @@ public class LoginActivity extends PingoActivity {
 
         rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
         rightErrorBaloon.setVisibility(View.INVISIBLE);
+
+        progressCounter = (ImageView) findViewById(R.id.progressCounter);
+        dotsProgress = (AnimationDrawable) progressCounter.getDrawable();
 
         cardNumberInput.addTextChangedListener(new TextWatcher() {
 
@@ -206,6 +210,7 @@ public class LoginActivity extends PingoActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 authButtonGo.setEnabled(false);
+                doProgress(true);
             }
 
             @Override
@@ -299,6 +304,7 @@ public class LoginActivity extends PingoActivity {
 
         //go to game screen
         new Handler().postDelayed(()-> {
+            dotsProgress.stop();
             Intent intent;
             if (event.getErrorCode() != null && event.getErrorCode().equals(ErrorCode.PLAYED)) {
                 intent = new Intent(getApplicationContext(), NoWinActivity.class);
@@ -374,6 +380,12 @@ public class LoginActivity extends PingoActivity {
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
         buttonParamsGo.height = buttonSizeGo;
         buttonParamsGo.width = buttonSizeGo;
+
+        //scale dots progress
+        ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
+        ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
+        dotsProgressParams18.height = buttonParamsGo.height;
+        dotsProgressParams18.width = buttonParamsGo.width;
 
         //sacele hey baloon
         ImageView heyBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);

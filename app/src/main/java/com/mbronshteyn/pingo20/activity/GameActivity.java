@@ -93,8 +93,6 @@ public class GameActivity extends PingoActivity {
     private GameActivity context;
     private boolean spinning;
     private ConstraintLayout root;
-    private AnimationDrawable dotsProgress;
-    private ImageView progressCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,8 +119,8 @@ public class GameActivity extends PingoActivity {
 
         context = this;
 
-        //ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
-        //Glide.with(this).load(R.drawable.game_background).into(iView);;
+        progressCounter = (ImageView) findViewById(R.id.progressCounter);
+        dotsProgress = (AnimationDrawable) progressCounter.getDrawable();
 
         //balance
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
@@ -131,9 +129,6 @@ public class GameActivity extends PingoActivity {
         balance.setText(getCardReward());
 
         flippedToGo = false;
-
-        progressCounter = (ImageView) findViewById(R.id.progressCounter);
-        dotsProgress = (AnimationDrawable) progressCounter.getDrawable();
 
         pingo1 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo1);
         pingo2 = (PingoWindow) getSupportFragmentManager().findFragmentById(R.id.pingo2);
@@ -430,6 +425,7 @@ public class GameActivity extends PingoActivity {
             card = response.body();
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
+            playSound(R.raw.spin);
             EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
             activatePingoCheckWindow(activeWindow,View.VISIBLE);
             Game.attemptCounter--;
@@ -678,9 +674,10 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void spinEnd(NumberSpinEndEvent event){
 
-        int duration = 0;
         dotsProgress.stop();
-        dotsProgress.selectDrawable(0);
+        dotsProgress.setVisible(true,true);
+
+        int duration = 0;
 
         //wrong nummber
         if(!event.isGuessed()){
@@ -707,6 +704,7 @@ public class GameActivity extends PingoActivity {
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
                 doProgress(true);
+                playSound(R.raw.spin);
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
                 activatePingoCheckWindow(activeWindow,View.VISIBLE);
                 playSound(R.raw.button);
@@ -963,15 +961,6 @@ public class GameActivity extends PingoActivity {
         }
     }
 
-    private void doProgress(boolean startProgress){
-        if(startProgress){
-            progressCounter.setVisibility(View.VISIBLE);
-            dotsProgress.start();
-        }else{
-            progressCounter.setVisibility(View.INVISIBLE);
-            dotsProgress.stop();
-        }
-    }
 
     private void activatePingoCheckWindow(int pingoNumber, int visibility){
 

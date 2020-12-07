@@ -357,7 +357,6 @@ public class PingoWindow extends Fragment {
 
     public void disableWindow() {
         touchBackground.setOnClickListener(null);
-        pingoState = PingoState.INACTIVE;
     }
 
     // Wheel changed listener
@@ -478,6 +477,8 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
+            int spinTiming = 8500;
+
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
 
             guessedNumber = event.getNumberGuesed();
@@ -492,21 +493,22 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,5400);
-            animation.setDuration(6400);
+            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,2520);
+            animation.setDuration(spinTiming);
             animation.setInterpolator(new AccelerateInterpolator(1.0F));
             animation.start();
 
             //spin cycle
             ScrollingImageView scrollingBackground = (ScrollingImageView) getView().findViewById(R.id.scrolling_background);
-            windowBackground.setBackground(null);
+            windowBackground.setBackgroundResource(R.drawable.spin0);
             new Handler().postDelayed(()->{
-                scrollingBackground.setVisibility(View.VISIBLE);
                 scrollingBackground.stop();
             },500);
             final AnimationDrawable[] spinAnimation = new AnimationDrawable[1];
             new Handler().postDelayed(()->{
                 scrollingBackground.start();
+                windowBackground.setBackground(null);
+                scrollingBackground.setVisibility(View.VISIBLE);
             },800);
 
             //stop spin
@@ -528,7 +530,7 @@ public class PingoWindow extends Fragment {
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
-            }, 6450);
+            }, spinTiming+50);
 
             //restore window state
             new Handler().postDelayed(() -> {
@@ -539,7 +541,7 @@ public class PingoWindow extends Fragment {
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
                 windowBackground.setBackgroundResource(R.drawable.window_background);
-            }, 6500);
+            }, spinTiming+100);
         }
     }
 

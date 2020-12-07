@@ -1,13 +1,12 @@
 package com.mbronshteyn.pingo20.activity;
 
 import android.content.res.AssetFileDescriptor;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -19,7 +18,7 @@ import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.model.Game;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,8 @@ public class PingoActivity extends AppCompatActivity {
     protected SoundPool soundPool;
     protected static Map<Integer,Integer> soundMap = new HashMap<>();
     protected static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
+    public ImageView progressCounter;
+    public AnimationDrawable dotsProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,48 +43,50 @@ public class PingoActivity extends AppCompatActivity {
         soundPool = new SoundPool.Builder().setMaxStreams(5).build();
 
         //load all sounds
-        int soindId = soundPool.load(this, R.raw.button, 1);
-        soundMap.put(R.raw.button,soindId);
-        soindId = soundPool.load(this, R.raw.error_short, 1);
-        soundMap.put(R.raw.error_short,soindId);
-        soindId = soundPool.load(this, R.raw.knocking_on_glass, 1);
-        soundMap.put(R.raw.knocking_on_glass,soindId);
-        soindId = soundPool.load(this, R.raw.right_number, 1);
-        soundMap.put(R.raw.right_number,soindId);
-        soindId = soundPool.load(this, R.raw.short_button_turn, 1);
-        soundMap.put(R.raw.short_button_turn,soindId);
-        soindId = soundPool.load(this, R.raw.wheel_spinning, 1);
-        soundMap.put(R.raw.wheel_spinning,soindId);
-        soindId = soundPool.load(this, R.raw.wheel_stop, 1);
-        soundMap.put(R.raw.wheel_stop,soindId);
-        soindId = soundPool.load(this, R.raw.wrong_number, 1);
-        soundMap.put(R.raw.wrong_number,soindId);
-        soindId = soundPool.load(this, R.raw.luckyseven, 1);
-        soundMap.put(R.raw.luckyseven,soindId);
-        soindId = soundPool.load(this, R.raw.bonus_nowin, 1);
-        soundMap.put(R.raw.bonus_nowin,soindId);
-        soindId = soundPool.load(this, R.raw.jackpot, 1);
-        soundMap.put(R.raw.jackpot,soindId);
-        soindId = soundPool.load(this, R.raw.trans_to_777, 1);
-        soundMap.put(R.raw.trans_to_777,soindId);
-        soindId = soundPool.load(this, R.raw.bonusspin_1, 1);
-        soundMap.put(R.raw.bonusspin_1,soindId);
-        soindId = soundPool.load(this, R.raw.bonusspin_2, 1);
-        soundMap.put(R.raw.bonusspin_2,soindId);
-        soindId = soundPool.load(this, R.raw.bonusspin_3, 1);
-        soundMap.put(R.raw.bonusspin_3,soindId);
-        soindId = soundPool.load(this, R.raw.bonusspin_4, 1);
-        soundMap.put(R.raw.bonusspin_4,soindId);
-        soindId = soundPool.load(this, R.raw.right_number_winner, 1);
-        soundMap.put(R.raw.right_number_winner,soindId);
-        soindId = soundPool.load(this, R.raw.wrong_try_again, 1);
-        soundMap.put(R.raw.wrong_try_again,soindId);
-        soindId = soundPool.load(this, R.raw.token_try_again, 1);
-        soundMap.put(R.raw.token_try_again,soindId);
-        soindId = soundPool.load(this, R.raw.wrong_last, 1);
-        soundMap.put(R.raw.wrong_last,soindId);
-        soindId = soundPool.load(this, R.raw.token_last, 1);
-        soundMap.put(R.raw.token_last,soindId);
+        int soundId = soundPool.load(this, R.raw.button, 1);
+        soundMap.put(R.raw.button,soundId);
+        soundId = soundPool.load(this, R.raw.error_short, 1);
+        soundMap.put(R.raw.error_short,soundId);
+        soundId = soundPool.load(this, R.raw.knocking_on_glass, 1);
+        soundMap.put(R.raw.knocking_on_glass,soundId);
+        soundId = soundPool.load(this, R.raw.right_number, 1);
+        soundMap.put(R.raw.right_number,soundId);
+        soundId = soundPool.load(this, R.raw.short_button_turn, 1);
+        soundMap.put(R.raw.short_button_turn,soundId);
+        soundId = soundPool.load(this, R.raw.wheel_spinning, 1);
+        soundMap.put(R.raw.wheel_spinning,soundId);
+        soundId = soundPool.load(this, R.raw.wheel_stop, 1);
+        soundMap.put(R.raw.wheel_stop,soundId);
+        soundId = soundPool.load(this, R.raw.wrong_number, 1);
+        soundMap.put(R.raw.wrong_number,soundId);
+        soundId = soundPool.load(this, R.raw.luckyseven, 1);
+        soundMap.put(R.raw.luckyseven,soundId);
+        soundId = soundPool.load(this, R.raw.bonus_nowin, 1);
+        soundMap.put(R.raw.bonus_nowin,soundId);
+        soundId = soundPool.load(this, R.raw.jackpot, 1);
+        soundMap.put(R.raw.jackpot,soundId);
+        soundId = soundPool.load(this, R.raw.trans_to_777, 1);
+        soundMap.put(R.raw.trans_to_777,soundId);
+        soundId = soundPool.load(this, R.raw.bonusspin_1, 1);
+        soundMap.put(R.raw.bonusspin_1,soundId);
+        soundId = soundPool.load(this, R.raw.bonusspin_2, 1);
+        soundMap.put(R.raw.bonusspin_2,soundId);
+        soundId = soundPool.load(this, R.raw.bonusspin_3, 1);
+        soundMap.put(R.raw.bonusspin_3,soundId);
+        soundId = soundPool.load(this, R.raw.bonusspin_4, 1);
+        soundMap.put(R.raw.bonusspin_4,soundId);
+        soundId = soundPool.load(this, R.raw.right_number_winner, 1);
+        soundMap.put(R.raw.right_number_winner,soundId);
+        soundId = soundPool.load(this, R.raw.wrong_try_again, 1);
+        soundMap.put(R.raw.wrong_try_again,soundId);
+        soundId = soundPool.load(this, R.raw.token_try_again, 1);
+        soundMap.put(R.raw.token_try_again,soundId);
+        soundId = soundPool.load(this, R.raw.wrong_last, 1);
+        soundMap.put(R.raw.wrong_last,soundId);
+        soundId = soundPool.load(this, R.raw.token_last, 1);
+        soundMap.put(R.raw.token_last,soundId);
+        soundId = soundPool.load(this, R.raw.spin, 1);
+        soundMap.put(R.raw.spin,soundId);
     }
 
     @Override
@@ -115,13 +118,6 @@ public class PingoActivity extends AppCompatActivity {
 
         Integer soundId = soundMap.get(sound);
         int soundPlaying = soundPool.play(soundId, 1, 1, 0, 0, 1);
-        soundsInPlayMap.put(sound,soundPlaying);
-    }
-
-    protected void playSoundLoop(int sound) {
-
-        Integer soundId = soundMap.get(sound);
-        int soundPlaying = soundPool.play(soundId, 1, 1, 0, -1, 1);
         soundsInPlayMap.put(sound,soundPlaying);
     }
 
@@ -284,4 +280,33 @@ public class PingoActivity extends AppCompatActivity {
 
         return reward;
     }
+
+    public void doProgress(boolean startProgress){
+        if(startProgress){
+            progressCounter.setVisibility(View.VISIBLE);
+            dotsProgress.start();
+        }else{
+            progressCounter.setVisibility(View.INVISIBLE);
+            dotsProgress.stop();
+        }
+    }
+
+    public void muteAudio(){
+        Collection<Integer> sounds = soundMap.values();
+        for(Integer sound: sounds){
+            soundPool.setVolume(sound,0,0);
+        }
+        mediaPlayer1.setVolume(0,0);
+        mediaPlayer2.setVolume(0,0);
+    }
+
+    public void unMuteAudio(){
+        Collection<Integer> sounds = soundMap.values();
+        for(Integer sound: sounds) {
+            soundPool.setVolume(sound, 1, 1);
+        }
+        mediaPlayer1.setVolume(1,1);
+        mediaPlayer2.setVolume(1,1);
+    }
+    
 }
