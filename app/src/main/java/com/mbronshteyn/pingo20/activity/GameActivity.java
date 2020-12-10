@@ -154,6 +154,7 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 playSound(R.raw.button);
+                stopPplayInBackground();
                 doPinCheck();
                 hitButtonGo.setEnabled(false);
             }
@@ -425,7 +426,7 @@ public class GameActivity extends PingoActivity {
             card = response.body();
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
-            playSound(R.raw.spin);
+            playSpingSound();
             EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
             activatePingoCheckWindow(activeWindow,View.VISIBLE);
             Game.attemptCounter--;
@@ -516,7 +517,9 @@ public class GameActivity extends PingoActivity {
     public void onPingoEventMessage(PingoEvent event) {
 
         int pingo = event.getPingoNumber();
-        removeNumber(closedPingos,pingo);
+        removeNumber(pingo);
+
+        playInBackgroundIfNotPlaying(R.raw.main_theme);
 
         if(closedPingos.size() ==0 && !flippedToGo){
             new Handler().postDelayed(()->{playSound(R.raw.short_button_turn);},200);
@@ -558,7 +561,7 @@ public class GameActivity extends PingoActivity {
             int delay = 0;
             if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
                 doHalfWayThere();
-                delay = 2500;
+                delay = 2000;
             }
             new Handler().postDelayed(()-> {
                 playSound(R.raw.right_number);
@@ -592,13 +595,13 @@ public class GameActivity extends PingoActivity {
             Glide.with(context).clear(overlayBlue);
             Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
             overlayBlue.setVisibility(View.VISIBLE);
-
+            playSound(R.raw.comix_page_short);
             new Handler().postDelayed(() -> {
                 overlayBlue.setVisibility(View.INVISIBLE);
                 doProgress(false);
                 flippToCounter();
                 initState();
-            }, 5000);
+            }, 6000);
         }
         else{
             flippToCounter();
@@ -669,6 +672,7 @@ public class GameActivity extends PingoActivity {
             public void onAnimationRepeat(Animation animation) {}
         });
         halfWay.startAnimation(zoomHalfWay);
+        playSound(R.raw.half_way);
     }
 
     @Subscribe
@@ -704,7 +708,7 @@ public class GameActivity extends PingoActivity {
             if (pingoIterator.hasNext()) {
                 Integer activeWindow = pingoIterator.next();
                 doProgress(true);
-                playSound(R.raw.spin);
+                playSpingSound();
                 EventBus.getDefault().post(new NumberSpinEvent(activeWindow, loadNumberGuessed(activeWindow)));
                 activatePingoCheckWindow(activeWindow,View.VISIBLE);
                 playSound(R.raw.button);
@@ -952,8 +956,8 @@ public class GameActivity extends PingoActivity {
         flippedToGo = false;
     }
 
-    private void removeNumber(List<Integer> pingos, int tagNumberToRemove){
-        Iterator<Integer> numbersIter =pingos.iterator();
+    private void removeNumber(int tagNumberToRemove){
+        Iterator<Integer> numbersIter = closedPingos.iterator();
         while (numbersIter.hasNext()){
             if(numbersIter.next().equals(tagNumberToRemove)){
                 numbersIter.remove();              // it will remove element from collection
@@ -1002,10 +1006,14 @@ public class GameActivity extends PingoActivity {
                 break;
         }
 
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.star_zoom);;
         ImageView finalWinFlash = winFlash;
         new Handler().postDelayed(()->{ finalWinFlash.startAnimation(zoomIntAnimation);},event.getOffsetWinStars());
         new Handler().postDelayed(()->{ finalWinFlash.clearAnimation();},event.getDurationWinStars());
+    }
+
+    public void playSpingSound(){
+        new Handler().postDelayed(()->{playSound(R.raw.spin);},600);
     }
 
     public void scaleUi() {

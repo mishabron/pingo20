@@ -477,7 +477,7 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            int spinTiming = 8500;
+            int spinTiming = 7500;
 
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
 
@@ -493,23 +493,19 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator animation = ObjectAnimator.ofFloat(spin,"rotationY", 0,2520);
-            animation.setDuration(spinTiming);
-            animation.setInterpolator(new AccelerateInterpolator(1.0F));
-            animation.start();
+            ObjectAnimator numberAnimation = ObjectAnimator.ofFloat(spin,"rotationX", 0,-2520);
+            numberAnimation.setDuration(spinTiming);
+            numberAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
 
             //spin cycle
             ScrollingImageView scrollingBackground = (ScrollingImageView) getView().findViewById(R.id.scrolling_background);
             windowBackground.setBackgroundResource(R.drawable.spin0);
             new Handler().postDelayed(()->{
-                scrollingBackground.stop();
-            },500);
-            final AnimationDrawable[] spinAnimation = new AnimationDrawable[1];
-            new Handler().postDelayed(()->{
+                numberAnimation.start();
                 scrollingBackground.start();
                 windowBackground.setBackground(null);
                 scrollingBackground.setVisibility(View.VISIBLE);
-            },800);
+            },900);
 
             //stop spin
             new Handler().postDelayed(() -> {
@@ -528,6 +524,10 @@ public class PingoWindow extends Fragment {
                     AnimationDrawable wrongAnimation = (AnimationDrawable) windowBackground.getDrawable();
                     wrongAnimation.start();
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
+                    int wronDelay = 0;
+                    for(int i = 0; i < wrongAnimation.getNumberOfFrames(); i++){
+                        wronDelay = wronDelay + wrongAnimation.getDuration(i);
+                    }
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
             }, spinTiming+50);

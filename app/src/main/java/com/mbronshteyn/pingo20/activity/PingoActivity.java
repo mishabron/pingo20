@@ -35,6 +35,7 @@ public class PingoActivity extends AppCompatActivity {
     protected static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
     public AnimationDrawable dotsProgress;
+    private boolean playingBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,10 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.token_last,soundId);
         soundId = soundPool.load(this, R.raw.spin, 1);
         soundMap.put(R.raw.spin,soundId);
+        soundId = soundPool.load(this, R.raw.half_way, 1);
+        soundMap.put(R.raw.half_way,soundId);
+        soundId = soundPool.load(this, R.raw.comix_page_short, 1);
+        soundMap.put(R.raw.comix_page_short,soundId);
     }
 
     @Override
@@ -121,6 +126,12 @@ public class PingoActivity extends AppCompatActivity {
         soundsInPlayMap.put(sound,soundPlaying);
     }
 
+    protected void playInBackgroundIfNotPlaying(int sound){
+        if(!playingBackground){
+            playInBackground(sound);
+        }
+    }
+
     protected void playInBackground(int sound){
 
         final AssetFileDescriptor afd = getResources().openRawResourceFd(sound);
@@ -129,6 +140,8 @@ public class PingoActivity extends AppCompatActivity {
 
         mediaPlayer1.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        playingBackground = true;
 
         mediaPlayer1.start();
         mediaPlayer1.setNextMediaPlayer(mediaPlayer2);
@@ -165,6 +178,9 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     protected void stopPplayInBackground(){
+
+        playingBackground = false;
+
         if(mediaPlayer1.isPlaying()){
             mediaPlayer1.stop();
         }
