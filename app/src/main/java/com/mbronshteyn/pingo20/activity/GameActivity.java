@@ -12,7 +12,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.ChangeBounds;
@@ -185,8 +184,9 @@ public class GameActivity extends PingoActivity {
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    protected void onResume() {
+
+        super.onResume();
 
         if(isWinningCard() && Game.attemptCounter != 0 ){
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
@@ -199,15 +199,15 @@ public class GameActivity extends PingoActivity {
             switch (Game.attemptCounter) {
                 case 3:
                     slideNo = R.drawable.to2;
-                    delay = 5000;
+                    delay = 6000;
                     break;
                 case 2:
                     slideNo = R.drawable.to3;
-                    delay = 5000;
+                    delay = 6000;
                     break;
                 case 1:
                     slideNo = R.drawable.to4;
-                    delay = 5000;
+                    delay = 6000;
                     break;
             }
 
@@ -216,6 +216,9 @@ public class GameActivity extends PingoActivity {
                 Glide.with(context).clear(overlayBlue);
                 Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
                 overlayBlue.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(() -> {
+                    playSound(R.raw.comix_page_short);
+                }, 700);
                 new Handler().postDelayed(() -> {
                     overlayBlue.setVisibility(View.INVISIBLE);
                 }, delay);
@@ -519,7 +522,7 @@ public class GameActivity extends PingoActivity {
         int pingo = event.getPingoNumber();
         removeNumber(pingo);
 
-        playInBackgroundIfNotPlaying(R.raw.main_theme);
+        //playInBackgroundIfNotPlaying(R.raw.main_theme);
 
         if(closedPingos.size() ==0 && !flippedToGo){
             new Handler().postDelayed(()->{playSound(R.raw.short_button_turn);},200);
@@ -564,8 +567,8 @@ public class GameActivity extends PingoActivity {
                 delay = 2000;
             }
             new Handler().postDelayed(()-> {
+                //stopPlaySound(R.raw.spin);
                 playSound(R.raw.right_number);
-                //start blinking winning backgound
                 EventBus.getDefault().post(new WinAnimation(event.getPingoNumber(),WinAnimation.colorType.GREEN));
             },delay);
         }
@@ -790,7 +793,7 @@ public class GameActivity extends PingoActivity {
             logo3.setVisibility(View.VISIBLE);
             Glide.with(this).load(R.drawable.bonus_banner).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo3);
             Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_banner);
-            logo3.startAnimation(logoPopup3);
+            //logo3.startAnimation(logoPopup3);
         },700);
 
         //transition to bonus activity

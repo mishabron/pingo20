@@ -297,13 +297,13 @@ public class BonusSpinActivity extends PingoActivity{
             case WRONG:
                 sound = R.raw.wrong_try_again;
                 if(pingosInPlay.isEmpty()){
-                    sound = R.raw.wrong_last;
+                    sound = R.raw.wrong_number;
                 }
                 break;
             case TOKEN:
                 sound = R.raw.token_try_again;
                 if(pingosInPlay.isEmpty()){
-                    sound = R.raw.token_last;
+                    sound = R.raw.wrong_number;
                 }
                 break;
         }
@@ -312,7 +312,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         //end of bonus game
         if(pingosInPlay.isEmpty()){
-            new Handler().postDelayed(()->{gotoMainGame();},7000);
+            new Handler().postDelayed(()->{gotoMainGame();},3000);
         }
     }
 
@@ -348,18 +348,21 @@ public class BonusSpinActivity extends PingoActivity{
 
         fingerButton.setEnabled(false);
         playSound(spinSound);
+        if(pingosInPlay.size()==1){
+            stopPplayInBackground();
+        }
         switch (pingoWindow){
             case 1:
-                pingo1.spinPingo(loadNumberGuessed(1));
+                pingo1.spinPingo(loadNumberGuessed(1),pingosInPlay.size()==1);
                 break;
             case 2:
-                pingo2.spinPingo(loadNumberGuessed(2));
+                pingo2.spinPingo(loadNumberGuessed(2), pingosInPlay.size() == 1);
                 break;
             case 3:
-                pingo3.spinPingo(loadNumberGuessed(3));
+                pingo3.spinPingo(loadNumberGuessed(3), pingosInPlay.size() == 1);
                 break;
             case 4:
-                pingo4.spinPingo(loadNumberGuessed(4));
+                pingo4.spinPingo(loadNumberGuessed(4), pingosInPlay.size() == 1);
                 break;
         }
     }

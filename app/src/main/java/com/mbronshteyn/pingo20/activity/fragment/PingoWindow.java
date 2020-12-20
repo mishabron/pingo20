@@ -505,7 +505,7 @@ public class PingoWindow extends Fragment {
                 scrollingBackground.start();
                 windowBackground.setBackground(null);
                 scrollingBackground.setVisibility(View.VISIBLE);
-            },900);
+            },1500);
 
             //stop spin
             new Handler().postDelayed(() -> {
@@ -524,13 +524,9 @@ public class PingoWindow extends Fragment {
                     AnimationDrawable wrongAnimation = (AnimationDrawable) windowBackground.getDrawable();
                     wrongAnimation.start();
                     fishka.setImageResource(redFishkas[ numbers.get(currentNumber).getId()]);
-                    int wronDelay = 0;
-                    for(int i = 0; i < wrongAnimation.getNumberOfFrames(); i++){
-                        wronDelay = wronDelay + wrongAnimation.getDuration(i);
-                    }
                     EventBus.getDefault().post(new NoGuessedNumberEvent(pingoNumber));
                 }
-            }, spinTiming+50);
+            }, spinTiming+450);
 
             //restore window state
             new Handler().postDelayed(() -> {
@@ -541,7 +537,7 @@ public class PingoWindow extends Fragment {
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
                 windowBackground.setBackgroundResource(R.drawable.window_background);
-            }, spinTiming+100);
+            }, spinTiming+500);
         }
     }
 

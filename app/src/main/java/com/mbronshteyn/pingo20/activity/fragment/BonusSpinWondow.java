@@ -60,6 +60,7 @@ public class BonusSpinWondow extends Fragment {
     private float numberHeight;
     private float numberWidth;
     private Integer winNumber;
+    private boolean lastPingo;
 
     public int getPingoNumber() {
         return pingoNumber;
@@ -172,7 +173,9 @@ public class BonusSpinWondow extends Fragment {
         }
     }
 
-    public void spinPingo(Integer winNumber){
+    public void spinPingo(Integer winNumber, boolean lastPingo){
+
+        this.lastPingo = lastPingo;
 
         if(!guessed) {
             this.winNumber = winNumber;
@@ -276,6 +279,11 @@ public class BonusSpinWondow extends Fragment {
         }
         @Override
         public void onScrollingFinished(WheelView wheel) {
+
+            int delay = 5000;
+            if(lastPingo){
+                delay =0;
+            }
             wheel.setCurrentItem(slotNumber);
             ImageView blueBackground = (ImageView) getView().findViewById(R.id.blueSpinBackground);
             blueBackground.setVisibility(View.VISIBLE);
@@ -286,9 +294,11 @@ public class BonusSpinWondow extends Fragment {
                 EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.TOKEN));
             }
             new Handler().postDelayed(()->{
-                doResetSpecialEffects();
+                if(!lastPingo) {
+                    doResetSpecialEffects();
+                }
                 EventBus.getDefault().post(new SpinScrollEnd(pingoNumber));
-            },5000);
+            },delay);
         }
     };
 

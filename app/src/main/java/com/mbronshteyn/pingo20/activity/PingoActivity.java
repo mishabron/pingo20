@@ -48,6 +48,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.button,soundId);
         soundId = soundPool.load(this, R.raw.error_short, 1);
         soundMap.put(R.raw.error_short,soundId);
+        soundId = soundPool.load(this, R.raw.comix_page_short, 1);
+        soundMap.put(R.raw.comix_page_short,soundId);
         soundId = soundPool.load(this, R.raw.knocking_on_glass, 1);
         soundMap.put(R.raw.knocking_on_glass,soundId);
         soundId = soundPool.load(this, R.raw.right_number, 1);
@@ -90,8 +92,7 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.spin,soundId);
         soundId = soundPool.load(this, R.raw.half_way, 1);
         soundMap.put(R.raw.half_way,soundId);
-        soundId = soundPool.load(this, R.raw.comix_page_short, 1);
-        soundMap.put(R.raw.comix_page_short,soundId);
+
     }
 
     @Override
