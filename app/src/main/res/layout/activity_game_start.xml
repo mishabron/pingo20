@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutGame"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/gameBacgroundimageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/main_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/cardNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CARD IN PLAY: "
+        android:textColor="@android:color/white"
+        android:textSize="7sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.90"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.00999999" />
+
+    <TextView
+        android:id="@+id/pinInPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pin_in_play"
+        android:textColor="@android:color/white"
+        android:textSize="7sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.00999999" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame">
+
+        <ImageView
+            android:id="@+id/pinChekBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_overlay_logos"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <fragment
+            android:id="@+id/pingo1"
+            android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:pingoNumber="1"
+            app:hasFinger="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"/>
+
+        <fragment
+            android:id="@+id/pingo2"
+            android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:pingoNumber="2"
+            app:hasFinger="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.388" />
+
+        <fragment
+            android:id="@+id/pingo3"
+            android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:pingoNumber="3"
+            app:hasFinger="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.623" />
+
+        <fragment
+            android:id="@+id/pingo4"
+            android:name="com.mbronshteyn.pingo20.activity.fragment.PingoWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:pingoNumber="4"
+            app:hasFinger="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.86" />
+
+        <ImageView
+            android:id="@+id/mainGameBacgroundimageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/game_background2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/pingoCheck1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_frame1"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo1"
+            app:layout_constraintTop_toTopOf="@+id/pingo1"
+            app:layout_constraintEnd_toEndOf="@+id/pingo1"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo1"/>
+
+        <ImageView
+            android:id="@+id/pingoCheck2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_frame1"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo2"
+            app:layout_constraintTop_toTopOf="@+id/pingo2"
+            app:layout_constraintEnd_toEndOf="@+id/pingo2"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo2"/>
+
+        <ImageView
+            android:id="@+id/pingoCheck3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_frame1"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo3"
+            app:layout_constraintTop_toTopOf="@+id/pingo3"
+            app:layout_constraintEnd_toEndOf="@+id/pingo3"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo3"/>
+
+        <ImageView
+            android:id="@+id/pingoCheck4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_frame1"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo4"
+            app:layout_constraintTop_toTopOf="@+id/pingo4"
+            app:layout_constraintEnd_toEndOf="@+id/pingo4"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo4"/>
+
+        <ImageView
+            android:id="@+id/winStars1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo1"
+            app:layout_constraintTop_toTopOf="@+id/pingo1"
+            app:layout_constraintEnd_toEndOf="@+id/pingo1"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo1"/>
+
+        <ImageView
+            android:id="@+id/winStars2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo2"
+            app:layout_constraintTop_toTopOf="@+id/pingo2"
+            app:layout_constraintEnd_toEndOf="@+id/pingo2"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo2"/>
+
+        <ImageView
+            android:id="@+id/winStars3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo3"
+            app:layout_constraintTop_toTopOf="@+id/pingo3"
+            app:layout_constraintEnd_toEndOf="@+id/pingo3"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo3"/>
+
+        <ImageView
+            android:id="@+id/winStars4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_stars"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@+id/pingo4"
+            app:layout_constraintTop_toTopOf="@+id/pingo4"
+            app:layout_constraintEnd_toEndOf="@+id/pingo4"
+            app:layout_constraintBottom_toBottomOf="@+id/pingo4"/>
+
+        <Button
+            android:id="@+id/actionButtonGo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/btn_auth"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.92999997" />
+
+        <ImageView
+            android:id="@+id/hitCounter"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.92999997" />
+
+        <ImageView
+            android:id="@+id/progressCounter"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/progress_animation"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.731"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.92999997" />
+
+        <ImageView
+            android:id="@+id/nonTouch_shield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shield"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_balance"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.45"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.777" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/mainBanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:background="@drawable/banner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WARNING: ALL RIGHTS RESERVED.  INT-L PATENTS PENDING. NO &quot;ME TOO&quot; COPYCATTING.                                                                                  MADE IN USA"
+        android:textColor="@android:color/white"
+        android:textSize="6sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.991"/>
+
+    <ImageView
+        android:id="@+id/overlay_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"
+        app:layout_constraintTop_toTopOf="@+id/coordinatorLayoutGame" />
+
+    <ImageView
+        android:id="@+id/free_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/free_game_app"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.94" />
+
+    <ImageView
+        android:id="@+id/spiral"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:background="@drawable/rays"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cherry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:background="@drawable/cherries"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.17"/>
+
+    <ImageView
+        android:id="@+id/mainLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        android:visibility="invisible"
+        android:background="@drawable/pingo_winner_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/popup_logo1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.70"/>
+
+    <ImageView
+        android:id="@+id/popup_logo2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.70"/>
+
+    <ImageView
+        android:id="@+id/popup_logo3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.70"/>
+
+
+    <ImageView
+        android:id="@+id/popup_logo4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:background="@drawable/yellow_callout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.60"
+        app:layout_constraintHorizontal_bias="0.60"/>
+
+    <TextView
+        android:id="@+id/win_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$500"
+        android:textColor="@android:color/white"
+        android:textSize="100sp"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

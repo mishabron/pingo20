@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PingoParameters">
+        <attr name="pingoNumber" format="integer"/>
+        <attr name="hasFinger" format="boolean"/>
+    </declare-styleable>
+</resources>

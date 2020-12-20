@@ -3,9 +3,9 @@
 
 
     <translate
-        android:interpolator="@android:interpolator/linear"
+        android:interpolator="@android:interpolator/decelerate_cubic"
         android:fromYDelta="-100%"
         android:toYDelta="0%"
-        android:duration="100"/>
+        android:duration="300"/>
 
 </set>

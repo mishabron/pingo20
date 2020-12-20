@@ -6,42 +6,37 @@ import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.activity.fragment.PingoProgressBar;
 import com.mbronshteyn.pingo20.events.ActionButtonEvent;
 import com.mbronshteyn.pingo20.events.CardAuthinticatedEvent;
 import com.mbronshteyn.pingo20.events.CardIdEnterEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -55,14 +50,11 @@ public class LoginActivity extends PingoActivity {
     private EditText cardNumberInput;
     private ImageView authButton18;
     private final String ROTATE_VERTICAL = "rotationY";
-    private PingoProgressBar progressBar;
     private ImageView leftLargeBaloon;
-    private ImageView rightSmallBaloon;
     private Button authButtonGo;
     private AnimatorSet mSetRightOut;
     private AnimatorSet mSetLeftIn;
     private LoginActivity context;
-    private int invalidAttempt = 0;
     private ImageView rightErrorBaloon;
 
     @SuppressLint("ResourceType")
@@ -81,8 +73,8 @@ public class LoginActivity extends PingoActivity {
         authButtonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(R.raw.button);
                 EventBus.getDefault().post(new ActionButtonEvent());
+                authButtonGo.setEnabled(false);
             }
         });
         authButtonGo.setEnabled(false);
@@ -101,11 +93,12 @@ public class LoginActivity extends PingoActivity {
 
         leftLargeBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);
         leftLargeBaloon.setVisibility(View.INVISIBLE);
-        rightSmallBaloon = (ImageView) findViewById(R.id.rightSmallBaloon);
-        rightSmallBaloon.setVisibility(View.INVISIBLE);
 
         rightErrorBaloon = (ImageView) findViewById(R.id.rightErrorBaloon);
         rightErrorBaloon.setVisibility(View.INVISIBLE);
+
+        progressCounter = (ImageView) findViewById(R.id.progressCounter);
+        dotsProgress = (AnimationDrawable) progressCounter.getDrawable();
 
         cardNumberInput.addTextChangedListener(new TextWatcher() {
 
@@ -118,7 +111,7 @@ public class LoginActivity extends PingoActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                rightErrorBaloon.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -146,14 +139,6 @@ public class LoginActivity extends PingoActivity {
                 }
             }
         });
-
-        progressBar = (PingoProgressBar) getSupportFragmentManager().findFragmentById(R.id.fragmentProgressBar);
-
-        new Handler().postDelayed(()-> {
-                leftLargeBaloon.setVisibility(View.VISIBLE);
-                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-                leftLargeBaloon.startAnimation(zoomIntAnimation);
-        }, 3000);
     }
 
     @Override
@@ -167,6 +152,10 @@ public class LoginActivity extends PingoActivity {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     @Subscribe
     public void onCardIdEnterEvent(CardIdEnterEvent event) {
@@ -174,6 +163,8 @@ public class LoginActivity extends PingoActivity {
         //close keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+        new Handler().postDelayed(()->{playSound(R.raw.short_button_turn);},200);
 
         mSetRightOut.setTarget(authButton18);
         mSetLeftIn.setTarget(authButtonGo);
@@ -202,6 +193,7 @@ public class LoginActivity extends PingoActivity {
     @Subscribe
     public void onActionButtonEventUi(ActionButtonEvent event){
 
+        playSound(R.raw.button);
         rightErrorBaloon.setVisibility(View.INVISIBLE);
 
         //disable input
@@ -218,6 +210,7 @@ public class LoginActivity extends PingoActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 authButtonGo.setEnabled(false);
+                doProgress(true);
             }
 
             @Override
@@ -230,30 +223,13 @@ public class LoginActivity extends PingoActivity {
         });
         mSetRightOut.start();
         mSetLeftIn.start();
-
-        //start progress
-        progressBar.startProgress();
-
-        //pop baloons
-        new Handler().postDelayed(()-> {
-                rightSmallBaloon.setImageResource(R.drawable.standby_blueright);
-                rightSmallBaloon.setVisibility(View.VISIBLE);
-                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-                rightSmallBaloon.startAnimation(zoomIntAnimation);
-
-                if(leftLargeBaloon.getVisibility() == View.VISIBLE) {
-                    Animation zoomIntAnimationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                    leftLargeBaloon.startAnimation(zoomIntAnimationOut);
-                    leftLargeBaloon.setVisibility(View.INVISIBLE);
-                }
-        }, 1500);
     }
 
     @Subscribe
     public void onActionButtonEventAuthinticate(ActionButtonEvent event){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://ec2-18-219-33-9.us-east-2.compute.amazonaws.com")
+                .baseUrl(PingoRemoteService.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -263,7 +239,7 @@ public class LoginActivity extends PingoActivity {
         card = card.replaceAll("[^\\d]", "");
         dto.setCardNumber(Long.parseLong(card));
 
-        Game.getInstancce().setCardNumber(card);
+        Game.cardNumber = card;
 
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
@@ -274,10 +250,7 @@ public class LoginActivity extends PingoActivity {
                 Call<CardDto> call = service.authinticate(dto);
                 call.enqueue(new Callback<CardDto>() {
                     @Override
-                    public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                        progressBar.stopProgress();
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                        rightSmallBaloon.startAnimation(zoomIntAnimation);
+                    public void onResponse(Call<CardDto> call, Response<CardDto> response) { ;
                         processResponse(response);
                     }
 
@@ -285,54 +258,42 @@ public class LoginActivity extends PingoActivity {
                     public void onFailure(Call<CardDto> call, Throwable t) {
                         cardNumberInput.setEnabled(true);
                         playSound(R.raw.error_short);
-                        progressBar.stopProgress();
-                        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
-                        rightSmallBaloon.startAnimation(zoomIntAnimation);
-                        rightSmallBaloon.setImageResource(R.drawable.try_again_baloon);
-                        popBaloon(rightSmallBaloon,4000);
                     }
                 });
-        }, 6000);
+        }, 1000);
     }
 
     private void processResponse(Response<CardDto> response) {
 
         Headers headers = response.headers();
         String message = headers.get("message");
+        ErrorCode errorCode = !StringUtils.isEmpty(headers.get("errorCode")) ? ErrorCode.valueOf(headers.get("errorCode")) : null;
 
-        if(StringUtils.isEmpty(headers.get("errorCode"))) {
-            card = response.body();
-            EventBus.getDefault().post(new CardAuthinticatedEvent());
+        if(errorCode == null) {
+            this.card = response.body();
+            Game.guessedCount = getGuessedCount();
+            EventBus.getDefault().post(new CardAuthinticatedEvent(null));
         }else{
             playSound(R.raw.error_short);
             cardNumberInput.setEnabled(true);
-            ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
             switch(errorCode){
                 case INVALID:
-                    if(invalidAttempt == 0){
-                        rightErrorBaloon.setVisibility(View.VISIBLE);
-                    }else {
-                        leftLargeBaloon.setImageResource(R.drawable.fake_card_baloon);
-                        popBaloon(leftLargeBaloon, 4000);
-                    }
-                    cardNumberInput.setText("");
-                    invalidAttempt++;
+                    rightErrorBaloon.setVisibility(View.VISIBLE);
                     break;
                 case NOTACTIVE:
                     leftLargeBaloon.setImageResource(R.drawable.not_active);
                     popBaloon(leftLargeBaloon,4000);
                     break;
+                case PLAYED:
+                    EventBus.getDefault().post(new CardAuthinticatedEvent(errorCode));
+                    break;
                 case INUSE:
                     leftLargeBaloon.setImageResource(R.drawable.another_device);
                     popBaloon(leftLargeBaloon,4000);
                     break;
-                case PLAYED:
-                    leftLargeBaloon.setImageResource(R.drawable.used_card);
-                    popBaloon(leftLargeBaloon,4000);
-                    break;
                 case SERVERERROR:
                     rightSmallBaloon.setImageResource(R.drawable.error_blue_right);
-                    popBaloon(leftLargeBaloon,4000);
+                    popBaloon(rightSmallBaloon,4000);
                     break;
             }
         }
@@ -341,23 +302,23 @@ public class LoginActivity extends PingoActivity {
     @Subscribe
     public void onCardAuthinticatedEvent(CardAuthinticatedEvent event){
 
-        final ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        Animatable bannerAnimation = (Animatable) topBanner.getBackground();
-        bannerAnimation.start();
-
-        leftLargeBaloon.setImageResource(R.drawable.hero_small);
-        popBaloon(leftLargeBaloon);
-        progressBar.startSaccess();
-
         //go to game screen
         new Handler().postDelayed(()-> {
-                progressBar.stopSuccess();
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                Activity activity = (Activity) context;
-                activity.finish();
-        }, 5000);
+            dotsProgress.stop();
+            Intent intent;
+            if (event.getErrorCode() != null && event.getErrorCode().equals(ErrorCode.PLAYED)) {
+                intent = new Intent(getApplicationContext(), NoWinActivity.class);
+            } else if (isWinningCard()) {
+                intent = new Intent(getApplicationContext(), WinActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), GameActivity.class);
+            }
+
+            startActivity(intent);
+            Activity activity = (Activity) context;
+            activity.finish();
+            Runtime.getRuntime().gc();
+        }, 1500);
     }
 
     public void scaleUi(){
@@ -368,9 +329,11 @@ public class LoginActivity extends PingoActivity {
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
 
-        BitmapDrawable bmap = (BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.login_background, null);
-        float bmapWidth = bmap.getBitmap().getWidth();
-        float bmapHeight = bmap.getBitmap().getHeight();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.login_newbacground, options);
+        float bmapHeight = options.outHeight;
+        float bmapWidth  = options.outWidth;
 
         float wRatio = width / bmapWidth;
         float hRatio = height / bmapHeight;
@@ -399,36 +362,30 @@ public class LoginActivity extends PingoActivity {
         //scale tex field
         EditText cardIdText = (EditText) findViewById(R.id.cardId);
         int cardIdTextHeight = (int) (newBmapHeight * 0.1085F);
-        int cardIdTextWidth = (int) (newBmapHeight * 0.8787F);
+        int cardIdTextWidth = (int) (newBmapHeight * 0.9787F);
         ViewGroup.LayoutParams cardIdTextParams = cardIdText.getLayoutParams();
         cardIdTextParams.height = cardIdTextHeight;
         cardIdTextParams.width = cardIdTextWidth;
 
-        //scale progress bar
-        FrameLayout progressBar = (FrameLayout) findViewById(R.id.fragmentProgressBar);
-        ViewGroup.LayoutParams progressParams = progressBar.getLayoutParams();
-        progressParams.height = (int)(newBmapHeight*0.059F);
-        progressParams.width = (int)(newBmapWidth*0.1397F);
-
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
-        int buttonSize18 = (int) (newBmapHeight * 0.2406F);
+        int buttonSize18 = (int) (newBmapHeight * 0.2806F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonSize18;
         buttonParams18.width = buttonSize18;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2406F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.2806F);
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
         buttonParamsGo.height = buttonSizeGo;
         buttonParamsGo.width = buttonSizeGo;
 
-        //sacele top banner
-        ImageView topBanner = (ImageView) findViewById(R.id.banner);
-        ViewGroup.LayoutParams bannerParams = topBanner.getLayoutParams();
-        bannerParams.width =(int)(newBmapWidth*0.7890F);
-        bannerParams.height =(int)(newBmapHeight*0.06296F);
+        //scale dots progress
+        ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
+        ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
+        dotsProgressParams18.height = buttonParamsGo.height;
+        dotsProgressParams18.width = buttonParamsGo.width;
 
         //sacele hey baloon
         ImageView heyBaloon = (ImageView) findViewById(R.id.leftLargeBaloon);

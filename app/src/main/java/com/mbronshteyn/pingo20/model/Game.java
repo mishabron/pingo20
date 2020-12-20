@@ -2,11 +2,13 @@ package com.mbronshteyn.pingo20.model;
 
 import android.os.Build;
 
+import com.mbronshteyn.gameserver.dto.game.Bonus;
+
 public class Game {
 
     public static final String GAMEID = "Pingo";
 
-    private int attemptCounter;
+    public static int attemptCounter = 4;
 
     public static  String devicedId = "35"
             + // we make this look like a valid IMEI
@@ -15,23 +17,19 @@ public class Game {
             + Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10 + Build.TAGS.length() % 10 + Build.TYPE.length() % 10
             + Build.USER.length() % 10; // 13 digits;
 
-    private String cardNumber;
+    public static String cardNumber;
+
+    public static int guessedCount;
 
     private static Game game = new Game();
+
+    public static Bonus bonusHit = null;
 
     private Game() {
     }
 
     public static Game getInstancce(){
         return game;
-    }
-
-    public int getAttemptCounter() {
-        return attemptCounter;
-    }
-
-    public void setAttemptCounter(int attemptCounter) {
-        this.attemptCounter = attemptCounter;
     }
 
     public static String getDevicedId() {
@@ -42,11 +40,8 @@ public class Game {
         return GAMEID;
     }
 
-    public String getCardNumber() {
+    public static String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
 }
