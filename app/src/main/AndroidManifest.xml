@@ -89,6 +89,13 @@
             android:immersive="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
+        <activity
+            android:name=".activity.MenuActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            android:immersive="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
     </application>
 
 </manifest>

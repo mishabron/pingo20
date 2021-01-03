@@ -181,8 +181,18 @@ public class GameActivity extends PingoActivity {
                 //do nothing
             }
         });
-    }
 
+        //menu button
+        ImageView menuButton = (ImageView) findViewById(R.id.menuButton);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+    
     @Override
     protected void onResume() {
 
@@ -192,7 +202,7 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
             new Handler().postDelayed(()->{processWin(1);},14000);
         }
-        else {
+        else if(isOKToInit){
             int slideNo = 0;
             int delay = 0;
 
@@ -224,9 +234,15 @@ public class GameActivity extends PingoActivity {
                 }, delay);
             }
             new Handler().postDelayed(() -> {
+                playInBackgroundIfNotPlaying(R.raw.main_theme);
                 transitionLayout();
             }, delay + 100);
         }
+        else{
+            playInBackgroundIfNotPlaying(R.raw.main_theme);
+        }
+
+        isOKToInit = false;
     }
 
     private void transitionLayout(){
@@ -284,6 +300,7 @@ public class GameActivity extends PingoActivity {
     }
 
     private void initPingos(List<Integer> playPingos, boolean canHaveFinger) {
+
         int i = 0;
         for(Integer pingo: playPingos){
 
@@ -521,8 +538,6 @@ public class GameActivity extends PingoActivity {
 
         int pingo = event.getPingoNumber();
         removeNumber(pingo);
-
-        //playInBackgroundIfNotPlaying(R.raw.main_theme);
 
         if(closedPingos.size() ==0 && !flippedToGo){
             new Handler().postDelayed(()->{playSound(R.raw.short_button_turn);},200);
@@ -1048,7 +1063,7 @@ public class GameActivity extends PingoActivity {
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.coordinatorLayoutGame);
-        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        ImageView iView = (ImageView) findViewById(R.id.menuBakcground);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
@@ -1110,8 +1125,8 @@ public class GameActivity extends PingoActivity {
         //scale nonTouchShield
         ImageView nonTouchShield = (ImageView) findViewById(R.id.nonTouch_shield);
         ViewGroup.LayoutParams nonTouchShieldParams = nonTouchShield.getLayoutParams();
-        nonTouchShieldParams.width =(int)(newBmapWidth*0.8472F);
-        nonTouchShieldParams.height =(int)(newBmapHeight*0.5923F);
+        nonTouchShieldParams.width =(int)(newBmapWidth*1F);
+        nonTouchShieldParams.height =(int)(newBmapHeight*1F);
 
         //scale pinChekBackground
         ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
@@ -1220,5 +1235,11 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams winStars4Params = winStars4.getLayoutParams();
         winStars4Params.width = winStars1Params.width;
         winStars4Params.height = winStars1Params.height;
+
+        //menu button
+        ImageView menuButton = (ImageView) findViewById(R.id.menuButton);
+        ViewGroup.LayoutParams menuButtonParams = menuButton.getLayoutParams();
+        menuButtonParams.width = (int)(newBmapWidth*0.07802F);
+        menuButtonParams.height = (int)(newBmapHeight*0.08238F);
     }
 }

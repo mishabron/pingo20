@@ -247,6 +247,7 @@ public class BonusGameActivity extends PingoActivity {
         Game.bonusHit = Bonus.BONUSPIN;
 
         new Handler().postDelayed(()->{
+            isOKToInit = true;
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
             startActivity(intent);
             Activity activity = (Activity) BonusGameActivity.this;

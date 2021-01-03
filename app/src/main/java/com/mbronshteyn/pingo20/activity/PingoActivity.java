@@ -1,5 +1,6 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
@@ -26,16 +27,18 @@ import java.util.Map;
 
 public class PingoActivity extends AppCompatActivity {
 
-    protected MediaPlayer mediaPlayer1;
-    protected MediaPlayer mediaPlayer2;
+    public MediaPlayer mediaPlayer1 = new MediaPlayer();;
+    public MediaPlayer mediaPlayer2 = new MediaPlayer();
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
     protected SoundPool soundPool;
-    protected static Map<Integer,Integer> soundMap = new HashMap<>();
-    protected static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
+    public static Map<Integer,Integer> soundMap = new HashMap<>();
+    public static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
     public AnimationDrawable dotsProgress;
     private boolean playingBackground;
+    public static float volume =1;
+    protected static boolean isOKToInit = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +99,19 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        isOKToInit = false;
+        stopPplayInBackground();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopPplayInBackground();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         soundPool.release();
@@ -123,7 +139,7 @@ public class PingoActivity extends AppCompatActivity {
     protected void playSound(int sound) {
 
         Integer soundId = soundMap.get(sound);
-        int soundPlaying = soundPool.play(soundId, 1, 1, 0, 0, 1);
+        int soundPlaying = soundPool.play(soundId, volume, volume, 0, 0, 1);
         soundsInPlayMap.put(sound,soundPlaying);
     }
 
@@ -138,6 +154,8 @@ public class PingoActivity extends AppCompatActivity {
         final AssetFileDescriptor afd = getResources().openRawResourceFd(sound);
         mediaPlayer1 = MediaPlayer.create(this,sound);
         mediaPlayer2 = MediaPlayer.create(this,sound);
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
 
         mediaPlayer1.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -182,10 +200,10 @@ public class PingoActivity extends AppCompatActivity {
 
         playingBackground = false;
 
-        if(mediaPlayer1.isPlaying()){
+        if(mediaPlayer1 != null && mediaPlayer1.isPlaying()){
             mediaPlayer1.stop();
         }
-        if(mediaPlayer2.isPlaying()){
+        if(mediaPlayer2 != null && mediaPlayer2.isPlaying()){
             mediaPlayer2.stop();
         }
     }
@@ -309,21 +327,29 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     public void muteAudio(){
+        volume  = 0;
+        Collection<Integer> soundsInPlay = soundsInPlayMap.values();
+        for(Integer sound: soundsInPlay){
+            soundPool.stop(sound);
+        }
         Collection<Integer> sounds = soundMap.values();
         for(Integer sound: sounds){
-            soundPool.setVolume(sound,0,0);
+            soundPool.setVolume(sound,volume,volume);
         }
-        mediaPlayer1.setVolume(0,0);
-        mediaPlayer2.setVolume(0,0);
+        mediaPlayer1.stop();
+        mediaPlayer2.stop();
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
     }
 
     public void unMuteAudio(){
+        volume = 1;
         Collection<Integer> sounds = soundMap.values();
         for(Integer sound: sounds) {
-            soundPool.setVolume(sound, 1, 1);
+            soundPool.setVolume(sound, volume, volume);
         }
-        mediaPlayer1.setVolume(1,1);
-        mediaPlayer2.setVolume(1,1);
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
     }
     
 }

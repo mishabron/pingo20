@@ -317,6 +317,7 @@ public class BonusSpinActivity extends PingoActivity{
     }
 
     private void gotoMainGame() {
+        isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
         startActivity(intent);
         Activity activity = (Activity) BonusSpinActivity.this;
