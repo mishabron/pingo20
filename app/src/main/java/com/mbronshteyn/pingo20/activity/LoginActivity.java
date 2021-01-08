@@ -304,6 +304,7 @@ public class LoginActivity extends PingoActivity {
 
         //go to game screen
         new Handler().postDelayed(()-> {
+            isOKToInit = true;
             dotsProgress.stop();
             Intent intent;
             if (event.getErrorCode() != null && event.getErrorCode().equals(ErrorCode.PLAYED)) {

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -188,9 +189,12 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-                startActivity(intent);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
+                startActivity(intent, options.toBundle());
             }
         });
+
+        isOKToInit = true;
     }
     
     @Override
@@ -619,9 +623,11 @@ public class GameActivity extends PingoActivity {
                 doProgress(false);
                 flippToCounter();
                 initState();
+                playInBackgroundIfNotPlaying(R.raw.main_theme);
             }, 6000);
         }
         else{
+            playInBackgroundIfNotPlaying(R.raw.main_theme);
             flippToCounter();
             initState();
         }
@@ -1044,7 +1050,7 @@ public class GameActivity extends PingoActivity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.game_background, options);
+        BitmapFactory.decodeResource(getResources(), R.drawable.main_background, options);
         float bmapHeight = options.outHeight;
         float bmapWidth  = options.outWidth;
 
@@ -1063,7 +1069,7 @@ public class GameActivity extends PingoActivity {
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.coordinatorLayoutGame);
-        ImageView iView = (ImageView) findViewById(R.id.menuBakcground);
+        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
