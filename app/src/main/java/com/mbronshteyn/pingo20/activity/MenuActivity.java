@@ -1,35 +1,60 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.dto.game.HistoryDto;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusesFragment;
 import com.mbronshteyn.pingo20.activity.fragment.HistoryFragment;
 import com.mbronshteyn.pingo20.activity.fragment.RulesFragment;
+import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.network.PingoRemoteService;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MenuActivity extends PingoActivity {
 
     private RulesFragment rulesFragment;
     private BonusesFragment bonusesFragment;
     private HistoryFragment historyFragment;
+    private Retrofit retrofit;
+    private HistoryDto hits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        rulesFragment = new RulesFragment();
-        bonusesFragment = new BonusesFragment();
+        double payouts[] = {card.getPayout1(),card.getPayout2(),card.getPayout3()};
+        rulesFragment = RulesFragment.newInstance(payouts);
+        bonusesFragment = BonusesFragment.newInstance(null,null);
         historyFragment = new HistoryFragment();
 
         //close button
@@ -39,18 +64,6 @@ public class MenuActivity extends PingoActivity {
             public void onClick(View v) {
                 isOKToInit = false;
                 finish();
-            }
-        });
-
-        Button bonusesButton = (Button) findViewById(R.id.bonusesButton);
-        bonusesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.menuFragment,bonusesFragment);
-                ft.addToBackStack(null);
-                ft.commit();
             }
         });
 
@@ -66,10 +79,27 @@ public class MenuActivity extends PingoActivity {
             }
         });
 
+        Button bonusesButton = (Button) findViewById(R.id.bonusesButton);
+        bonusesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.menuFragment,bonusesFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         Button historyButton = (Button) findViewById(R.id.historyButton);
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("hits", hits);
+                historyFragment.setArguments(bundle);
+
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.menuFragment,historyFragment);
@@ -78,8 +108,51 @@ public class MenuActivity extends PingoActivity {
             }
         });
 
-
         scaleUi();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(PingoRemoteService.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        AuthinticateDto dto = new AuthinticateDto();
+        ;
+        dto.setCardNumber(card.getCardNumber());
+        dto.setDeviceId(Game.devicedId);
+        dto.setGame(Game.getGAMEID());
+        
+        new Handler().postDelayed(()->{
+            final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+
+            Call<HistoryDto> call = service.getHistory(dto);
+            call.enqueue(new Callback<HistoryDto>() {
+                @Override
+                public void onResponse(Call<HistoryDto> call, Response<HistoryDto> response) {
+                    processResponse(response);
+                }
+
+                @Override
+                public void onFailure(Call<HistoryDto> call, Throwable t) {
+                    playSound(R.raw.error_short);
+                }
+            });
+
+        },5000);
+    }
+
+    private void processResponse(Response<HistoryDto> response) {
+
+        Headers headers = response.headers();
+        if(StringUtils.isEmpty(headers.get("errorCode"))) {
+            hits = response.body();
+        }else{
+
+        }
     }
 
     @Override

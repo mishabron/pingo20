@@ -1,10 +1,18 @@
 package com.mbronshteyn.pingo20.activity.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.mbronshteyn.pingo20.R;
 
@@ -23,6 +31,7 @@ public class BonusesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private  int content[] = {R.drawable.bonuses_layer1, R.drawable.bonuses_layer2};
 
     public BonusesFragment() {
         // Required empty public constructor
@@ -65,4 +74,50 @@ public class BonusesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_bonuses, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ViewPager bonusViewpager = (ViewPager) view.findViewById(R.id.bonusViewpager);
+        bonusViewpager.setAdapter(new CustomPagerAdapter(this));
+    }
+
+    private class CustomPagerAdapter extends PagerAdapter {
+
+        private BonusesFragment mContext;
+
+        public CustomPagerAdapter(BonusesFragment bonusesFragment) {
+            mContext = bonusesFragment;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup collection, int position) {
+
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+
+            View itemView = inflater.inflate(R.layout.bonus_menu_item, collection, false);
+
+            ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
+            imageView.setImageResource(content[position]);
+
+            collection.addView(itemView);
+
+            return itemView;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup collection, int position, Object view) {
+            collection.removeView((View) view);
+        }
+
+        @Override
+        public int getCount() {
+            return content.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
+            return view == ((LinearLayout) o);
+        }
+    }
 }

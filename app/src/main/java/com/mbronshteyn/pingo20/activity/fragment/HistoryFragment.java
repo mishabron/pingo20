@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mbronshteyn.gameserver.dto.game.HistoryDto;
 import com.mbronshteyn.pingo20.R;
 
 /**
@@ -62,6 +63,10 @@ public class HistoryFragment extends Fragment {
         if(container != null) {
             container.removeAllViews();
         }
+
+        Bundle args = this.getArguments();
+        HistoryDto hits  = (HistoryDto) this.getArguments().getSerializable("hits");
+
         return inflater.inflate(R.layout.fragment_history, container, false);
     }
 }
