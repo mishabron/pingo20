@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.mbronshteyn.pingo20.R;
 
@@ -81,6 +82,12 @@ public class RulesFragment extends Fragment {
             }
             else {
                 itemView = inflater.inflate(R.layout.rules_menu_item2, collection, false);
+                TextView pay1 = (TextView) itemView.findViewById(R.id.payout1);
+                pay1.setText("$"+(int)payouts[0]);
+                TextView pay2 = (TextView) itemView.findViewById(R.id.payout2);
+                pay2.setText("$"+(int)payouts[1]);
+                TextView pay3 = (TextView) itemView.findViewById(R.id.payout3);
+                pay3.setText("$"+(int)payouts[2]);
             }
 
             ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
