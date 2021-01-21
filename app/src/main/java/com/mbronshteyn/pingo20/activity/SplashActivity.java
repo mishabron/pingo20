@@ -1,17 +1,13 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.app.Application;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Activity;
-import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
@@ -78,7 +74,7 @@ public class SplashActivity extends Activity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.login_newbacground, options);
+        BitmapFactory.decodeResource(getResources(), R.drawable.splash, options);
         float bmapHeight = options.outHeight;
         float bmapWidth = options.outWidth;
 
@@ -102,8 +98,8 @@ public class SplashActivity extends Activity {
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
         set.constrainWidth(iView.getId(), newBmapWidth);
-        set.centerVertically(R.id.loginBacgroundimageView, 0);
-        set.centerHorizontally(R.id.loginBacgroundimageView, 0);
+        set.centerVertically(R.id.loginMainBackground, 0);
+        set.centerHorizontally(R.id.loginMainBackground, 0);
         set.applyTo(layout);
 
     }
