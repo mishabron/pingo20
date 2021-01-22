@@ -31,7 +31,7 @@ public class PingoActivity extends AppCompatActivity {
     public MediaPlayer mediaPlayer2 = new MediaPlayer();
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
-    protected SoundPool soundPool;
+    protected static SoundPool soundPool;
     public static Map<Integer,Integer> soundMap = new HashMap<>();
     public static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
@@ -49,6 +49,8 @@ public class PingoActivity extends AppCompatActivity {
         //load all sounds
         int soundId = soundPool.load(this, R.raw.button, 1);
         soundMap.put(R.raw.button,soundId);
+        soundId = soundPool.load(this, R.raw.screen_down, 1);
+        soundMap.put(R.raw.screen_down,soundId);
         soundId = soundPool.load(this, R.raw.error_short, 1);
         soundMap.put(R.raw.error_short,soundId);
         soundId = soundPool.load(this, R.raw.comix_page_short, 1);
@@ -95,7 +97,6 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.spin,soundId);
         soundId = soundPool.load(this, R.raw.half_way, 1);
         soundMap.put(R.raw.half_way,soundId);
-
     }
 
     @Override

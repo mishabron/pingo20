@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
@@ -82,6 +83,7 @@ public class LoginActivity extends PingoActivity {
         authButtonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                messageBaloon.setImageResource(R.drawable.blank_baloon);
                 EventBus.getDefault().post(new ActionButtonEvent());
                 authButtonGo.setEnabled(false);
             }
@@ -116,7 +118,6 @@ public class LoginActivity extends PingoActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                messageBaloon.setImageResource(R.drawable.blank_baloon);
             }
 
             @Override
@@ -149,7 +150,7 @@ public class LoginActivity extends PingoActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> {transitionLayout();}, 300);
+        new Handler().postDelayed(() -> { transitionLayout();}, 100);
     }
 
     private void transitionLayout(){
@@ -163,26 +164,22 @@ public class LoginActivity extends PingoActivity {
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-
+                playSound(R.raw.screen_down);
             }
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
+                stopPlaySound(R.raw.screen_down);
                 new Handler().postDelayed(() -> {messageBaloon.setImageResource(R.drawable.card_number_login); }, 1000);
             }
 
             @Override
             public void onTransitionCancel(@NonNull Transition transition) {
-
             }
-
             @Override
             public void onTransitionPause(@NonNull Transition transition) {
-
             }
-
             @Override
             public void onTransitionResume(@NonNull Transition transition) {
-
             }
         });
         TransitionManager.beginDelayedTransition(root, transition);
@@ -364,14 +361,43 @@ public class LoginActivity extends PingoActivity {
                 messageBaloon.setImageResource(R.drawable.played);
                 new Handler().postDelayed(()->{messageBaloon.setImageResource(R.drawable.blank_baloon);},4000);
             } else if (isWinningCard()) {
-                messageBaloon.setImageResource(R.drawable.played);
-                new Handler().postDelayed(()->{messageBaloon.setImageResource(R.drawable.winner);},4000);
+                TextView balance = (TextView) findViewById(R.id.winAmount);
+                balance.setText(Integer.toString((int) card.getBalance())+" ");
+                Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
+                balance.setTypeface(font,Typeface.BOLD_ITALIC);
+                balance.setVisibility(View.VISIBLE);
+                messageBaloon.setImageResource(R.drawable.winner);
             } else {
-                Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(intent);
-                Activity activity = (Activity) context;
-                activity.finish();
-                Runtime.getRuntime().gc();
+                ConstraintSet constraintSet = new ConstraintSet();
+                constraintSet.clone(this, R.layout.activity_login_end);
+                ChangeBounds transition = new ChangeBounds();
+                transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
+                transition.setDuration(1000);
+                transition.addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(@NonNull Transition transition) {
+                    }
+                    @Override
+                    public void onTransitionEnd(@NonNull Transition transition) {
+                        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                        startActivity(intent);
+                        Activity activity = (Activity) context;
+                        activity.finish();
+                        Runtime.getRuntime().gc();
+                    }
+                    @Override
+                    public void onTransitionCancel(@NonNull Transition transition) {
+                    }
+                    @Override
+                    public void onTransitionPause(@NonNull Transition transition) {
+
+                    }
+                    @Override
+                    public void onTransitionResume(@NonNull Transition transition) {
+                    }
+                });
+                TransitionManager.beginDelayedTransition(root, transition);
+                constraintSet.applyTo(root);
             }
         }, 1500);
     }
