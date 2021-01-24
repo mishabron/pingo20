@@ -23,8 +23,6 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -64,6 +62,7 @@ public class LoginActivity extends PingoActivity {
     private LoginActivity context;
     private ConstraintLayout root;
     private ImageView messageBaloon;
+    private boolean loaded;
 
     @SuppressLint("ResourceType")
     @Override
@@ -148,9 +147,18 @@ public class LoginActivity extends PingoActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> { transitionLayout();}, 100);
+        if(!loaded) {
+            loaded = true;
+            new Handler().postDelayed(() -> {transitionLayout();}, 100);
+        }
     }
 
     private void transitionLayout(){
@@ -164,11 +172,10 @@ public class LoginActivity extends PingoActivity {
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-                playSound(R.raw.screen_down);
+                new Handler().postDelayed(()->{playSound(R.raw.screen_down);},500);
             }
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                stopPlaySound(R.raw.screen_down);
                 new Handler().postDelayed(() -> {messageBaloon.setImageResource(R.drawable.card_number_login); }, 1000);
             }
 
@@ -184,12 +191,6 @@ public class LoginActivity extends PingoActivity {
         });
         TransitionManager.beginDelayedTransition(root, transition);
         constraintSet.applyTo(root);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
