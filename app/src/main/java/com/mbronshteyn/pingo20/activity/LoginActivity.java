@@ -76,7 +76,7 @@ public class LoginActivity extends PingoActivity {
 
         scaleUi();
 
-        authButton18 = (ImageView) findViewById(R.id.hitCounter);
+        authButton18 = (ImageView) findViewById(R.id.button18);
 
         authButtonGo = (Button) findViewById(R.id.actionButtonGo);
         authButtonGo.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +117,7 @@ public class LoginActivity extends PingoActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                playSound(R.raw.atm);
             }
 
             @Override
@@ -176,7 +177,9 @@ public class LoginActivity extends PingoActivity {
             }
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                new Handler().postDelayed(() -> {messageBaloon.setImageResource(R.drawable.card_number_login); }, 1000);
+                new Handler().postDelayed(() -> {
+                    messageBaloon.setImageResource(R.drawable.card_number_login);
+                    playSound(R.raw.pop_login);}, 2000);
             }
 
             @Override
@@ -362,6 +365,7 @@ public class LoginActivity extends PingoActivity {
                 messageBaloon.setImageResource(R.drawable.played);
                 new Handler().postDelayed(()->{messageBaloon.setImageResource(R.drawable.blank_baloon);},4000);
             } else if (isWinningCard()) {
+                playSound(R.raw.card_check_win3);
                 TextView balance = (TextView) findViewById(R.id.winAmount);
                 balance.setText(Integer.toString((int) card.getBalance())+" ");
                 Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
@@ -435,39 +439,43 @@ public class LoginActivity extends PingoActivity {
         ImageView iView = (ImageView) findViewById(R.id.loginMainBackground);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
-        set.constrainHeight(iView.getId(),newBmapHeight);
-        set.constrainWidth(iView.getId(),newBmapWidth);
-        set.centerVertically(R.id.loginMainBackground, 0);
-        set.centerHorizontally(R.id.loginMainBackground, 0);
+        set.constrainHeight(iView.getId(), newBmapHeight);
+        set.constrainWidth(iView.getId(), newBmapWidth);
         set.applyTo(layout);
+
+        //scale login background
+        ImageView loginBackground = (ImageView) findViewById(R.id.loginBackground);
+        ViewGroup.LayoutParams loginBackgroundParams = loginBackground.getLayoutParams();
+        loginBackgroundParams.width = newBmapWidth;
+        loginBackgroundParams.height = newBmapHeight;
 
         //scale tex field
         EditText cardIdText = (EditText) findViewById(R.id.cardId);
         int cardIdTextHeight = (int) (newBmapHeight * 0.0855F);
-        int cardIdTextWidth = (int) (newBmapHeight * 0.9787F);
+        int cardIdTextWidth = (int) (newBmapWidth * 0.4587F);
         ViewGroup.LayoutParams cardIdTextParams = cardIdText.getLayoutParams();
         cardIdTextParams.height = cardIdTextHeight;
         cardIdTextParams.width = cardIdTextWidth;
 
         //scale action18  button
-        ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
-        int buttonSize18 = (int) (newBmapHeight * 0.2606F);
+        ImageView actionButton18 = (ImageView) findViewById(R.id.button18);
+        int buttonHeight = (int) (newBmapHeight * 0.3149F);
+        int buttonWidth = (int) (newBmapWidth * 0.1777F);
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
-        buttonParams18.height = buttonSize18;
-        buttonParams18.width = buttonSize18;
+        buttonParams18.height = buttonHeight;
+        buttonParams18.width = buttonWidth;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2606F);
         ViewGroup.LayoutParams buttonParamsGo = actionButtonGo.getLayoutParams();
-        buttonParamsGo.height = buttonSizeGo;
-        buttonParamsGo.width = buttonSizeGo;
+        buttonParamsGo.height = buttonHeight;
+        buttonParamsGo.width = buttonWidth;
 
         //scale dots progress
         ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
         ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
-        dotsProgressParams18.height = buttonParamsGo.height;
-        dotsProgressParams18.width = buttonParamsGo.width;
+        dotsProgressParams18.height = buttonHeight;
+        dotsProgressParams18.width = buttonWidth;
 
         //sacele message baloon
         ImageView messageBaloon = (ImageView) findViewById(R.id.messageBaloon);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
@@ -33,35 +34,13 @@ public class SplashActivity extends Activity {
 
         View rootView = getWindow().getDecorView().getRootView();
 
-        //start logo show
-        Thread logoShow = new Thread(new LogoSwitcher(rootView));
-        logoShow.start();
-    }
-
-    private class LogoSwitcher implements Runnable {
-
-        View view;
-
-        public LogoSwitcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void run() {
-
-            try {
-                Thread.sleep(5000);
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                intent.putExtras(new Bundle());
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                Activity activity = (Activity) context;
-                activity.finish();
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        new Handler().postDelayed(()->{
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtras(new Bundle());
+            startActivity(intent);
+            Activity activity = (Activity) context;
+            activity.finish();
+        },5000);
     }
 
     public void scaleUi() {

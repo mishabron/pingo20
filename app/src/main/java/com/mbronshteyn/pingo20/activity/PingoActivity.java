@@ -1,6 +1,5 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
@@ -31,7 +30,7 @@ public class PingoActivity extends AppCompatActivity {
     public MediaPlayer mediaPlayer2 = new MediaPlayer();
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
-    protected static SoundPool soundPool;
+    protected SoundPool soundPool;
     public static Map<Integer,Integer> soundMap = new HashMap<>();
     public static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
@@ -49,6 +48,8 @@ public class PingoActivity extends AppCompatActivity {
         //load all sounds
         int soundId = soundPool.load(this, R.raw.button, 1);
         soundMap.put(R.raw.button,soundId);
+        soundId = soundPool.load(this, R.raw.pop_login, 1);
+        soundMap.put(R.raw.pop_login,soundId);
         soundId = soundPool.load(this, R.raw.screen_down, 1);
         soundMap.put(R.raw.screen_down,soundId);
         soundId = soundPool.load(this, R.raw.error_short, 1);
@@ -97,6 +98,10 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.spin,soundId);
         soundId = soundPool.load(this, R.raw.half_way, 1);
         soundMap.put(R.raw.half_way,soundId);
+        soundId = soundPool.load(this, R.raw.atm, 1);
+        soundMap.put(R.raw.atm,soundId);
+        soundId = soundPool.load(this, R.raw.card_check_win3, 1);
+        soundMap.put(R.raw.card_check_win3,soundId);
     }
 
     @Override

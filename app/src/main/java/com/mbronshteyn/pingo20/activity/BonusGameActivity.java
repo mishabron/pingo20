@@ -482,7 +482,7 @@ public class BonusGameActivity extends PingoActivity {
 
         //scale counter  button1
         Button counterButton1 = (Button) findViewById(R.id.counterButton1);
-        int buttonSizeGo = (int) (newBmapHeight * 0.2006F);
+        int buttonSizeGo = (int) (newBmapHeight * 0.3149F);
         ViewGroup.LayoutParams buttonParamsCounter1 = counterButton1.getLayoutParams();
         buttonParamsCounter1.height = buttonSizeGo;
         buttonParamsCounter1.width = buttonSizeGo;
