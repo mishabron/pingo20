@@ -99,7 +99,7 @@ public class GameActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_start);
 
-        root = findViewById(R.id.coordinatorLayoutGame);
+        root = findViewById(R.id.rootCoordinatorLayoutGame);
 
         scaleUi();
 
@@ -676,7 +676,7 @@ public class GameActivity extends PingoActivity {
     private void doHalfWayThere() {
 
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(this).load(R.drawable.overlay_blue7).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
+        Glide.with(this).load(R.drawable.overlay_blue).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
 
         ImageView halfWay = (ImageView) findViewById(R.id.popup_logo1);
@@ -864,7 +864,7 @@ public class GameActivity extends PingoActivity {
 
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
         Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.overlay_blue3).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
+        Glide.with(this).load(R.drawable.overlay_blue).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
 
         ImageView pingoWinner = (ImageView) findViewById(R.id.mainLogo);
@@ -1050,7 +1050,7 @@ public class GameActivity extends PingoActivity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), R.drawable.main_background, options);
+        BitmapFactory.decodeResource(getResources(), R.drawable.main_background_blue, options);
         float bmapHeight = options.outHeight;
         float bmapWidth  = options.outWidth;
 
@@ -1068,27 +1068,25 @@ public class GameActivity extends PingoActivity {
         int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
 
         //scale background
-        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.coordinatorLayoutGame);
-        ImageView iView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.rootCoordinatorLayoutGame);
+        ImageView iView = (ImageView) findViewById(R.id.blueGameBacgroundimage);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
         set.constrainWidth(iView.getId(), newBmapWidth);
         set.applyTo(layout);
 
+        //scale main background
+        ImageView gameBacgroundimageView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        ViewGroup.LayoutParams gameBacgroundimageViewParams = gameBacgroundimageView.getLayoutParams();
+        gameBacgroundimageViewParams.width = newBmapWidth;
+        gameBacgroundimageViewParams.height = newBmapHeight;
+
         //scale game background
         ImageView mainBackground = (ImageView) findViewById(R.id.mainGameBacgroundimageView);
         ViewGroup.LayoutParams mainBackgroundParams = mainBackground.getLayoutParams();
         mainBackgroundParams.width = newBmapWidth;
         mainBackgroundParams.height = newBmapHeight;
-
-        //scale dots progress
-        ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
-        int dotsProgressSize18 = (int) (newBmapHeight * 0.2606F);
-        ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
-        dotsProgressParams18.height = dotsProgressSize18;
-        dotsProgressParams18.width = dotsProgressSize18;
-
 
         //scale action18  button
         ImageView actionButton18 = (ImageView) findViewById(R.id.hitCounter);
@@ -1097,6 +1095,12 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonHeight;
         buttonParams18.width = buttonWidth;
+
+        //scale dots progress
+        ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);
+        ViewGroup.LayoutParams dotsProgressParams18 = dotsProgress.getLayoutParams();
+        dotsProgressParams18.height = buttonHeight;
+        dotsProgressParams18.width = buttonWidth;
 
         //scale actionGo  button
         Button actionButtonGo = (Button) findViewById(R.id.actionButtonGo);
