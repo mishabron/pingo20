@@ -1,9 +1,10 @@
 package com.mbronshteyn.pingo20.activity;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -37,9 +38,8 @@ public class SplashActivity extends Activity {
         new Handler().postDelayed(()->{
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtras(new Bundle());
-            startActivity(intent);
-            Activity activity = (Activity) context;
-            activity.finish();
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this);
+            startActivity(intent, options.toBundle());
         },5000);
     }
 

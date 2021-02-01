@@ -227,13 +227,6 @@ public class PingoActivity extends AppCompatActivity {
         }, duration);
     }
 
-    protected void popBaloon(final ImageView ballon){
-
-        ballon.setVisibility(View.VISIBLE);
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-        ballon.startAnimation(zoomIntAnimation);
-    }
-
     protected boolean isWinningCard(){
          boolean winning = false;
 

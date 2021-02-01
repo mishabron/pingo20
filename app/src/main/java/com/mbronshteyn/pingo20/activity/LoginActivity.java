@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -145,6 +146,13 @@ public class LoginActivity extends PingoActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        moveTaskToBack(true);
+        System.exit(1);
     }
 
     @Override
@@ -385,10 +393,8 @@ public class LoginActivity extends PingoActivity {
                     @Override
                     public void onTransitionEnd(@NonNull Transition transition) {
                         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                        startActivity(intent);
-                        Activity activity = (Activity) context;
-                        activity.finish();
-                        Runtime.getRuntime().gc();
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
+                        startActivity(intent, options.toBundle());
                     }
                     @Override
                     public void onTransitionCancel(@NonNull Transition transition) {

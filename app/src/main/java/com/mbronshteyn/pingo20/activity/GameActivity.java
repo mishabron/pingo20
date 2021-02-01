@@ -101,8 +101,6 @@ public class GameActivity extends PingoActivity {
 
         root = findViewById(R.id.rootCoordinatorLayoutGame);
 
-        scaleUi();
-
         if(card.isFreeGame()){
             Game.attemptCounter = 3 - card.getNonBonusHits().size();
         }
@@ -195,8 +193,17 @@ public class GameActivity extends PingoActivity {
         });
 
         isOKToInit = true;
+
+        scaleUi();
     }
-    
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        moveTaskToBack(true);
+        System.exit(1);
+    }
+
     @Override
     protected void onResume() {
 
@@ -213,15 +220,15 @@ public class GameActivity extends PingoActivity {
             switch (Game.attemptCounter) {
                 case 3:
                     slideNo = R.drawable.to2;
-                    delay = 6000;
+                    delay = 8000;
                     break;
                 case 2:
                     slideNo = R.drawable.to3;
-                    delay = 6000;
+                    delay = 8000;
                     break;
                 case 1:
                     slideNo = R.drawable.to4;
-                    delay = 6000;
+                    delay = 8000;
                     break;
             }
 
@@ -238,22 +245,13 @@ public class GameActivity extends PingoActivity {
                 }, delay);
             }
             new Handler().postDelayed(() -> {
-                playInBackgroundIfNotPlaying(R.raw.main_theme);
                 transitionLayout();
             }, delay + 100);
         }
-        else{
-            playInBackgroundIfNotPlaying(R.raw.main_theme);
-        }
-
         isOKToInit = false;
     }
 
     private void transitionLayout(){
-
-        ImageView banner = (ImageView) findViewById(R.id.mainBanner);
-        Animation zoomBanner = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_banner);
-        banner.startAnimation(zoomBanner);
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(this, R.layout.activity_game);
@@ -264,12 +262,13 @@ public class GameActivity extends PingoActivity {
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-
+                new Handler().postDelayed(()->{playSound(R.raw.screen_down);},500);
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
                 new Handler().postDelayed(() -> {initState(); }, 100);
+
             }
 
             @Override
@@ -623,11 +622,9 @@ public class GameActivity extends PingoActivity {
                 doProgress(false);
                 flippToCounter();
                 initState();
-                playInBackgroundIfNotPlaying(R.raw.main_theme);
-            }, 6000);
+            }, 8000);
         }
         else{
-            playInBackgroundIfNotPlaying(R.raw.main_theme);
             flippToCounter();
             initState();
         }
