@@ -166,7 +166,7 @@ public class LoginActivity extends PingoActivity {
         super.onResume();
         if(!loaded) {
             loaded = true;
-            new Handler().postDelayed(() -> {transitionLayout();}, 100);
+            new Handler().postDelayed(() -> {transitionLayout();}, 2000);
         }
     }
 

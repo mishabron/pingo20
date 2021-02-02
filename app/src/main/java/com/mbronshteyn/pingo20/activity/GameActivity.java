@@ -664,7 +664,8 @@ public class GameActivity extends PingoActivity {
         //transition to bonus activity
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
-            startActivity(intent);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
+            startActivity(intent, options.toBundle());
             Activity activity = (Activity) context;
             activity.finish();
         }, 6100);
@@ -817,7 +818,8 @@ public class GameActivity extends PingoActivity {
         //transition to bonus activity
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), BonusSpinActivity.class);
-            startActivity(intent);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
+            startActivity(intent, options.toBundle());
             Activity activity = (Activity) context;
             activity.finish();
         }, 3000);

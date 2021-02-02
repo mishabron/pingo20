@@ -28,7 +28,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
@@ -107,7 +106,7 @@ public class BonusGameActivity extends PingoActivity {
 
         heads = false;
 
-        fingerTimer = new FingerTimer(2000,100);
+        fingerTimer = new FingerTimer(4000,100);
         fingerTimer.start();
 
         scaleUi();
@@ -116,7 +115,7 @@ public class BonusGameActivity extends PingoActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        new Handler().postDelayed(() -> { transitionLayout(); }, 500);
+        new Handler().postDelayed(() -> { transitionLayout(); }, 2000);
     }
 
     private void transitionLayout(){
@@ -130,26 +129,24 @@ public class BonusGameActivity extends PingoActivity {
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-
+                new Handler().postDelayed(()->{playSound(R.raw.screen_down);},500);
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
+                playInBackground(R.raw.bonus_background);
             }
 
             @Override
             public void onTransitionCancel(@NonNull Transition transition) {
-
             }
 
             @Override
             public void onTransitionPause(@NonNull Transition transition) {
-
             }
 
             @Override
             public void onTransitionResume(@NonNull Transition transition) {
-
             }
         });
 
@@ -211,7 +208,7 @@ public class BonusGameActivity extends PingoActivity {
         ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
         backgroundView.setVisibility(View.INVISIBLE);
         fingerButton.setEnabled(false);
-        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusEndOfGameOverlay);
         Glide.with(this).clear(overlayBlue);
         Glide.with(this).load(R.drawable.bonus_win).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
@@ -258,14 +255,12 @@ public class BonusGameActivity extends PingoActivity {
 
     private void transitionToPlay() {
 
-        playInBackground(R.raw.bonus_background);
-
         fingerButton.setBackground(getResources().getDrawable(R.drawable.btn_bonus_finger_play,this.getTheme()));
 
-        //bonus pingos background
-        ImageView iView = (ImageView) findViewById(R.id.bonusGameBacgroundimageView);
-        Glide.with(this).load(R.drawable.bonuspin_background_play).diskCacheStrategy(DiskCacheStrategy.NONE).
-                skipMemoryCache(true).transition(DrawableTransitionOptions.withCrossFade()).into(iView);
+        ImageView pinChekBackground = (ImageView) findViewById(R.id.bonusPlayBackground);
+        pinChekBackground.setVisibility(View.VISIBLE);
+        Animation fadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+        pinChekBackground.startAnimation(fadeIn);
 
         ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
         Animation transAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
@@ -330,7 +325,7 @@ public class BonusGameActivity extends PingoActivity {
         stopPplayInBackground();
 
         //ballon background
-        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusEndOfGameOverlay);
         Glide.with(this).clear(overlayBlue);
         Glide.with(this).load(R.drawable.bonus_nowin_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
         overlayBlue.setVisibility(View.VISIBLE);
@@ -511,7 +506,7 @@ public class BonusGameActivity extends PingoActivity {
         pingoParams3.width = (int)(newBmapHeight*pingoSize);
 
         //scale blue overlay
-        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusOverlay_blue);
+        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusEndOfGameOverlay);
         ViewGroup.LayoutParams overlayBlueParams = overlayBlue.getLayoutParams();
         overlayBlueParams.width = newBmapWidth;
         overlayBlueParams.height = newBmapHeight;
@@ -519,8 +514,8 @@ public class BonusGameActivity extends PingoActivity {
         //scal sevens
         ImageView seven1 = (ImageView) findViewById(R.id.seven1);
         ViewGroup.LayoutParams seven1Params = seven1.getLayoutParams();
-        seven1Params.width = (int) (newBmapWidth * 0.2267F);;
-        seven1Params.height = (int) (newBmapHeight * 0.3971F);;
+        seven1Params.width = (int) (newBmapWidth * 0.2267F);
+        seven1Params.height = (int) (newBmapHeight * 0.3971F);
 
         ImageView seven2 = (ImageView) findViewById(R.id.seven2);
         ViewGroup.LayoutParams seven2Params = seven2.getLayoutParams();
@@ -535,8 +530,14 @@ public class BonusGameActivity extends PingoActivity {
         //no winn banner
         ImageView noWinBanner = (ImageView) findViewById(R.id.noWinBanner);
         ViewGroup.LayoutParams noWinBannerParams = noWinBanner.getLayoutParams();
-        noWinBannerParams.width = (int) (newBmapWidth * 0.5454F);;
-        noWinBannerParams.height = (int) (newBmapHeight * 0.1710F);;
+        noWinBannerParams.width = (int) (newBmapWidth * 0.5454F);
+        noWinBannerParams.height = (int) (newBmapHeight * 0.1710F);
+
+        //scale pinChekBackground
+        ImageView pinChekBackground = (ImageView) findViewById(R.id.bonusPlayBackground);
+        ViewGroup.LayoutParams pinChekBackgroundParams = pinChekBackground.getLayoutParams();
+        pinChekBackgroundParams.width = newBmapWidth;
+        pinChekBackgroundParams.height = newBmapHeight;
     }
 
 }
