@@ -77,6 +77,7 @@ public class BonusGameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 fingerTimer.cancel();
+                playSound(R.raw.short_button_turn);
                 transitionToPlay();
             }
         });
