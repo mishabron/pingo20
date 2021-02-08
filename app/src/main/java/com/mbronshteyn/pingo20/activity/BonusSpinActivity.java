@@ -104,13 +104,18 @@ public class BonusSpinActivity extends PingoActivity{
         super.onPostCreate(savedInstanceState);
         new Handler().postDelayed(() -> { transitionLayout(); }, 500);
         Game.bonusHit = Bonus.SUPERPIN;
-        new Handler().postDelayed(()->{ playInBackground(R.raw.bonusspin_background);},0);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Handler().postDelayed(()->{ playInBackgroundIfNotPlaying(R.raw.bonusspin_background);},0);
     }
 
     @Override

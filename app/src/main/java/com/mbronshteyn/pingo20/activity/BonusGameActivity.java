@@ -56,6 +56,8 @@ public class BonusGameActivity extends PingoActivity {
     private char[] luckyState =  {'0','0','0'};
     private FingerTimer fingerTimer;
     private ConstraintLayout bonusRoot;
+    private boolean created;
+    private boolean transitioned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +116,18 @@ public class BonusGameActivity extends PingoActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(created){
+            playInBackgroundIfNotPlaying(R.raw.bonus_background);
+        }
+        if(transitioned){
+            ImageView playText = (ImageView) findViewById(R.id.playTextBackground);
+            playText.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         new Handler().postDelayed(() -> { transitionLayout(); }, 2000);
@@ -135,7 +149,8 @@ public class BonusGameActivity extends PingoActivity {
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-                playInBackground(R.raw.bonus_background);
+                playInBackgroundIfNotPlaying(R.raw.bonus_background);
+                created = true;
             }
 
             @Override
@@ -287,6 +302,7 @@ public class BonusGameActivity extends PingoActivity {
             }
         });
         playText.startAnimation(transAnimation);
+        transitioned = true;
 
         buttonCounter1.setVisibility(View.VISIBLE);
         buttonCounter2.setVisibility(View.VISIBLE);

@@ -769,6 +769,8 @@ public class GameActivity extends PingoActivity {
 
     private void gotoToSpinBonus() {
 
+        playSound(R.raw.gotobonus);
+
         //move up the game interface
         new Handler().postDelayed(()->{
             ConstraintSet constraintSet = new ConstraintSet();
@@ -783,10 +785,12 @@ public class GameActivity extends PingoActivity {
         },100);
 
         //pop up dark overlay and bonus logo
-        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.dark_overlay_bonus).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(()->{
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(R.drawable.dark_overlay_bonus).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+        },1500);
 
         //popup logo 1
         new Handler().postDelayed(()->{
@@ -794,7 +798,7 @@ public class GameActivity extends PingoActivity {
             logo1.setVisibility(View.VISIBLE);
             Glide.with(this).load(R.drawable.bonus_blue).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo1);
             Animation logoPopup1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
-            logo1.startAnimation(logoPopup1);},200);
+            logo1.startAnimation(logoPopup1);},1600);
 
         //popup logo 2
         new Handler().postDelayed(()->{
@@ -803,7 +807,7 @@ public class GameActivity extends PingoActivity {
             Glide.with(this).load(R.drawable.bonus_yellow).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo2);
             Animation logoPopup2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
             logo2.startAnimation(logoPopup2);
-        },450);
+        },1750);
 
 
         //popup logo 3
@@ -811,9 +815,9 @@ public class GameActivity extends PingoActivity {
             ImageView logo3 = (ImageView) findViewById(R.id.popup_logo3);
             logo3.setVisibility(View.VISIBLE);
             Glide.with(this).load(R.drawable.bonus_banner).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo3);
-            Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_banner);
-            //logo3.startAnimation(logoPopup3);
-        },700);
+            Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate_bonus);
+            logo3.startAnimation(logoPopup3);
+        },1850);
 
         //transition to bonus activity
         new Handler().postDelayed(() -> {
@@ -822,7 +826,7 @@ public class GameActivity extends PingoActivity {
             startActivity(intent, options.toBundle());
             Activity activity = (Activity) context;
             activity.finish();
-        }, 3000);
+        }, 8000);
     }
 
     private void processWin(int pingoNumber) {
