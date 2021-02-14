@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.fragment.HistoryFragment">
+    tools:context=".activity.fragment.ContactFragment">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,13 +11,13 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/historyBacgroundimageView"
+            android:id="@+id/contactBacgroundimageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/history_layer"
+            android:src="@drawable/contact_layer"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

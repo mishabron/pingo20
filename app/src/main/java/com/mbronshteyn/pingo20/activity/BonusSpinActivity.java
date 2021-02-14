@@ -1,6 +1,7 @@
 package com.mbronshteyn.pingo20.activity;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -141,16 +142,14 @@ public class BonusSpinActivity extends PingoActivity{
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-                searchLights();
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-
+                searchLights();
                 ImageView spinBannerw = (ImageView) findViewById(R.id.spinBannerw);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 spinBannerw.startAnimation(zoomIntAnimation);
-
                 new Handler().postDelayed(()->{transitionToPlay();},500);
             }
 
@@ -324,7 +323,8 @@ public class BonusSpinActivity extends PingoActivity{
     private void gotoMainGame() {
         isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-        startActivity(intent);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
+        startActivity(intent, options.toBundle());
         Activity activity = (Activity) BonusSpinActivity.this;
         activity.finish();
         Runtime.getRuntime().gc();

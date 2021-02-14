@@ -90,10 +90,10 @@
         app:layout_constraintBottom_toBottomOf="@id/menuGuideline" />
 
     <Button
-        android:id="@+id/historyButton"
+        android:id="@+id/contactButton"
         android:layout_width="wrap_content"
         android:layout_height="21dp"
-        android:background="@drawable/menu_history_button"
+        android:background="@drawable/menu_contact_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent"

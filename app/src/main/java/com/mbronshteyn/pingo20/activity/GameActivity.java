@@ -666,8 +666,6 @@ public class GameActivity extends PingoActivity {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
-            Activity activity = (Activity) context;
-            activity.finish();
         }, 6100);
     }
 
@@ -784,21 +782,13 @@ public class GameActivity extends PingoActivity {
 
         },100);
 
-        //pop up dark overlay and bonus logo
-        new Handler().postDelayed(()->{
-            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-            Glide.with(context).clear(overlayBlue);
-            Glide.with(this).load(R.drawable.dark_overlay_bonus).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-            overlayBlue.setVisibility(View.VISIBLE);
-        },1500);
-
         //popup logo 1
         new Handler().postDelayed(()->{
             ImageView logo1 = (ImageView) findViewById(R.id.popup_logo1);
             logo1.setVisibility(View.VISIBLE);
             Glide.with(this).load(R.drawable.bonus_blue).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo1);
             Animation logoPopup1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
-            logo1.startAnimation(logoPopup1);},1600);
+            logo1.startAnimation(logoPopup1);},600);
 
         //popup logo 2
         new Handler().postDelayed(()->{
@@ -807,7 +797,7 @@ public class GameActivity extends PingoActivity {
             Glide.with(this).load(R.drawable.bonus_yellow).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo2);
             Animation logoPopup2 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_bonus);
             logo2.startAnimation(logoPopup2);
-        },1750);
+        },750);
 
 
         //popup logo 3
@@ -817,16 +807,14 @@ public class GameActivity extends PingoActivity {
             Glide.with(this).load(R.drawable.bonus_banner).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(logo3);
             Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate_bonus);
             logo3.startAnimation(logoPopup3);
-        },1850);
+        },850);
 
         //transition to bonus activity
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), BonusSpinActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
-            Activity activity = (Activity) context;
-            activity.finish();
-        }, 8000);
+        }, 5500);
     }
 
     private void processWin(int pingoNumber) {
@@ -938,8 +926,6 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(()->{
                 Intent intent = new Intent(getApplicationContext(), EndOfGameActivity.class);
                 startActivity(intent);
-                Activity activity = (Activity) context;
-                activity.finish();
             },4000);
         }else{
             playSound(R.raw.error_short);

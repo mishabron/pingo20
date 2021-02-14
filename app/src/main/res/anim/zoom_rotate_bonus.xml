@@ -17,4 +17,14 @@
         android:pivotX="50%"
         android:pivotY="50%"
         android:toDegrees="1080" />
+
+    <rotate
+        android:startOffset="2000"
+        android:duration="1000"
+        android:fromDegrees="0"
+        android:interpolator="@android:anim/cycle_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toDegrees="1080" />
+
 </set>
