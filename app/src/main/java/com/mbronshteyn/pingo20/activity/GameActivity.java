@@ -155,6 +155,7 @@ public class GameActivity extends PingoActivity {
                 stopPplayInBackground();
                 doPinCheck();
                 hitButtonGo.setEnabled(false);
+                stopPplayInBackground();
             }
         });
         hitButtonGo.setEnabled(false);
@@ -248,6 +249,9 @@ public class GameActivity extends PingoActivity {
                 transitionLayout();
             }, delay + 100);
         }
+        else{
+            playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
+        }
         isOKToInit = false;
     }
 
@@ -292,6 +296,8 @@ public class GameActivity extends PingoActivity {
     }
 
     private void initState() {
+
+        playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
 
         playPingos = loadPingosInPlay(true);
         List<Integer> winPingos = loadPingosInPlay(false);

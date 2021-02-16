@@ -341,28 +341,6 @@ public class BonusGameActivity extends PingoActivity {
         playSound(R.raw.bonus_nowin);
         stopPplayInBackground();
 
-        //ballon background
-        ImageView overlayBlue = (ImageView) findViewById(R.id.bonusEndOfGameOverlay);
-        Glide.with(this).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.bonus_nowin_overlay).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
-
-        //first banner
-        ImageView noWinBanner = (ImageView) findViewById(R.id.noWinBanner);
-        Glide.with(this).clear(noWinBanner);
-        Glide.with(this).load(R.drawable.no_win_yellow_bubble_text1).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(noWinBanner);
-        noWinBanner.setVisibility(View.VISIBLE);
-        final Animation[] noWinBannerAnimation = {AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_bonus_no_win)};
-        noWinBanner.startAnimation(noWinBannerAnimation[0]);
-
-        new Handler().postDelayed(()->{
-            Glide.with(this).clear(noWinBanner);
-            Glide.with(this).load(R.drawable.no_win_yellow_bubble_text2).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(noWinBanner);
-            noWinBanner.setVisibility(View.VISIBLE);
-            noWinBannerAnimation[0] = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_bonus_no_win);
-            noWinBanner.startAnimation(noWinBannerAnimation[0]);
-        },3500);
-
         new Handler().postDelayed(()->{
             isOKToInit = true;
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
@@ -370,7 +348,7 @@ public class BonusGameActivity extends PingoActivity {
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },6500);
+        },3000);
     }
 
     public void spinPingos(){
