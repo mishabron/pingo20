@@ -334,12 +334,25 @@ public class BonusSpinWondow extends Fragment {
             windowBackground.setImageDrawable(getResources().getDrawable(R.drawable.win_animation,null));
             windowBackground.setVisibility(View.VISIBLE);
             AnimationDrawable winAnimation = (AnimationDrawable) windowBackground.getDrawable();
+            int animDuration = 0;
+            for(int i =0; i<winAnimation.getNumberOfFrames();i++){
+                animDuration = animDuration + winAnimation.getDuration(i);
+            }
             winAnimation.start();
+
             //rotate number
-            ObjectAnimator animation = ObjectAnimator.ofFloat(wheel,"rotationY", 0,720);
+            ImageView zoomWin = (ImageView) getView().findViewById(R.id.zoomWin);
+            zoomWin.setVisibility(View.VISIBLE);
+            wheel.setVisibility(View.INVISIBLE);
+            int currentNumber = wheel.getCurrentItem();
+            ImageView viw = numbers.get(currentNumber);
+            zoomWin.setImageDrawable(viw.getDrawable());
+
+            ObjectAnimator animation = ObjectAnimator.ofFloat(zoomWin,"rotationY", 0,720);
             animation.setDuration(3000);
             animation.setInterpolator(new AccelerateDecelerateInterpolator());
             new Handler().postDelayed(()->{animation.start();},1000);
+            new Handler().postDelayed(()->{zoomWin.setVisibility(View.INVISIBLE);;},animDuration);
         }
         else{
             EventBus.getDefault().post(new SpinResultEvent(BonusSpinResult.WRONG));
@@ -415,6 +428,12 @@ public class BonusSpinWondow extends Fragment {
         ViewGroup.LayoutParams zoomSpinParams = zoomSpin.getLayoutParams();
         zoomSpinParams.width =(int)(newBmapWidth*pingoWidth * 1.10);
         zoomSpinParams.height =(int)(newBmapHeight*pingoHeight * 1.10);
+
+        //scale zoomWin
+        ImageView zoomWin = (ImageView) mainView.findViewById(R.id.zoomWin);
+        ViewGroup.LayoutParams zoomWinParams = zoomWin.getLayoutParams();
+        zoomWinParams.width =(int)(newBmapWidth*pingoWidth * 1.05);
+        zoomWinParams.height =(int)(newBmapHeight*pingoHeight * 1.05);
 
     }
 }

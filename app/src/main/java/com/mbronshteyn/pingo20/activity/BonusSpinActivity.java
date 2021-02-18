@@ -287,6 +287,7 @@ public class BonusSpinActivity extends PingoActivity{
     public void onSpinResultEvent(SpinResultEvent event){
 
         int sound = 0;;
+        int delay = 3000;
 
         switch(event.getResult()){
             case RIGHT:
@@ -297,6 +298,7 @@ public class BonusSpinActivity extends PingoActivity{
                 searchLights();
                 sound = R.raw.right_number_winner;
                 Game.guessedCount++;
+                delay = 6500;
                 break;
             case WRONG:
                 sound = R.raw.wrong_try_again;
@@ -316,7 +318,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         //end of bonus game
         if(pingosInPlay.isEmpty()){
-            new Handler().postDelayed(()->{gotoMainGame();},3000);
+            new Handler().postDelayed(()->{gotoMainGame();},delay);
         }
     }
 

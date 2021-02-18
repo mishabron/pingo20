@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
@@ -334,21 +335,17 @@ public class BonusGameActivity extends PingoActivity {
 
     private void gotoNoWin() {
 
-        ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
-        backgroundView.setVisibility(View.INVISIBLE);
-        fingerButton.setEnabled(false);
-        fingerButton.setVisibility(View.INVISIBLE);
-        playSound(R.raw.bonus_nowin);
         stopPplayInBackground();
 
         new Handler().postDelayed(()->{
             isOKToInit = true;
             Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-            startActivity(intent);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
+            startActivity(intent, options.toBundle());
             Activity activity = (Activity) BonusGameActivity.this;
             activity.finish();
             Runtime.getRuntime().gc();
-        },3000);
+        },2000);
     }
 
     public void spinPingos(){
