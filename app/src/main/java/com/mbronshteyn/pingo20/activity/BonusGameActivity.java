@@ -26,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -112,6 +113,10 @@ public class BonusGameActivity extends PingoActivity {
 
         fingerTimer = new FingerTimer(4000,100);
         fingerTimer.start();
+
+        TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
+        String cardId = Game.getInstancce().getCardNumber();
+        cardNumber.setText(cardNumber.getText()+ cardId.substring(0,4)+" "+cardId.substring(4,8)+" "+cardId.substring(8,12));
 
         scaleUi();
     }

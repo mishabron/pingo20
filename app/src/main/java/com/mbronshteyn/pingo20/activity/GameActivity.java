@@ -214,7 +214,10 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
             new Handler().postDelayed(()->{processWin(1);},14000);
         }
-        else if(isOKToInit){
+        else if(card.isFreeGame()){
+            new Handler().postDelayed(() -> {transitionLayout();}, 1000);
+        }
+        else if(isOKToInit ){
             int slideNo = 0;
             int delay = 0;
 
@@ -233,7 +236,7 @@ public class GameActivity extends PingoActivity {
                     break;
             }
 
-            if (slideNo > 0 && !card.isFreeGame()) {
+            if (slideNo > 0) {
                 ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
                 Glide.with(context).clear(overlayBlue);
                 Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
@@ -584,18 +587,16 @@ public class GameActivity extends PingoActivity {
     @Subscribe
     public void winNumber(GuessedNumberEvent event){
 
-        if(pingoIterator.hasNext() || !isWinningCard()) {
-            int delay = 0;
-            if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
-                doHalfWayThere();
-                delay = 2000;
-            }
-            new Handler().postDelayed(()-> {
-                //stopPlaySound(R.raw.spin);
-                playSound(R.raw.right_number);
-                EventBus.getDefault().post(new WinAnimation(event.getPingoNumber(),WinAnimation.colorType.GREEN));
-            },delay);
+        int delay = 0;
+        if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
+            doHalfWayThere();
+            delay = 2000;
         }
+        new Handler().postDelayed(()-> {
+            //stopPlaySound(R.raw.spin);
+            playSound(R.raw.right_number);
+            EventBus.getDefault().post(new WinAnimation(event.getPingoNumber(),WinAnimation.colorType.GREEN));
+        },delay);
     }
 
     private void attemptTransition(){
@@ -672,6 +673,8 @@ public class GameActivity extends PingoActivity {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
+            Activity activity = (Activity) context;
+            activity.finish();
         }, 6100);
     }
 
@@ -721,7 +724,7 @@ public class GameActivity extends PingoActivity {
             }
             //last guessed number when game is won / not frre game
             else if(!pingoIterator.hasNext() && isWinningCard()){
-                duration = 700;
+                duration = 6000;
             }
             //flash ray animation for guessed number
             else {

@@ -38,6 +38,29 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/cardNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CARD IN PLAY: "
+        android:textColor="@android:color/white"
+        android:textSize="7sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.90"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WARNING: ALL RIGHTS RESERVED.  INT-L PATENTS PENDING. NO &quot;ME TOO&quot; COPYCATTING.                                                                                  MADE IN USA"
+        android:textColor="@android:color/white"
+        android:textSize="6sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bonusRoot"
         android:layout_width="wrap_content"
