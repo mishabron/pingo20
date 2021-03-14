@@ -52,6 +52,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.free_game,soundId);
         soundId = soundPool.load(this, R.raw.pop_login, 1);
         soundMap.put(R.raw.pop_login,soundId);
+        soundId = soundPool.load(this, R.raw.wheel_spinning, 1);
+        soundMap.put(R.raw.wheel_spinning,soundId);
         soundId = soundPool.load(this, R.raw.screen_down, 1);
         soundMap.put(R.raw.screen_down,soundId);
         soundId = soundPool.load(this, R.raw.error_short, 1);
@@ -64,8 +66,6 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.right_number,soundId);
         soundId = soundPool.load(this, R.raw.short_button_turn, 1);
         soundMap.put(R.raw.short_button_turn,soundId);
-        soundId = soundPool.load(this, R.raw.wheel_spinning, 1);
-        soundMap.put(R.raw.wheel_spinning,soundId);
         soundId = soundPool.load(this, R.raw.wheel_stop, 1);
         soundMap.put(R.raw.wheel_stop,soundId);
         soundId = soundPool.load(this, R.raw.wrong_number, 1);
@@ -106,6 +106,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.card_check_win3,soundId);
         soundId = soundPool.load(this, R.raw.gotobonus, 1);
         soundMap.put(R.raw.gotobonus,soundId);
+        soundId = soundPool.load(this, R.raw.game_win, 1);
+        soundMap.put(R.raw.game_win,soundId);
 
     }
 

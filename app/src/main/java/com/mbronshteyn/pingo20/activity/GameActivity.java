@@ -155,7 +155,6 @@ public class GameActivity extends PingoActivity {
                 stopPplayInBackground();
                 doPinCheck();
                 hitButtonGo.setEnabled(false);
-                stopPplayInBackground();
             }
         });
         hitButtonGo.setEnabled(false);
@@ -745,6 +744,8 @@ public class GameActivity extends PingoActivity {
             //end of attempt
             else {
                 if(isWinningCard()){
+                    ImageView pinChekBackground = (ImageView) findViewById(R.id.pinChekBackground);
+                    pinChekBackground.setVisibility(View.INVISIBLE);
                     processWin(event.getPingoNumber());
                 }
                 else{
@@ -828,6 +829,8 @@ public class GameActivity extends PingoActivity {
 
     private void processWin(int pingoNumber) {
 
+        stopPplayInBackground();
+
         //move up the game interface
         new Handler().postDelayed(()->{
             ConstraintSet constraintSet = new ConstraintSet();
@@ -849,8 +852,8 @@ public class GameActivity extends PingoActivity {
         }
         else{
             intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
-            duration = 7000;
-            doWinningFlash();
+            duration = 10000;
+            new Handler().postDelayed(()->{ doWinningFlash();},1000);
         }
 
         new Handler().postDelayed(() -> {
@@ -862,35 +865,24 @@ public class GameActivity extends PingoActivity {
 
     private void doWinningFlash(){
 
-        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
-        Glide.with(context).clear(overlayBlue);
-        Glide.with(this).load(R.drawable.overlay_blue).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(overlayBlue);
-        overlayBlue.setVisibility(View.VISIBLE);
+        playSound(R.raw.game_win);
+
+        ImageView starts = (ImageView) findViewById(R.id.winGameStars);
+        starts.setVisibility(View.VISIBLE);
+        AnimationDrawable starsAnimation = (AnimationDrawable) starts.getDrawable();
+        starsAnimation.start();
 
         ImageView pingoWinner = (ImageView) findViewById(R.id.mainLogo);
-        ImageView logo4 = (ImageView) findViewById(R.id.popup_logo4);
+        pingoWinner.setVisibility(View.VISIBLE);
+
         TextView winBalance = (TextView) findViewById(R.id.win_amount);
-
-        new Handler().postDelayed(()->{
-            pingoWinner.setVisibility(View.VISIBLE);
-        },100);
-
-        //popup logo 2
-        new Handler().postDelayed(()->{
-            logo4.setVisibility(View.VISIBLE);
-        },200);
-
-
-        Spannable wordtoSpan = new SpannableString("$" +(int) card.getBalance()+"  ");
-        wordtoSpan.setSpan(new ForegroundColorSpan(Color.parseColor("#28b5ed")), 1, wordtoSpan.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        wordtoSpan.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
-        winBalance.setText(wordtoSpan);
+        int win = (int) card.getBalance();
+        winBalance.setText(String.valueOf(win)+" ");
         winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
-        winBalance.setShadowLayer(30, 20, 20, Color.BLACK);
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.win_zoom_in);
         new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},300);
+        new Handler().postDelayed(()->{winBalance.startAnimation(zoomIntAnimation);},6000);
 
     }
 
@@ -1166,12 +1158,6 @@ public class GameActivity extends PingoActivity {
         halfWay3arams.width =(int)(newBmapWidth*0.75F);
         halfWay3arams.height =(int)(newBmapHeight*0.7722F);
 
-        //scale logo4
-        ImageView logo4 = (ImageView) findViewById(R.id.popup_logo4);
-        ViewGroup.LayoutParams logo4Params = logo4.getLayoutParams();
-        logo4Params.width =(int)(newBmapWidth*0.5971F);
-        logo4Params.height =(int)(newBmapHeight*0.4759F);
-
         //scale blue overlay
         ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
         ViewGroup.LayoutParams overlayBlueParams = overlayBlue.getLayoutParams();
@@ -1249,5 +1235,11 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams menuButtonParams = menuButton.getLayoutParams();
         menuButtonParams.width = (int)(newBmapWidth*0.07802F);
         menuButtonParams.height = (int)(newBmapHeight*0.08238F);
+
+        //scale stars
+        ImageView winGameStars = (ImageView) findViewById(R.id.winGameStars);
+        ViewGroup.LayoutParams winGameStarsParams = winGameStars.getLayoutParams();
+        winGameStarsParams.width =(int)(newBmapWidth);
+        winGameStarsParams.height =(int)(newBmapHeight);
     }
 }
