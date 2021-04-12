@@ -98,6 +98,8 @@ public class WinEmailActivity extends PingoActivity {
         
         email = (EditText) findViewById(R.id.email);
         emailConfirm = (EditText) findViewById(R.id.email_confirm);
+        email.setCursorVisible(false);
+        emailConfirm.setCursorVisible(false);
         emailConfirm.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -267,7 +269,7 @@ public class WinEmailActivity extends PingoActivity {
 
         //scale background
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.emailScreen);
-        ImageView iView = (ImageView) findViewById(R.id.emailacgroundimage);
+        ImageView iView = (ImageView) findViewById(R.id.emailBackgroundImage);
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         set.constrainHeight(iView.getId(), newBmapHeight);
