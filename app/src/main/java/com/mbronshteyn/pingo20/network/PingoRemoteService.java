@@ -31,4 +31,7 @@ public interface PingoRemoteService {
     @POST("/pingo/Game/history")
     Call<HistoryDto> getHistory(@Body AuthinticateDto authinticateDto);
 
+    @POST("/pingo/Game/freeAttempt")
+    Call<CardDto> saveFreeAttempt(@Body AuthinticateDto authinticateDto);
+
 }

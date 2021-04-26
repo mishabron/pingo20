@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
@@ -43,6 +44,7 @@ public class EndOfGameActivity extends Activity {
                 homeIntent.addCategory( Intent.CATEGORY_HOME );
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);
+                finish();
             }
         });
 
@@ -84,6 +86,17 @@ public class EndOfGameActivity extends Activity {
         set.constrainHeight(iView.getId(), newBmapHeight);
         set.constrainWidth(iView.getId(), newBmapWidth);
         set.applyTo(layout);
+
+        //yes no buttons
+        ImageView yesButton = (ImageView) findViewById(R.id.yesAgain);
+        ViewGroup.LayoutParams yesButtonParams = yesButton.getLayoutParams();
+        yesButtonParams.width =(int)(newBmapWidth*0.06224F);
+        yesButtonParams.height =(int)(newBmapHeight*0.1103F);
+
+        ImageView noButton = (ImageView) findViewById(R.id.noAgain);
+        ViewGroup.LayoutParams noButtonParams = noButton.getLayoutParams();
+        noButtonParams.width =(int)(newBmapWidth*0.06224F);
+        noButtonParams.height =(int)(newBmapHeight*0.1103F);
     }
 
 }

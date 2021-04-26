@@ -373,13 +373,20 @@ public class LoginActivity extends PingoActivity {
                 messageBaloon.setImageResource(R.drawable.played);
                 new Handler().postDelayed(()->{messageBaloon.setImageResource(R.drawable.blank_baloon);},4000);
             } else if (isWinningCard()) {
-                playSound(R.raw.card_check_win3);
-                TextView balance = (TextView) findViewById(R.id.winAmount);
-                balance.setText(Integer.toString((int) card.getBalance())+" ");
-                Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
-                balance.setTypeface(font,Typeface.BOLD_ITALIC);
-                balance.setVisibility(View.VISIBLE);
-                messageBaloon.setImageResource(R.drawable.winner);
+                if(!StringUtils.isEmpty(card.getEmail())) {
+                    playSound(R.raw.card_check_win3);
+                    TextView balance = (TextView) findViewById(R.id.winAmount);
+                    balance.setText(Integer.toString((int) card.getBalance()) + " ");
+                    Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
+                    balance.setTypeface(font, Typeface.BOLD_ITALIC);
+                    balance.setVisibility(View.VISIBLE);
+                    messageBaloon.setImageResource(R.drawable.winner);
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), WinEmailActivity.class);
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
+                    startActivity(intent, options.toBundle());
+                }
             } else {
                 ConstraintSet constraintSet = new ConstraintSet();
                 constraintSet.clone(this, R.layout.activity_login_end);

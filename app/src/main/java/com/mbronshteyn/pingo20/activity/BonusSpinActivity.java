@@ -394,7 +394,7 @@ public class BonusSpinActivity extends PingoActivity{
         cardHitDto.setHit2(pingo2.getCurrentPingo());
         cardHitDto.setHit3(pingo3.getCurrentPingo());
         cardHitDto.setHit4(pingo4.getCurrentPingo());
-        cardHitDto.setBonus(Game.bonusHit);
+        cardHitDto.setBonus(Bonus.SUPERPIN);
         cardHitDto.setBonusHit(Game.bonusHit != null);
 
         //reset bonus

@@ -478,7 +478,7 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            int spinTiming = 7500;
+            int spinTiming = 6500;
 
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
 

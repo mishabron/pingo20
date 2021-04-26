@@ -104,15 +104,13 @@ public class GameActivity extends PingoActivity {
         if(card.isFreeGame()){
             Game.attemptCounter = 3 - card.getNonBonusHits().size();
         }
+        else if(card.isFreeAttempt()){
+            Game.attemptCounter ++;
+        }
         else {
             Game.attemptCounter = 4 - card.getNonBonusHits().size();
             ImageView freeGame = (ImageView) findViewById(R.id.free_game);
             freeGame.setVisibility(View.INVISIBLE);
-        }
-
-        //if bonus hit increase counter
-        if(Game.bonusHit != null && Game.bonusHit.equals(Bonus.BONUSPIN)){
-            Game.attemptCounter ++;
         }
 
         context = this;
@@ -631,6 +629,7 @@ public class GameActivity extends PingoActivity {
             }, 8000);
         }
         else{
+            doProgress(false);
             flippToCounter();
             initState();
         }
@@ -950,16 +949,13 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onAnimationStart(Animator animation) {
             }
-
             @Override
             public void onAnimationEnd(Animator animation) {
                 hitButtonGo.setEnabled(false);
             }
-
             @Override
             public void onAnimationCancel(Animator animation) {
             }
-
             @Override
             public void onAnimationRepeat(Animator animation) {
             }

@@ -214,7 +214,7 @@ public class WinEmailActivity extends PingoActivity {
             public void onFailure(Call<Void> call, Throwable t) {
                 doProgress(false);
                 goButton.setEnabled(true);
-                messageBaloon.setImageResource(R.drawable.bubble_email_error);
+                messageBaloon.setImageResource(R.drawable.bubble_network_error);
                 playSound(R.raw.error_short);
             }
         });
@@ -233,7 +233,7 @@ public class WinEmailActivity extends PingoActivity {
                 activity.finish();
             },3500);
         }else{
-            messageBaloon.setImageResource(R.drawable.bubble_email_error);
+            messageBaloon.setImageResource(R.drawable.bubble_network_error);
             goButton.setEnabled(true);
             playSound(R.raw.error_short);
         }

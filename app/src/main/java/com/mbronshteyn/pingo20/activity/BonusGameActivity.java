@@ -30,17 +30,29 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
 import com.mbronshteyn.gameserver.dto.game.Bonus;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
+import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
 import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.model.Game;
+import com.mbronshteyn.pingo20.network.PingoRemoteService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.HashMap;
+
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BonusGameActivity extends PingoActivity {
 
@@ -207,7 +219,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoNoWin();
+            gotoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -263,16 +275,33 @@ public class BonusGameActivity extends PingoActivity {
         sevenAnim3.setTarget(seven3);
         sevenAnim3.start();
 
-        Game.bonusHit = Bonus.BONUSPIN;
+        //Game.bonusHit = Bonus.BONUSPIN;
 
-        new Handler().postDelayed(()->{
-            isOKToInit = true;
-            Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-            startActivity(intent);
-            Activity activity = (Activity) BonusGameActivity.this;
-            activity.finish();
-            Runtime.getRuntime().gc();
-        },4800);
+        //update free attempt
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PingoRemoteService.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
+        final AuthinticateDto dto = new AuthinticateDto();
+        dto.setCardNumber(card.getCardNumber());
+        dto.setDeviceId(Game.devicedId);
+        dto.setGame(Game.getGAMEID());
+        Call<CardDto> call = service.saveFreeAttempt(dto);
+        call.enqueue(new Callback<CardDto>() {
+            @Override
+            public void onResponse(Call<CardDto> call, Response<CardDto> response) {
+                new Handler().postDelayed(()->{processResponse(response);},5000);
+            }
+            @Override
+            public void onFailure(Call<CardDto> call, Throwable t) {
+            }
+        });
+    }
+
+    private void processResponse(Response<CardDto> response) {
+        card = response.body();
+        goToGame();
     }
 
     private void transitionToPlay() {
@@ -343,14 +372,18 @@ public class BonusGameActivity extends PingoActivity {
         stopPplayInBackground();
 
         new Handler().postDelayed(()->{
-            isOKToInit = true;
-            Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
-            startActivity(intent, options.toBundle());
-            Activity activity = (Activity) BonusGameActivity.this;
-            activity.finish();
-            Runtime.getRuntime().gc();
+            goToGame();
         },2000);
+    }
+
+    private void goToGame(){
+        isOKToInit = true;
+        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
+        startActivity(intent, options.toBundle());
+        Activity activity = (Activity) BonusGameActivity.this;
+        activity.finish();
+        Runtime.getRuntime().gc();
     }
 
     public void spinPingos(){
