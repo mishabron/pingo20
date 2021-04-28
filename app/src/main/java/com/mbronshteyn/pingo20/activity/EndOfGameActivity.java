@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
 
-public class EndOfGameActivity extends Activity {
+public class EndOfGameActivity extends PingoActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class EndOfGameActivity extends Activity {
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                exitApp();
                 Intent homeIntent = new Intent(Intent.ACTION_MAIN);
                 homeIntent.addCategory( Intent.CATEGORY_HOME );
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

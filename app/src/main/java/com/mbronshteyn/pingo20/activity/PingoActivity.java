@@ -30,7 +30,7 @@ public class PingoActivity extends AppCompatActivity {
     public MediaPlayer mediaPlayer2 = new MediaPlayer();
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
-    protected SoundPool soundPool;
+    protected static SoundPool soundPool;
     public static Map<Integer,Integer> soundMap = new HashMap<>();
     public static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
@@ -129,9 +129,6 @@ public class PingoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        soundPool.release();
-        soundPool = null;
-
         if(mediaPlayer1 != null) {
             mediaPlayer1.release();
             mediaPlayer1 = null;
@@ -140,6 +137,11 @@ public class PingoActivity extends AppCompatActivity {
             mediaPlayer2.release();
             mediaPlayer2 = null;
         }
+    }
+
+    protected void exitApp(){
+        soundPool.release();
+        soundPool = null;
     }
 
     protected void stopPlaySound(int sound) {
@@ -359,5 +361,5 @@ public class PingoActivity extends AppCompatActivity {
         mediaPlayer1.setVolume(volume,volume);
         mediaPlayer2.setVolume(volume,volume);
     }
-    
+
 }

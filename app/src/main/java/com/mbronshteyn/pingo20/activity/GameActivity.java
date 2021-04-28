@@ -93,6 +93,8 @@ public class GameActivity extends PingoActivity {
     private GameActivity context;
     private boolean spinning;
     private ConstraintLayout root;
+    private AnimatorSet mSetRightOutLeft;
+    private AnimatorSet mSetLeftInLeft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,14 +105,14 @@ public class GameActivity extends PingoActivity {
 
         if(card.isFreeGame()){
             Game.attemptCounter = 3 - card.getNonBonusHits().size();
+            ImageView freeGame = (ImageView) findViewById(R.id.free_game);
+            freeGame.setVisibility(View.VISIBLE);
         }
         else if(card.isFreeAttempt()){
             Game.attemptCounter ++;
         }
         else {
             Game.attemptCounter = 4 - card.getNonBonusHits().size();
-            ImageView freeGame = (ImageView) findViewById(R.id.free_game);
-            freeGame.setVisibility(View.INVISIBLE);
         }
 
         context = this;
@@ -141,6 +143,8 @@ public class GameActivity extends PingoActivity {
 
         mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_animation);
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_animation);
+        mSetRightOutLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_left_animation);
+        mSetLeftInLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_left_animation);
         
         buttonCounter = (ImageView) findViewById(R.id.hitCounter);
         Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
@@ -940,6 +944,33 @@ public class GameActivity extends PingoActivity {
     }
 
     public void flippToCounter() {
+
+        //flip button
+        Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
+        mSetRightOut.setTarget(hitButtonGo);
+        mSetLeftIn.setTarget(buttonCounter);
+        mSetLeftIn.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hitButtonGo.setEnabled(false);
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        mSetRightOut.start();
+        mSetLeftIn.start();
+
+        flippedToGo = false;
+    }
+
+    public void flippToCounterLeft() {
 
         //flip button
         Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
