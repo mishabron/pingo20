@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,9 +19,7 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.ChangeBounds;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,8 +107,8 @@ public class GameActivity extends PingoActivity {
             ImageView freeGame = (ImageView) findViewById(R.id.free_game);
             freeGame.setVisibility(View.VISIBLE);
         }
-        else if(card.isFreeAttempt()){
-            Game.attemptCounter ++;
+        else if(card.isFreeAttempt() && !luckySeven){
+            Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
         }
         else {
             Game.attemptCounter = 4 - card.getNonBonusHits().size();
@@ -143,8 +142,8 @@ public class GameActivity extends PingoActivity {
 
         mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_animation);
         mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_animation);
-        mSetRightOutLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.out_left_animation);
-        mSetLeftInLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.in_left_animation);
+        mSetRightOutLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.card_flip_left_out);
+        mSetLeftInLeft = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.card_flip_left_in);
         
         buttonCounter = (ImageView) findViewById(R.id.hitCounter);
         Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
@@ -215,7 +214,7 @@ public class GameActivity extends PingoActivity {
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
             new Handler().postDelayed(()->{processWin(1);},14000);
         }
-        else if(card.isFreeGame()){
+        else if(card.isFreeGame() || luckySeven){
             new Handler().postDelayed(() -> {transitionLayout();}, 1000);
         }
         else if(isOKToInit ){
@@ -276,7 +275,11 @@ public class GameActivity extends PingoActivity {
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
                 new Handler().postDelayed(() -> {initState(); }, 100);
-
+                if(luckySeven){
+                    luckySeven = false;
+                    Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
+                    new Handler().postDelayed(() -> {flippToCounterLeft();}, 500);
+                }
             }
 
             @Override
@@ -559,6 +562,9 @@ public class GameActivity extends PingoActivity {
     }
 
     public void flippToGo() {
+
+        Drawable go = AppCompatResources.getDrawable(context, R.drawable.btn_auth);
+        hitButtonGo.setBackground(go);
 
         mSetRightOut.setTarget(buttonCounter);
         mSetLeftIn.setTarget(hitButtonGo);
@@ -972,17 +978,19 @@ public class GameActivity extends PingoActivity {
 
     public void flippToCounterLeft() {
 
+        playSound(R.raw.up_plus_one2);
+
         //flip button
-        Glide.with(this).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
-        mSetRightOut.setTarget(hitButtonGo);
-        mSetLeftIn.setTarget(buttonCounter);
-        mSetLeftIn.addListener(new Animator.AnimatorListener() {
+        Drawable backFlip = AppCompatResources.getDrawable(context, buttonMap.get(Game.attemptCounter));
+        hitButtonGo.setBackground(backFlip);
+        mSetRightOutLeft.setTarget(buttonCounter);
+        mSetLeftInLeft.setTarget(hitButtonGo);
+        mSetLeftInLeft.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
             }
             @Override
             public void onAnimationEnd(Animator animation) {
-                hitButtonGo.setEnabled(false);
             }
             @Override
             public void onAnimationCancel(Animator animation) {
@@ -991,8 +999,8 @@ public class GameActivity extends PingoActivity {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        mSetRightOut.start();
-        mSetLeftIn.start();
+        mSetRightOutLeft.start();
+        mSetLeftInLeft.start();
 
         flippedToGo = false;
     }
@@ -1112,6 +1120,7 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams buttonParams18 = actionButton18.getLayoutParams();
         buttonParams18.height = buttonHeight;
         buttonParams18.width = buttonWidth;
+
 
         //scale dots progress
         ImageView dotsProgress = (ImageView) findViewById(R.id.progressCounter);

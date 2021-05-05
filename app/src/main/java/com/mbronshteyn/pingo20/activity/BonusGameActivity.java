@@ -31,9 +31,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
-import com.mbronshteyn.gameserver.dto.game.Bonus;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
-import com.mbronshteyn.gameserver.exception.ErrorCode;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.activity.fragment.BonusPinWondow;
 import com.mbronshteyn.pingo20.events.LuckySevenEvent;
@@ -41,13 +39,11 @@ import com.mbronshteyn.pingo20.events.ScrollEnd;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.network.PingoRemoteService;
 
-import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.HashMap;
 
-import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -219,7 +215,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoWin();
+            gotoNoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -239,6 +235,7 @@ public class BonusGameActivity extends PingoActivity {
 
     private void gotoWin() {
 
+        luckySeven = true;
         ImageView backgroundView = (ImageView) findViewById(R.id.logoBackground);
         backgroundView.setVisibility(View.INVISIBLE);
         fingerButton.setEnabled(false);
@@ -383,7 +380,6 @@ public class BonusGameActivity extends PingoActivity {
         startActivity(intent, options.toBundle());
         Activity activity = (Activity) BonusGameActivity.this;
         activity.finish();
-        Runtime.getRuntime().gc();
     }
 
     public void spinPingos(){

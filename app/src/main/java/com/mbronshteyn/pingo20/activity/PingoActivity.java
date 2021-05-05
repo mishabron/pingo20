@@ -38,6 +38,7 @@ public class PingoActivity extends AppCompatActivity {
     private boolean playingBackground;
     public static float volume =1;
     protected static boolean isOKToInit = true;
+    protected static boolean luckySeven = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.game_win,soundId);
         soundId = soundPool.load(this, R.raw.email_sent, 1);
         soundMap.put(R.raw.email_sent,soundId);
+        soundId = soundPool.load(this, R.raw.up_plus_one2, 1);
+        soundMap.put(R.raw.up_plus_one2,soundId);
 
     }
 
