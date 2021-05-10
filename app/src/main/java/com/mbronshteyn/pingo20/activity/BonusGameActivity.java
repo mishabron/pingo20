@@ -215,7 +215,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoNoWin();
+            gotoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -288,7 +288,7 @@ public class BonusGameActivity extends PingoActivity {
         call.enqueue(new Callback<CardDto>() {
             @Override
             public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                new Handler().postDelayed(()->{processResponse(response);},5000);
+                new Handler().postDelayed(()->{processResponse(response);},4000);
             }
             @Override
             public void onFailure(Call<CardDto> call, Throwable t) {
@@ -378,8 +378,6 @@ public class BonusGameActivity extends PingoActivity {
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
         startActivity(intent, options.toBundle());
-        Activity activity = (Activity) BonusGameActivity.this;
-        activity.finish();
     }
 
     public void spinPingos(){

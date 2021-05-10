@@ -278,7 +278,7 @@ public class GameActivity extends PingoActivity {
                 if(luckySeven){
                     luckySeven = false;
                     Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
-                    new Handler().postDelayed(() -> {flippToCounterLeft();}, 500);
+                    new Handler().postDelayed(() -> {flippToCounterLeft();}, 1000);
                 }
             }
 
@@ -682,7 +682,6 @@ public class GameActivity extends PingoActivity {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
             Activity activity = (Activity) context;
-            activity.finish();
         }, 6100);
     }
 
