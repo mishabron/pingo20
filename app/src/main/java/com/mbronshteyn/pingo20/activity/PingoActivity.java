@@ -49,6 +49,8 @@ public class PingoActivity extends AppCompatActivity {
         //load all sounds
         int soundId = soundPool.load(this, R.raw.button, 1);
         soundMap.put(R.raw.button,soundId);
+        soundId = soundPool.load(this, R.raw.up_plus_one2, 1);
+        soundMap.put(R.raw.up_plus_one2,soundId);
         soundId = soundPool.load(this, R.raw.free_game, 1);
         soundMap.put(R.raw.free_game,soundId);
         soundId = soundPool.load(this, R.raw.pop_login, 1);
@@ -111,9 +113,6 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.game_win,soundId);
         soundId = soundPool.load(this, R.raw.email_sent, 1);
         soundMap.put(R.raw.email_sent,soundId);
-        soundId = soundPool.load(this, R.raw.up_plus_one2, 1);
-        soundMap.put(R.raw.up_plus_one2,soundId);
-
     }
 
     @Override

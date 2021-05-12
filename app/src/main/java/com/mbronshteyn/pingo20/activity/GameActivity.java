@@ -278,20 +278,16 @@ public class GameActivity extends PingoActivity {
                 if(luckySeven){
                     luckySeven = false;
                     Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
-                    new Handler().postDelayed(() -> {flippToCounterLeft();}, 1000);
+                    new Handler().postDelayed(() -> {flippToCounterLeft();}, 4000);
                 }
             }
 
             @Override
             public void onTransitionCancel(@NonNull Transition transition) {
-
             }
-
             @Override
             public void onTransitionPause(@NonNull Transition transition) {
-
             }
-
             @Override
             public void onTransitionResume(@NonNull Transition transition) {
 
@@ -562,9 +558,6 @@ public class GameActivity extends PingoActivity {
     }
 
     public void flippToGo() {
-
-        Drawable go = AppCompatResources.getDrawable(context, R.drawable.btn_auth);
-        hitButtonGo.setBackground(go);
 
         mSetRightOut.setTarget(buttonCounter);
         mSetLeftIn.setTarget(hitButtonGo);
@@ -979,6 +972,8 @@ public class GameActivity extends PingoActivity {
 
         playSound(R.raw.up_plus_one2);
 
+        GameActivity app = this;
+
         //flip button
         Drawable backFlip = AppCompatResources.getDrawable(context, buttonMap.get(Game.attemptCounter));
         hitButtonGo.setBackground(backFlip);
@@ -990,6 +985,30 @@ public class GameActivity extends PingoActivity {
             }
             @Override
             public void onAnimationEnd(Animator animation) {
+                Glide.with(app).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
+
+                AnimatorSet fadeOut = (AnimatorSet) AnimatorInflater.loadAnimator(app, R.anim.alpha_out);
+                AnimatorSet fadeIn = (AnimatorSet) AnimatorInflater.loadAnimator(app, R.anim.alpha_in);
+                fadeOut.setTarget(hitButtonGo);
+                fadeIn.setTarget(buttonCounter);
+                fadeOut.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        Drawable go = AppCompatResources.getDrawable(context, R.drawable.btn_auth);
+                        hitButtonGo.setBackground(go);
+                    }
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+                });
+                fadeOut.start();
+                fadeIn.start();
             }
             @Override
             public void onAnimationCancel(Animator animation) {
