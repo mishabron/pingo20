@@ -256,6 +256,8 @@ public class GameActivity extends PingoActivity {
             playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
         }
         isOKToInit = false;
+        ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
+        Glide.with(context).clear(messageAlert);
     }
 
     private void transitionLayout(){
@@ -1032,7 +1034,6 @@ public class GameActivity extends PingoActivity {
         }
     }
 
-
     private void activatePingoCheckWindow(int pingoNumber, int visibility){
 
         //pingo check window
@@ -1077,6 +1078,24 @@ public class GameActivity extends PingoActivity {
         ImageView finalWinFlash = winFlash;
         new Handler().postDelayed(()->{ finalWinFlash.startAnimation(zoomIntAnimation);},event.getOffsetWinStars());
         new Handler().postDelayed(()->{ finalWinFlash.clearAnimation();},event.getDurationWinStars());
+    }
+
+    @Subscribe
+    public void onStaertNumberCheck(NumberSpinEvent event){
+        //generate alert on last window
+        if(!pingoIterator.hasNext()){
+            int alert = 0;
+            if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
+                alert = R.drawable.alert_777;
+            }
+            if(alert != 0) {
+                ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
+                Glide.with(this).load(alert).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(messageAlert);
+                AnimatorSet fromRight = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.slide_from_right);
+                fromRight.setTarget(messageAlert);
+                fromRight.start();
+            }
+        }
     }
 
     public void playSpingSound(){
@@ -1295,5 +1314,11 @@ public class GameActivity extends PingoActivity {
         ViewGroup.LayoutParams winGameStarsParams = winGameStars.getLayoutParams();
         winGameStarsParams.width =(int)(newBmapWidth);
         winGameStarsParams.height =(int)(newBmapHeight);
+
+        //scale messageAlert
+        ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
+        ViewGroup.LayoutParams messageAlertParams = messageAlert.getLayoutParams();
+        messageAlertParams.width = (int)(newBmapWidth*0.2409F);
+        messageAlertParams.height = (int)(newBmapHeight*0.0960F);
     }
 }
