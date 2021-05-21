@@ -100,6 +100,8 @@ public class GameActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_start);
 
+        scaleUi();
+
         root = findViewById(R.id.rootCoordinatorLayoutGame);
 
         if(card.isFreeGame()){
@@ -194,8 +196,6 @@ public class GameActivity extends PingoActivity {
         });
 
         isOKToInit = true;
-
-        scaleUi();
     }
 
     @Override
@@ -357,6 +357,13 @@ public class GameActivity extends PingoActivity {
 
         //show winning pin
         flippToGo();
+
+        //alert message
+        ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
+        Glide.with(this).load(R.drawable.alert_open).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(messageAlert);
+        Animation fromRight = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_right);
+        messageAlert.startAnimation(fromRight);
+
         hitButtonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1088,12 +1095,14 @@ public class GameActivity extends PingoActivity {
             if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
                 alert = R.drawable.alert_777;
             }
+            else if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
+                alert = R.drawable.alert_bonus;
+            }
             if(alert != 0) {
                 ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
                 Glide.with(this).load(alert).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(messageAlert);
-                AnimatorSet fromRight = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.slide_from_right);
-                fromRight.setTarget(messageAlert);
-                fromRight.start();
+                Animation fromRight = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_right);
+                messageAlert.startAnimation(fromRight);
             }
         }
     }

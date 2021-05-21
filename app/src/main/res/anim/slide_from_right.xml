@@ -2,19 +2,10 @@
 
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <objectAnimator
-        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
-        android:valueFrom="0"
-        android:valueTo="1"
-        android:valueType="floatType"
-        android:propertyName="Alpha"
-        android:duration="2000" />
-
-    <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-        android:valueFrom="0"
-        android:valueTo="1.0"
-        android:valueType="floatType"
-        android:propertyName="xFraction"
-        android:duration="2000" />
+    <translate
+        android:interpolator="@android:interpolator/anticipate_overshoot"
+        android:fromXDelta="20%p"
+        android:toXDelta="0%p"
+        android:duration="1000" />
 
 </set>
