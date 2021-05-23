@@ -113,6 +113,8 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.game_win,soundId);
         soundId = soundPool.load(this, R.raw.email_sent, 1);
         soundMap.put(R.raw.email_sent,soundId);
+        soundId = soundPool.load(this, R.raw.aler_message, 1);
+        soundMap.put(R.raw.aler_message,soundId);
     }
 
     @Override

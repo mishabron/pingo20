@@ -11,11 +11,11 @@
         android:toYScale="2.2"/>
 
     <rotate
-        android:duration="3000"
+        android:duration="6000"
         android:startOffset="600"
         android:fromDegrees="0"
         android:interpolator="@android:anim/cycle_interpolator"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:toDegrees="1080" />
+        android:toDegrees="2160" />
 </set>

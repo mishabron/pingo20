@@ -359,6 +359,7 @@ public class GameActivity extends PingoActivity {
         flippToGo();
 
         //alert message
+        playSound(R.raw.aler_message);
         ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
         Glide.with(this).load(R.drawable.alert_open).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(messageAlert);
         Animation fromRight = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_right);
@@ -1099,6 +1100,7 @@ public class GameActivity extends PingoActivity {
                 alert = R.drawable.alert_bonus;
             }
             if(alert != 0) {
+                playSound(R.raw.aler_message);
                 ImageView messageAlert = (ImageView) findViewById(R.id.messageAlert);
                 Glide.with(this).load(alert).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(messageAlert);
                 Animation fromRight = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_right);

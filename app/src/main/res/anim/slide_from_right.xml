@@ -6,6 +6,6 @@
         android:interpolator="@android:interpolator/anticipate_overshoot"
         android:fromXDelta="20%p"
         android:toXDelta="0%p"
-        android:duration="1000" />
+        android:duration="500" />
 
 </set>
