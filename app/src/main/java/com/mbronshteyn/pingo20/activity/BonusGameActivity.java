@@ -220,7 +220,6 @@ public class BonusGameActivity extends PingoActivity {
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
             fingerTimer.start();
-
         }
     }
 
