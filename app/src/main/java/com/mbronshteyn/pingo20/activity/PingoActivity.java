@@ -39,6 +39,7 @@ public class PingoActivity extends AppCompatActivity {
     public static float volume =1;
     protected static boolean isOKToInit = true;
     protected static boolean luckySeven = false;
+    protected static boolean fingerred = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

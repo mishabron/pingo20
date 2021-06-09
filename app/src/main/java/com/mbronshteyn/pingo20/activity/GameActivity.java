@@ -83,8 +83,8 @@ public class GameActivity extends PingoActivity {
     private ImageView buttonCounter;
     private AnimatorSet mSetLeftIn;
     private AnimatorSet mSetRightOut;
-    List<Integer> closedPingos  = new ArrayList<>();;
-    List<Integer> playPingos;
+    private List<Integer> closedPingos  = new ArrayList<>();;
+    private List<Integer> playPingos;
     private boolean flippedToGo;
     private Iterator<Integer> pingoIterator;
     private HashMap<Integer, Integer> buttonMap;
@@ -306,7 +306,7 @@ public class GameActivity extends PingoActivity {
 
         playPingos = loadPingosInPlay(true);
         List<Integer> winPingos = loadPingosInPlay(false);
-        initPingos(playPingos,Game.attemptCounter != 0);
+        initPingos(playPingos,Game.attemptCounter != 0 && !fingerred);
         initPingos(winPingos, false);
         for(Integer playPingo: playPingos){
             closedPingos.add(playPingo);
@@ -314,6 +314,10 @@ public class GameActivity extends PingoActivity {
     }
 
     private void initPingos(List<Integer> playPingos, boolean canHaveFinger) {
+
+        if (canHaveFinger){
+            fingerred = true;
+        }
 
         int i = 0;
         for(Integer pingo: playPingos){
@@ -980,6 +984,12 @@ public class GameActivity extends PingoActivity {
 
     public void flippToCounterLeft() {
 
+        ImageView plusOne = (ImageView) findViewById(R.id.popup_logo1);
+        Glide.with(this).load(R.drawable.plus1).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(plusOne);
+        plusOne.setVisibility(View.VISIBLE);
+        Animation zoomPlusOne = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in_fade_plus);
+        plusOne.startAnimation(zoomPlusOne);
+
         playSound(R.raw.up_plus_one2);
 
         GameActivity app = this;
@@ -995,6 +1005,10 @@ public class GameActivity extends PingoActivity {
             }
             @Override
             public void onAnimationEnd(Animator animation) {
+
+                plusOne.setVisibility(View.INVISIBLE);
+                plusOne.clearAnimation();
+
                 Glide.with(app).load(buttonMap.get(Game.attemptCounter)).into(buttonCounter);
 
                 AnimatorSet fadeOut = (AnimatorSet) AnimatorInflater.loadAnimator(app, R.anim.alpha_out);
