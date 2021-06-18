@@ -215,7 +215,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoNoWin();
+            gotoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -287,7 +287,7 @@ public class BonusGameActivity extends PingoActivity {
         call.enqueue(new Callback<CardDto>() {
             @Override
             public void onResponse(Call<CardDto> call, Response<CardDto> response) {
-                new Handler().postDelayed(()->{processResponse(response);},4000);
+                new Handler().postDelayed(()->{processResponse(response);},5000);
             }
             @Override
             public void onFailure(Call<CardDto> call, Throwable t) {
