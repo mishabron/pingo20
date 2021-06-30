@@ -1,6 +1,7 @@
 package com.mbronshteyn.pingo20.activity;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -104,13 +105,18 @@ public class BonusSpinActivity extends PingoActivity{
         super.onPostCreate(savedInstanceState);
         new Handler().postDelayed(() -> { transitionLayout(); }, 500);
         Game.bonusHit = Bonus.SUPERPIN;
-        new Handler().postDelayed(()->{ playInBackground(R.raw.bonusspin_background);},0);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Handler().postDelayed(()->{ playInBackgroundIfNotPlaying(R.raw.bonusspin_background);},0);
     }
 
     @Override
@@ -136,16 +142,14 @@ public class BonusSpinActivity extends PingoActivity{
         transition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(@NonNull Transition transition) {
-                searchLights();
             }
 
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
-
+                searchLights();
                 ImageView spinBannerw = (ImageView) findViewById(R.id.spinBannerw);
                 Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
                 spinBannerw.startAnimation(zoomIntAnimation);
-
                 new Handler().postDelayed(()->{transitionToPlay();},500);
             }
 
@@ -283,6 +287,7 @@ public class BonusSpinActivity extends PingoActivity{
     public void onSpinResultEvent(SpinResultEvent event){
 
         int sound = 0;;
+        int delay = 3000;
 
         switch(event.getResult()){
             case RIGHT:
@@ -293,6 +298,7 @@ public class BonusSpinActivity extends PingoActivity{
                 searchLights();
                 sound = R.raw.right_number_winner;
                 Game.guessedCount++;
+                delay = 6500;
                 break;
             case WRONG:
                 sound = R.raw.wrong_try_again;
@@ -312,13 +318,15 @@ public class BonusSpinActivity extends PingoActivity{
 
         //end of bonus game
         if(pingosInPlay.isEmpty()){
-            new Handler().postDelayed(()->{gotoMainGame();},3000);
+            new Handler().postDelayed(()->{gotoMainGame();},delay);
         }
     }
 
     private void gotoMainGame() {
+        isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-        startActivity(intent);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
+        startActivity(intent, options.toBundle());
         Activity activity = (Activity) BonusSpinActivity.this;
         activity.finish();
         Runtime.getRuntime().gc();
@@ -386,7 +394,7 @@ public class BonusSpinActivity extends PingoActivity{
         cardHitDto.setHit2(pingo2.getCurrentPingo());
         cardHitDto.setHit3(pingo3.getCurrentPingo());
         cardHitDto.setHit4(pingo4.getCurrentPingo());
-        cardHitDto.setBonus(Game.bonusHit);
+        cardHitDto.setBonus(Bonus.SUPERPIN);
         cardHitDto.setBonusHit(Game.bonusHit != null);
 
         //reset bonus

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayoutGame"
+    android:id="@+id/rootCoordinatorLayoutGame"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical|center_horizontal"
@@ -12,22 +11,9 @@
         android:id="@+id/root"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayoutGame"
-        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
-        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"/>
-
-    <ImageView
-        android:id="@+id/mainBanner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:scaleType="fitCenter"
-        android:background="@drawable/banner"
-        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayoutGame"
-        app:layout_constraintLeft_toLeftOf="@+id/coordinatorLayoutGame"
-        app:layout_constraintRight_toRightOf="@+id/coordinatorLayoutGame"/>
-
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 
 </android.support.constraint.ConstraintLayout>

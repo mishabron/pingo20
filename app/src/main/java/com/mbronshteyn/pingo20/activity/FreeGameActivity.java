@@ -1,13 +1,16 @@
 package com.mbronshteyn.pingo20.activity;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
@@ -30,20 +33,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FreeGameActivity extends PingoActivity{
 
-    private Application context;
     private Retrofit retrofit;
     private AuthinticateDto dto;
-    private FreeGameActivity activity;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_free_game);
-        
-        context = getApplication();
-        activity = this;
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(PingoRemoteService.baseUrl)
@@ -54,55 +51,54 @@ public class FreeGameActivity extends PingoActivity{
         dto.setCardNumber(card.getCardNumber());
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
+
+        scaleUi();
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
 
-        setContentView(R.layout.activity_free_game);
+        ImageView starts = (ImageView) findViewById(R.id.freeGameStars);
+        AnimationDrawable starsAnimation = (AnimationDrawable) starts.getDrawable();
+        starsAnimation.start();
 
-        ImageView freeGameBaloon = (ImageView) findViewById(R.id.freegame_baloon);
-        freeGameBaloon.setImageDrawable(getResources().getDrawable(R.drawable.freegame_animation,null));
         ImageView exl = (ImageView) findViewById(R.id.excl);
 
-        //animation delay
         new Handler().postDelayed(()->{
             ImageView glass = (ImageView) findViewById(R.id.glass);
             glass.setVisibility(View.VISIBLE);
             Animation glassAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_inglass);
             glass.startAnimation(glassAnimation);
+        },500);
 
-            freeGameBaloon.setVisibility(View.VISIBLE);
-            Animation freeGameBaloonAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-            freeGameBaloonAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    glass.setVisibility(View.INVISIBLE);
-                    AnimationDrawable freeGameAnimation = (AnimationDrawable) freeGameBaloon.getDrawable();
-                    freeGameAnimation.start();
-                    long totalDuration = 0;
-                    for(int i = 0; i< freeGameAnimation.getNumberOfFrames();i++){
-                        totalDuration += freeGameAnimation.getDuration(i);
-                    }
-                    freeGameAnimation.start();
-                    new Handler().postDelayed(()->{
-                        exl.setVisibility(View.VISIBLE);
-                        freeGameBaloon.setImageDrawable(getResources().getDrawable(R.drawable.freegame_baloon_noexlm,null));
-                        RotateAnimation rotateSpin = new RotateAnimation(0, -360*3, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                        rotateSpin.setDuration(1000);
-                        exl.startAnimation(rotateSpin);
-                    },totalDuration);
-                }
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-            });
-            freeGameBaloon.startAnimation(freeGameBaloonAnimation);
-        },300);
+        new Handler().postDelayed(()->{ playSound(R.raw.free_game);},1000);
 
         new Handler().postDelayed(()->{
+
+            ImageView logo3 = (ImageView) findViewById(R.id.freegame_baloon);
+            logo3.setVisibility(View.VISIBLE);
+            Animation logoPopup3 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_rotate_bonus);
+            logoPopup3.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    exl.setVisibility(View.VISIBLE);
+                    RotateAnimation rotateSpin = new RotateAnimation(0, -360*3, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotateSpin.setDuration(1000);
+                    exl.startAnimation(rotateSpin);
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            logo3.startAnimation(logoPopup3);
+        },850);
+
+        new Handler().postDelayed(()->{
+
             final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 
             Call<CardDto> call = service.authinticate(dto);
@@ -111,14 +107,12 @@ public class FreeGameActivity extends PingoActivity{
                 public void onResponse(Call<CardDto> call, Response<CardDto> response) {
                     processResponse(response);
                 }
-
                 @Override
                 public void onFailure(Call<CardDto> call, Throwable t) {
                     playSound(R.raw.error_short);
                 }
             });
-            
-        },5000);
+        },6000);
     }
 
     private void processResponse(Response<CardDto> response) {
@@ -138,6 +132,7 @@ public class FreeGameActivity extends PingoActivity{
                     Intent intent = new Intent(getApplicationContext(), GameActivity.class);
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    Activity activity = (Activity) FreeGameActivity.this;
                     activity.finish();
                     Runtime.getRuntime().gc();
                 }
@@ -145,8 +140,55 @@ public class FreeGameActivity extends PingoActivity{
                 public void onAnimationRepeat(Animation animation) {}
             });
             glass.startAnimation(glassAnimation);
-        }else{
-
         }
+    }
+
+    public void scaleUi() {
+
+        // scale the screen
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int height = metrics.heightPixels;
+        int width = metrics.widthPixels;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.free_game_background, options);
+        float bmapHeight = options.outHeight;
+        float bmapWidth  = options.outWidth;
+
+        float wRatio = width / bmapWidth;
+        float hRatio = height / bmapHeight;
+
+        float ratioMultiplier = wRatio;
+        // Untested conditional though I expect this might work for landscape
+        // mode
+        if (hRatio < wRatio) {
+            ratioMultiplier = hRatio;
+        }
+
+        int newBmapWidth = (int) (bmapWidth * ratioMultiplier);
+        int newBmapHeight = (int) (bmapHeight * ratioMultiplier);
+
+        //scale background
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.freeGameLayout);
+        ImageView iView = (ImageView) findViewById(R.id.freeGameBacgroundimage);
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+        set.constrainHeight(iView.getId(), newBmapHeight);
+        set.constrainWidth(iView.getId(), newBmapWidth);
+        set.applyTo(layout);
+
+        //scale popup
+        ImageView freeGame = (ImageView) findViewById(R.id.freegame_baloon);
+        ViewGroup.LayoutParams freeGameParams = freeGame.getLayoutParams();
+        freeGameParams.width =(int)(newBmapWidth*0.7875F);
+        freeGameParams.height =(int)(newBmapHeight*0.3413F);
+
+        //scale stars
+        ImageView freeGameStars = (ImageView) findViewById(R.id.freeGameStars);
+        ViewGroup.LayoutParams freeGameStarsParams = freeGameStars.getLayoutParams();
+        freeGameStarsParams.width =(int)(newBmapWidth);
+        freeGameStarsParams.height =(int)(newBmapHeight);
     }
 }

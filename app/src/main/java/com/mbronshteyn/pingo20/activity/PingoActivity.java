@@ -26,16 +26,20 @@ import java.util.Map;
 
 public class PingoActivity extends AppCompatActivity {
 
-    protected MediaPlayer mediaPlayer1;
-    protected MediaPlayer mediaPlayer2;
+    public MediaPlayer mediaPlayer1 = new MediaPlayer();;
+    public MediaPlayer mediaPlayer2 = new MediaPlayer();
     protected static CardDto card;
     protected ImageView rightSmallBaloon;
-    protected SoundPool soundPool;
-    protected static Map<Integer,Integer> soundMap = new HashMap<>();
-    protected static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
+    protected static SoundPool soundPool;
+    public static Map<Integer,Integer> soundMap = new HashMap<>();
+    public static Map<Integer,Integer> soundsInPlayMap = new HashMap<>();
     public ImageView progressCounter;
     public AnimationDrawable dotsProgress;
     private boolean playingBackground;
+    public static float volume =1;
+    protected static boolean isOKToInit = true;
+    protected static boolean luckySeven = false;
+    protected static boolean fingerred = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,16 @@ public class PingoActivity extends AppCompatActivity {
         //load all sounds
         int soundId = soundPool.load(this, R.raw.button, 1);
         soundMap.put(R.raw.button,soundId);
+        soundId = soundPool.load(this, R.raw.up_plus_one2, 1);
+        soundMap.put(R.raw.up_plus_one2,soundId);
+        soundId = soundPool.load(this, R.raw.free_game, 1);
+        soundMap.put(R.raw.free_game,soundId);
+        soundId = soundPool.load(this, R.raw.pop_login, 1);
+        soundMap.put(R.raw.pop_login,soundId);
+        soundId = soundPool.load(this, R.raw.wheel_spinning, 1);
+        soundMap.put(R.raw.wheel_spinning,soundId);
+        soundId = soundPool.load(this, R.raw.screen_down, 1);
+        soundMap.put(R.raw.screen_down,soundId);
         soundId = soundPool.load(this, R.raw.error_short, 1);
         soundMap.put(R.raw.error_short,soundId);
         soundId = soundPool.load(this, R.raw.comix_page_short, 1);
@@ -56,8 +70,6 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.right_number,soundId);
         soundId = soundPool.load(this, R.raw.short_button_turn, 1);
         soundMap.put(R.raw.short_button_turn,soundId);
-        soundId = soundPool.load(this, R.raw.wheel_spinning, 1);
-        soundMap.put(R.raw.wheel_spinning,soundId);
         soundId = soundPool.load(this, R.raw.wheel_stop, 1);
         soundMap.put(R.raw.wheel_stop,soundId);
         soundId = soundPool.load(this, R.raw.wrong_number, 1);
@@ -92,15 +104,36 @@ public class PingoActivity extends AppCompatActivity {
         soundMap.put(R.raw.spin,soundId);
         soundId = soundPool.load(this, R.raw.half_way, 1);
         soundMap.put(R.raw.half_way,soundId);
+        soundId = soundPool.load(this, R.raw.atm, 1);
+        soundMap.put(R.raw.atm,soundId);
+        soundId = soundPool.load(this, R.raw.card_check_win3, 1);
+        soundMap.put(R.raw.card_check_win3,soundId);
+        soundId = soundPool.load(this, R.raw.gotobonus, 1);
+        soundMap.put(R.raw.gotobonus,soundId);
+        soundId = soundPool.load(this, R.raw.game_win, 1);
+        soundMap.put(R.raw.game_win,soundId);
+        soundId = soundPool.load(this, R.raw.email_sent, 1);
+        soundMap.put(R.raw.email_sent,soundId);
+        soundId = soundPool.load(this, R.raw.aler_message, 1);
+        soundMap.put(R.raw.aler_message,soundId);
+    }
 
+    @Override
+    public void onBackPressed() {
+        isOKToInit = false;
+        stopPplayInBackground();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopPplayInBackground();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        soundPool.release();
-        soundPool = null;
-
         if(mediaPlayer1 != null) {
             mediaPlayer1.release();
             mediaPlayer1 = null;
@@ -109,6 +142,11 @@ public class PingoActivity extends AppCompatActivity {
             mediaPlayer2.release();
             mediaPlayer2 = null;
         }
+    }
+
+    protected void exitApp(){
+        soundPool.release();
+        soundPool = null;
     }
 
     protected void stopPlaySound(int sound) {
@@ -123,7 +161,7 @@ public class PingoActivity extends AppCompatActivity {
     protected void playSound(int sound) {
 
         Integer soundId = soundMap.get(sound);
-        int soundPlaying = soundPool.play(soundId, 1, 1, 0, 0, 1);
+        int soundPlaying = soundPool.play(soundId, volume, volume, 0, 0, 1);
         soundsInPlayMap.put(sound,soundPlaying);
     }
 
@@ -138,6 +176,8 @@ public class PingoActivity extends AppCompatActivity {
         final AssetFileDescriptor afd = getResources().openRawResourceFd(sound);
         mediaPlayer1 = MediaPlayer.create(this,sound);
         mediaPlayer2 = MediaPlayer.create(this,sound);
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
 
         mediaPlayer1.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -182,10 +222,10 @@ public class PingoActivity extends AppCompatActivity {
 
         playingBackground = false;
 
-        if(mediaPlayer1.isPlaying()){
+        if(mediaPlayer1 != null && mediaPlayer1.isPlaying()){
             mediaPlayer1.stop();
         }
-        if(mediaPlayer2.isPlaying()){
+        if(mediaPlayer2 != null && mediaPlayer2.isPlaying()){
             mediaPlayer2.stop();
         }
     }
@@ -201,13 +241,6 @@ public class PingoActivity extends AppCompatActivity {
                 ballon.startAnimation(zoomIntAnimationOut);
                 ballon.setVisibility(View.INVISIBLE);
         }, duration);
-    }
-
-    protected void popBaloon(final ImageView ballon){
-
-        ballon.setVisibility(View.VISIBLE);
-        Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
-        ballon.startAnimation(zoomIntAnimation);
     }
 
     protected boolean isWinningCard(){
@@ -309,21 +342,29 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     public void muteAudio(){
+        volume  = 0;
+        Collection<Integer> soundsInPlay = soundsInPlayMap.values();
+        for(Integer sound: soundsInPlay){
+            soundPool.stop(sound);
+        }
         Collection<Integer> sounds = soundMap.values();
         for(Integer sound: sounds){
-            soundPool.setVolume(sound,0,0);
+            soundPool.setVolume(sound,volume,volume);
         }
-        mediaPlayer1.setVolume(0,0);
-        mediaPlayer2.setVolume(0,0);
+        mediaPlayer1.stop();
+        mediaPlayer2.stop();
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
     }
 
     public void unMuteAudio(){
+        volume = 1;
         Collection<Integer> sounds = soundMap.values();
         for(Integer sound: sounds) {
-            soundPool.setVolume(sound, 1, 1);
+            soundPool.setVolume(sound, volume, volume);
         }
-        mediaPlayer1.setVolume(1,1);
-        mediaPlayer2.setVolume(1,1);
+        mediaPlayer1.setVolume(volume,volume);
+        mediaPlayer2.setVolume(volume,volume);
     }
-    
+
 }

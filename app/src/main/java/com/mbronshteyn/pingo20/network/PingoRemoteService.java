@@ -3,6 +3,7 @@ package com.mbronshteyn.pingo20.network;
 import com.mbronshteyn.gameserver.dto.game.AuthinticateDto;
 import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.CardHitDto;
+import com.mbronshteyn.gameserver.dto.game.HistoryDto;
 import com.mbronshteyn.gameserver.dto.game.WinnerEmailDto;
 
 import retrofit2.Call;
@@ -13,7 +14,7 @@ import retrofit2.http.Path;
 
 public interface PingoRemoteService {
 
-    public static String baseUrl = "http://ec2-18-219-33-9.us-east-2.compute.amazonaws.com:8084";
+    public static String baseUrl = "http://161.35.182.62:8084";
 
     @POST("/pingo/Game/authinticate")
     Call<CardDto> authinticate(@Body AuthinticateDto authinticateDto);
@@ -26,5 +27,11 @@ public interface PingoRemoteService {
 
     @POST("/pingo/Game/sendEmail")
     Call<Void> saveEmail(@Body WinnerEmailDto winnerEmailDto);
+
+    @POST("/pingo/Game/history")
+    Call<HistoryDto> getHistory(@Body AuthinticateDto authinticateDto);
+
+    @POST("/pingo/Game/freeAttempt")
+    Call<CardDto> saveFreeAttempt(@Body AuthinticateDto authinticateDto);
 
 }

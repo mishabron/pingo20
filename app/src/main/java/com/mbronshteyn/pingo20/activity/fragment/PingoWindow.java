@@ -158,6 +158,7 @@ public class PingoWindow extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        fingerTimer.cancel();
     }
 
     @Override
@@ -325,7 +326,7 @@ public class PingoWindow extends Fragment {
                 if(pingoState.equals(PingoState.WIN)){
                     currentPingo = guessedNumber;
                     wheel.setCurrentItem(getNumberIndex(currentPingo),false);
-                    Glide.with(getActivity()).load(R.drawable.right_green_expl).diskCacheStrategy( DiskCacheStrategy.NONE )
+                    Glide.with(getActivity()).load(R.drawable.green_window).diskCacheStrategy( DiskCacheStrategy.NONE )
                             .skipMemoryCache( true ).into(windowBackground);
                     disableWindow();
                     fishka.setImageResource(greenFishkas[currentPingo]);
@@ -477,7 +478,7 @@ public class PingoWindow extends Fragment {
 
         if (event.getPingoNumber() == pingoNumber) {
 
-            int spinTiming = 7500;
+            int spinTiming = 6500;
 
             ViewGroup.LayoutParams pingoParams = mainView.getLayoutParams();
 
@@ -505,7 +506,7 @@ public class PingoWindow extends Fragment {
                 scrollingBackground.start();
                 windowBackground.setBackground(null);
                 scrollingBackground.setVisibility(View.VISIBLE);
-            },1500);
+            },1000);
 
             //stop spin
             new Handler().postDelayed(() -> {
