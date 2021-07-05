@@ -9,19 +9,6 @@
     tools:context=".activity.fragment.PingoWindow"
     android:layout_gravity="center_vertical|center_horizontal">
 
-    <com.q42.android.scrollingimageview.ScrollingImageView
-        android:id="@+id/scrolling_background"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        scrolling_image_view:speed="17dp"
-        scrolling_image_view:src="@drawable/spin1"
-        android:visibility="invisible"
-        android:rotation="-90"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <ImageView
         android:id="@+id/window_background"
         android:layout_width="match_parent"
