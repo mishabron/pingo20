@@ -417,7 +417,7 @@ public class LoginActivity extends PingoActivity {
                 TransitionManager.beginDelayedTransition(root, transition);
                 constraintSet.applyTo(root);
             }
-        }, 1500);
+        }, 750);
     }
 
     public void scaleUi(){

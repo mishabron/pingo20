@@ -94,6 +94,7 @@ public class GameActivity extends PingoActivity {
     private ConstraintLayout root;
     private AnimatorSet mSetRightOutLeft;
     private AnimatorSet mSetLeftInLeft;
+    private int playablePingos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -302,9 +303,8 @@ public class GameActivity extends PingoActivity {
 
     private void initState() {
 
-        playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
-
         playPingos = loadPingosInPlay(true);
+        playablePingos = playPingos.size();
         List<Integer> winPingos = loadPingosInPlay(false);
         initPingos(playPingos,Game.attemptCounter != 0 && !fingerred);
         initPingos(winPingos, false);
@@ -547,6 +547,10 @@ public class GameActivity extends PingoActivity {
         playSound(R.raw.wheel_stop);
         stopPlaySound(R.raw.wheel_spinning);
         spinning = false;
+        playablePingos--;
+        if(playablePingos == 0){
+            playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
+        }
     }
 
     @Subscribe
@@ -939,6 +943,9 @@ public class GameActivity extends PingoActivity {
             pingo2.showWinPin(Integer.parseInt(winPin.substring(1,2)));
             pingo3.showWinPin(Integer.parseInt(winPin.substring(2,3)));
             pingo4.showWinPin(Integer.parseInt(winPin.substring(3,4)));
+
+            stopPplayInBackground();
+
             new Handler().postDelayed(()->{
                 Intent intent = new Intent(getApplicationContext(), EndOfGameActivity.class);
                 startActivity(intent);
