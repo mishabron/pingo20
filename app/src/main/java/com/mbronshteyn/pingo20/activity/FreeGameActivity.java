@@ -95,7 +95,7 @@ public class FreeGameActivity extends PingoActivity{
                 }
             });
             logo3.startAnimation(logoPopup3);
-        },850);
+        },250);
 
         new Handler().postDelayed(()->{
 

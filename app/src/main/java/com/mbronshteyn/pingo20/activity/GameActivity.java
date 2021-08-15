@@ -63,7 +63,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -864,21 +863,21 @@ public class GameActivity extends PingoActivity {
         },100);
 
         int duration;
-        AtomicReference<Intent> intent  = new AtomicReference<>(new Intent());
+        Intent intent  = null;
         if(Game.attemptCounter == 0 && isWinningCard() && !card.isFreeGame()){
             duration = 1200;
-            intent.set(new Intent(getApplicationContext(), FreeGameActivity.class));
+            intent = new Intent(getApplicationContext(), FreeGameActivity.class);
         }
         else{
-            intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
+            intent = new Intent(getApplicationContext(), WinEmailActivity.class);
             duration = 10000;
             new Handler().postDelayed(()->{ doWinningFlash();},1000);
         }
 
+        Intent finalIntent = intent;
         new Handler().postDelayed(() -> {
-            startActivity(intent.get());
-            Activity activity = (Activity) context;
-            activity.finish();
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
+            startActivity(finalIntent, options.toBundle());
         }, duration);
     }
 
