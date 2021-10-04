@@ -494,7 +494,7 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator fishkaAnimation = ObjectAnimator.ofFloat(fishka,"rotationX", 0,7200);
+            ObjectAnimator fishkaAnimation = ObjectAnimator.ofFloat(fishka,"rotationX", 0,3600);
             fishkaAnimation.setDuration(7000);
             fishkaAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
 

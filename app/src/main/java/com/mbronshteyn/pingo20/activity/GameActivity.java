@@ -805,6 +805,28 @@ public class GameActivity extends PingoActivity {
             ChangeBounds transition = new ChangeBounds();
             transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
             transition.setDuration(1000);
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(@NonNull Transition transition) {
+                    //pop up dark overlay and bonus logo
+                    ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+                    Glide.with(context).clear(overlayBlue);
+                    Glide.with(context).load(R.drawable.bonus_spin_mainbackground).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+                    overlayBlue.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onTransitionEnd(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionCancel(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionPause(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionResume(@NonNull Transition transition) {
+                }
+            });
             TransitionManager.beginDelayedTransition(root, transition);
             constraintSet.applyTo(root);
 
