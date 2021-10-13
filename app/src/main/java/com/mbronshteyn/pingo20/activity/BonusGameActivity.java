@@ -377,6 +377,8 @@ public class BonusGameActivity extends PingoActivity {
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
         startActivity(intent, options.toBundle());
+        finish();
+        Runtime.getRuntime().gc();
     }
 
     public void spinPingos(){

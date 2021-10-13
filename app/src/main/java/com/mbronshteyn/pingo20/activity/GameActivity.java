@@ -196,6 +196,12 @@ public class GameActivity extends PingoActivity {
         });
 
         isOKToInit = true;
+
+        ImageView iView = (ImageView) findViewById(R.id.blueGameBacgroundimage);
+        Glide.with(this).load(R.drawable.main_background_blue).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
+
+        ImageView gameBacgroundimageView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        Glide.with(this).load(R.drawable.main_background).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(gameBacgroundimageView);
     }
 
     @Override
@@ -691,7 +697,8 @@ public class GameActivity extends PingoActivity {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
-            Activity activity = (Activity) context;
+            finish();
+            Runtime.getRuntime().gc();
         }, 6100);
     }
 
@@ -864,6 +871,8 @@ public class GameActivity extends PingoActivity {
             Intent intent = new Intent(getApplicationContext(), BonusSpinActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
+            finish();
+            Runtime.getRuntime().gc();
         }, 5500);
     }
 
