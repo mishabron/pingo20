@@ -250,7 +250,7 @@ public class BonusSpinActivity extends PingoActivity{
 
             //start finger timer
             ImageView instructionsPage = (ImageView) findViewById(R.id.instructionsPageBonus);
-            Glide.with(this).load(R.drawable.instruction_onuspin).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(instructionsPage);
+            Glide.with(this).load(R.drawable.instruction_bonuspin).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(instructionsPage);
             instructionsPage.setVisibility(View.VISIBLE);
             fingerButton.setEnabled(true);
             fingerTimer.start();

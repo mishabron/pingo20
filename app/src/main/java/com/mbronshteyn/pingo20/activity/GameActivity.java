@@ -560,16 +560,27 @@ public class GameActivity extends PingoActivity {
 
     @Subscribe
     public void onFingerTouch(StopPlayer event){
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        overlayBlue.setVisibility(View.INVISIBLE);
         stopPlaySound(event.getSound());
     }
 
     @Subscribe
     public void onFingerTap(FingerTap event){
+        if(event.getTapNumber() == 1) {
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(R.drawable.instruction_game).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+        }
         new Handler().postDelayed(()->{playSound(R.raw.knocking_on_glass);},100);
     }
 
     @Subscribe
     public void onPingoEventMessage(PingoEvent event) {
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        overlayBlue.setVisibility(View.INVISIBLE);
 
         int pingo = event.getPingoNumber();
         removeNumber(pingo);

@@ -252,7 +252,7 @@ public class PingoWindow extends Fragment {
         new Handler().postDelayed(()->{touchBackground.setEnabled(true);},totalDuration);
 
         //first tap
-        EventBus.getDefault().post(new FingerTap());
+        EventBus.getDefault().post(new FingerTap(1));
         fingerAnimation.start();
         new Handler().postDelayed(()->{
             if(play.getVisibility() == View.VISIBLE) {
@@ -266,7 +266,7 @@ public class PingoWindow extends Fragment {
         //second tap
         new Handler().postDelayed(()->{
             if(play.getVisibility() == View.VISIBLE) {
-                EventBus.getDefault().post(new FingerTap());
+                EventBus.getDefault().post(new FingerTap(2));
                 AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
                 rockplay.setTarget(play);
                 rockplay.setStartDelay(500);
