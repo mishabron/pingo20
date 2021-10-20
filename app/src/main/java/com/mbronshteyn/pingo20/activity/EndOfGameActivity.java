@@ -1,6 +1,5 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
+import com.mbronshteyn.pingo20.model.Game;
 
 public class EndOfGameActivity extends PingoActivity {
 
@@ -29,10 +29,9 @@ public class EndOfGameActivity extends PingoActivity {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("playAgain",true);
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                Activity activity = (Activity) context;
-                activity.finish();
             }
         });
 
@@ -40,11 +39,13 @@ public class EndOfGameActivity extends PingoActivity {
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exitApp();
-                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                homeIntent.addCategory( Intent.CATEGORY_HOME );
-                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
+                Game.exit = true;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("playAgain",false);
+                Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 finish();
             }
         });

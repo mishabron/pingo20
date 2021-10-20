@@ -99,6 +99,13 @@ public class BonusSpinActivity extends PingoActivity{
         scaleUi();
     }
 
+    public void onBackPressed() {
+        isOKToInit = true;
+        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
+        startActivity(intent, options.toBundle());
+    }
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -213,7 +220,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         ArrayList<Integer>  numbersPlayed = new ArrayList<>();
 
-        List<HitDto> hits = card.getHits();
+        List<HitDto> hits = Game.card.getHits();
         for(HitDto hit :hits){
             Integer playedNumber = null;
             switch(pingoNumber){
@@ -329,10 +336,10 @@ public class BonusSpinActivity extends PingoActivity{
     private void gotoMainGame() {
         isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
         startActivity(intent, options.toBundle());
         finish();
-        Runtime.getRuntime().gc();
     }
 
     private class FingerTimer extends CountDownTimer {
@@ -427,7 +434,7 @@ public class BonusSpinActivity extends PingoActivity{
         String message = headers.get("message");
 
         if(StringUtils.isEmpty(headers.get("errorCode"))) {
-            card = response.body();
+            Game.card = response.body();
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));

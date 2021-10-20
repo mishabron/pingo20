@@ -197,7 +197,7 @@ public class WinEmailActivity extends PingoActivity {
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 
         WinnerEmailDto winnerEmailDto = new WinnerEmailDto();
-        winnerEmailDto.setCardNumber(card.getCardNumber());
+        winnerEmailDto.setCardNumber(Game.card.getCardNumber());
         winnerEmailDto.setDeviceId(Game.devicedId);
         winnerEmailDto.setGame(Game.GAMEID);
         winnerEmailDto.setEmail(email.getText().toString());

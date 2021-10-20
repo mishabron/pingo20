@@ -30,7 +30,7 @@ public class MenuActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        double payouts[] = {card.getPayout1(),card.getPayout2(),card.getPayout3()};
+        double payouts[] = {Game.card.getPayout1(), Game.card.getPayout2(), Game.card.getPayout3()};
         rulesFragment = RulesFragment.newInstance(payouts);
         bonusesFragment = BonusesFragment.newInstance(null,null);
         contactFragment = ContactFragment.newInstance(null,null);
@@ -94,7 +94,7 @@ public class MenuActivity extends PingoActivity {
 
         AuthinticateDto dto = new AuthinticateDto();
         ;
-        dto.setCardNumber(card.getCardNumber());
+        dto.setCardNumber(Game.card.getCardNumber());
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
     }
