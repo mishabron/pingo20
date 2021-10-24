@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +20,7 @@ import com.mbronshteyn.pingo20.activity.fragment.ContactFragment;
 import com.mbronshteyn.pingo20.activity.fragment.RulesFragment;
 import com.mbronshteyn.pingo20.model.Game;
 
-public class MenuActivity extends PingoActivity {
+public class MenuActivity extends AppCompatActivity {
 
     private RulesFragment rulesFragment;
     private BonusesFragment bonusesFragment;
@@ -40,7 +41,6 @@ public class MenuActivity extends PingoActivity {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isOKToInit = false;
                 finish();
             }
         });
@@ -101,7 +101,6 @@ public class MenuActivity extends PingoActivity {
 
     @Override
     public void onBackPressed() {
-        isOKToInit = false;
         finish();
     }
 

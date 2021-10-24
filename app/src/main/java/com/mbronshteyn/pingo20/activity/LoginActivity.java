@@ -149,13 +149,6 @@ public class LoginActivity extends PingoActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        moveTaskToBack(true);
-        System.exit(1);
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);

@@ -99,13 +99,6 @@ public class BonusSpinActivity extends PingoActivity{
         scaleUi();
     }
 
-    public void onBackPressed() {
-        isOKToInit = true;
-        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
-        startActivity(intent, options.toBundle());
-    }
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -339,7 +332,6 @@ public class BonusSpinActivity extends PingoActivity{
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
         startActivity(intent, options.toBundle());
-        finish();
     }
 
     private class FingerTimer extends CountDownTimer {

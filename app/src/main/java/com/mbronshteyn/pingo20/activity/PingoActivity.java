@@ -117,13 +117,6 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        isOKToInit = false;
-        stopPplayInBackground();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         stopPplayInBackground();
@@ -140,6 +133,15 @@ public class PingoActivity extends AppCompatActivity {
             mediaPlayer2.release();
             mediaPlayer2 = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopPplayInBackground();
+        moveTaskToBack(true);
+        exitApp();
+        System.exit(1);
     }
 
     protected void exitApp(){

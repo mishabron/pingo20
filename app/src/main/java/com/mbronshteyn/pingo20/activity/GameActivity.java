@@ -204,13 +204,6 @@ public class GameActivity extends PingoActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        moveTaskToBack(true);
-        System.exit(1);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 

@@ -128,14 +128,6 @@ public class BonusGameActivity extends PingoActivity {
         scaleUi();
     }
 
-    public void onBackPressed() {
-        isOKToInit = true;
-        Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
-        startActivity(intent, options.toBundle());
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -277,8 +269,6 @@ public class BonusGameActivity extends PingoActivity {
         AnimatorSet sevenAnim3 = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.anim.seven_rotation_first);
         sevenAnim3.setTarget(seven3);
         sevenAnim3.start();
-
-        //Game.bonusHit = Bonus.BONUSPIN;
 
         //update free attempt
         Retrofit retrofit = new Retrofit.Builder()

@@ -11,7 +11,6 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
-import com.mbronshteyn.pingo20.model.Game;
 
 public class SplashActivity extends PingoActivity {
 
@@ -30,19 +29,12 @@ public class SplashActivity extends PingoActivity {
 
         super.onResume();
 
-        if(Game.exit){
-            exitApp();
-            finish();
-            System.exit(0);
-        }
-        else {
-            new Handler().postDelayed(() -> {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                intent.putExtras(new Bundle());
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this);
-                startActivity(intent, options.toBundle());
-            }, 5000);
-        }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtras(new Bundle());
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this);
+            startActivity(intent, options.toBundle());
+        }, 5000);
     }
 
     public void scaleUi() {
