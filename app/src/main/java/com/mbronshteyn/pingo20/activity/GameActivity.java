@@ -22,6 +22,7 @@ import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
@@ -206,6 +207,8 @@ public class GameActivity extends PingoActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         clearBonusSplash();
         clearBonus777Splash();

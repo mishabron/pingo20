@@ -494,14 +494,20 @@ public class PingoWindow extends Fragment {
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
+
             ObjectAnimator fishkaAnimation = ObjectAnimator.ofFloat(fishka,"rotationX", 0,3600);
             fishkaAnimation.setDuration(7000);
             fishkaAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
+
+            ObjectAnimator spinAnimation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
+            spinAnimation.setDuration(4000);
+            spinAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
 
             //spin cycle
             windowBackground.setBackgroundResource(R.drawable.spin0);
             new Handler().postDelayed(()->{
                 fishkaAnimation.start();
+                spinAnimation.start();
             },0);
 
             //zoom in spin number
