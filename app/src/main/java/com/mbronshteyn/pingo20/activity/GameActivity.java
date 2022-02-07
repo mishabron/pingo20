@@ -3,7 +3,6 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -23,6 +22,7 @@ import android.support.v7.content.res.AppCompatResources;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.AnticipateOvershootInterpolator;
@@ -63,7 +63,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -94,6 +93,7 @@ public class GameActivity extends PingoActivity {
     private ConstraintLayout root;
     private AnimatorSet mSetRightOutLeft;
     private AnimatorSet mSetLeftInLeft;
+    private int playablePingos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,16 +104,16 @@ public class GameActivity extends PingoActivity {
 
         root = findViewById(R.id.rootCoordinatorLayoutGame);
 
-        if(card.isFreeGame()){
-            Game.attemptCounter = 3 - card.getNonBonusHits().size();
+        if(Game.card.isFreeGame()){
+            Game.attemptCounter = 3 - Game.card.getNonBonusHits().size();
             ImageView freeGame = (ImageView) findViewById(R.id.free_game);
             freeGame.setVisibility(View.VISIBLE);
         }
-        else if(card.isFreeAttempt() && !luckySeven){
-            Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
+        else if(Game.card.isFreeAttempt() && !luckySeven){
+            Game.attemptCounter = 4 - Game.card.getNonBonusHits().size() +1;
         }
         else {
-            Game.attemptCounter = 4 - card.getNonBonusHits().size();
+            Game.attemptCounter = 4 - Game.card.getNonBonusHits().size();
         }
 
         context = this;
@@ -196,25 +196,28 @@ public class GameActivity extends PingoActivity {
         });
 
         isOKToInit = true;
-    }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        moveTaskToBack(true);
-        System.exit(1);
+        ImageView iView = (ImageView) findViewById(R.id.blueGameBacgroundimage);
+        Glide.with(this).load(R.drawable.main_background_blue).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iView);
+
+        ImageView gameBacgroundimageView = (ImageView) findViewById(R.id.gameBacgroundimageView);
+        Glide.with(this).load(R.drawable.main_background).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(gameBacgroundimageView);
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        clearBonusSplash();
+        clearBonus777Splash();
 
         if(isWinningCard() && Game.attemptCounter != 0 ){
             new Handler().postDelayed(() -> {transitionLayout();}, 7100);
             new Handler().postDelayed(()->{processWin(1);},14000);
         }
-        else if(card.isFreeGame() || luckySeven){
+        else if(Game.card.isFreeGame() || luckySeven){
             new Handler().postDelayed(() -> {transitionLayout();}, 1000);
         }
         else if(isOKToInit ){
@@ -279,7 +282,7 @@ public class GameActivity extends PingoActivity {
                 new Handler().postDelayed(() -> {initState(); }, 100);
                 if(luckySeven){
                     luckySeven = false;
-                    Game.attemptCounter = 4 - card.getNonBonusHits().size() +1;
+                    Game.attemptCounter = 4 - Game.card.getNonBonusHits().size() +1;
                     new Handler().postDelayed(() -> {flippToCounterLeft();}, 4000);
                 }
             }
@@ -302,9 +305,8 @@ public class GameActivity extends PingoActivity {
 
     private void initState() {
 
-        playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
-
         playPingos = loadPingosInPlay(true);
+        playablePingos = playPingos.size();
         List<Integer> winPingos = loadPingosInPlay(false);
         initPingos(playPingos,Game.attemptCounter != 0 && !fingerred);
         initPingos(winPingos, false);
@@ -469,7 +471,7 @@ public class GameActivity extends PingoActivity {
         String message = headers.get("message");
 
         if(StringUtils.isEmpty(headers.get("errorCode"))) {
-            card = response.body();
+            Game.card = response.body();
             pingoIterator = playPingos.iterator();
             Integer activeWindow = pingoIterator.next();
             playSpingSound();
@@ -492,7 +494,7 @@ public class GameActivity extends PingoActivity {
 
         ArrayList<Integer>  numbersPlayed = new ArrayList<>();
 
-        List<HitDto> hits = card.getHits();
+        List<HitDto> hits = Game.card.getHits();
         for(HitDto hit :hits){
             Integer playedNumber = null;
             switch(pingoNumber){
@@ -547,20 +549,35 @@ public class GameActivity extends PingoActivity {
         playSound(R.raw.wheel_stop);
         stopPlaySound(R.raw.wheel_spinning);
         spinning = false;
+        playablePingos--;
+        if(playablePingos == 0){
+            playInBackgroundIfNotPlaying(R.raw.main_long_minus10);
+        }
     }
 
     @Subscribe
     public void onFingerTouch(StopPlayer event){
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        overlayBlue.setVisibility(View.INVISIBLE);
         stopPlaySound(event.getSound());
     }
 
     @Subscribe
     public void onFingerTap(FingerTap event){
+        if(event.getTapNumber() == 1) {
+            ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+            Glide.with(context).clear(overlayBlue);
+            Glide.with(this).load(R.drawable.instruction_game).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+            overlayBlue.setVisibility(View.VISIBLE);
+        }
         new Handler().postDelayed(()->{playSound(R.raw.knocking_on_glass);},100);
     }
 
     @Subscribe
     public void onPingoEventMessage(PingoEvent event) {
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        overlayBlue.setVisibility(View.INVISIBLE);
 
         int pingo = event.getPingoNumber();
         removeNumber(pingo);
@@ -602,7 +619,7 @@ public class GameActivity extends PingoActivity {
     public void winNumber(GuessedNumberEvent event){
 
         int delay = 0;
-        if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !card.isFreeGame()) {
+        if (Game.guessedCount == 2 && Game.attemptCounter > 0 && !Game.card.isFreeGame()) {
             doHalfWayThere();
             delay = 2000;
         }
@@ -632,7 +649,7 @@ public class GameActivity extends PingoActivity {
                 break;
         }
 
-        if(slideNo != 0 && !card.isFreeGame()) {
+        if(slideNo != 0 && !Game.card.isFreeGame()) {
             ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
             Glide.with(context).clear(overlayBlue);
             Glide.with(this).load(slideNo).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
@@ -688,7 +705,6 @@ public class GameActivity extends PingoActivity {
             Intent intent = new Intent(getApplicationContext(), BonusGameActivity.class);
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
             startActivity(intent, options.toBundle());
-            Activity activity = (Activity) context;
         }, 6100);
     }
 
@@ -733,7 +749,7 @@ public class GameActivity extends PingoActivity {
         //right number
         else {
             //half there popup for non free game
-            if(!card.isFreeGame() && Game.guessedCount == 2 && Game.attemptCounter > 0){
+            if(!Game.card.isFreeGame() && Game.guessedCount == 2 && Game.attemptCounter > 0){
                 duration = 9000;
             }
             //last guessed number when game is won / not frre game
@@ -772,10 +788,10 @@ public class GameActivity extends PingoActivity {
                     balance.setTextColor(Color.WHITE);
                     balance.setText(getCardReward());
                     EventBus.getDefault().post(new InitBackgroundEvent());
-                    if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
+                    if(Game.card.getBonusPin() != null && Game.card.getBonusPin().equals(Bonus.BONUSPIN)){
                         gotoToBonus();
                     }
-                    else if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
+                    else if(Game.card.getBonusPin() != null && Game.card.getBonusPin().equals(Bonus.SUPERPIN)){
                         gotoToSpinBonus();
                     }
                     else {
@@ -802,6 +818,28 @@ public class GameActivity extends PingoActivity {
             ChangeBounds transition = new ChangeBounds();
             transition.setInterpolator(new AnticipateOvershootInterpolator(1.2f));
             transition.setDuration(1000);
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(@NonNull Transition transition) {
+                    //pop up dark overlay and bonus logo
+                    ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+                    Glide.with(context).clear(overlayBlue);
+                    Glide.with(context).load(R.drawable.bonus_spin_mainbackground).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(overlayBlue);
+                    overlayBlue.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onTransitionEnd(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionCancel(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionPause(@NonNull Transition transition) {
+                }
+                @Override
+                public void onTransitionResume(@NonNull Transition transition) {
+                }
+            });
             TransitionManager.beginDelayedTransition(root, transition);
             constraintSet.applyTo(root);
 
@@ -842,6 +880,43 @@ public class GameActivity extends PingoActivity {
         }, 5500);
     }
 
+    private void clearBonusSplash(){
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        overlayBlue.setVisibility(View.INVISIBLE);
+
+        ImageView logo1 = (ImageView) findViewById(R.id.popup_logo1);
+        Glide.with(context).clear(logo1);
+        logo1.setVisibility(View.INVISIBLE);
+
+        ImageView logo2 = (ImageView) findViewById(R.id.popup_logo2);
+        Glide.with(context).clear(logo2);
+        logo2.setVisibility(View.INVISIBLE);
+
+        ImageView logo3 = (ImageView) findViewById(R.id.popup_logo3);
+        Glide.with(context).clear(logo3);
+        logo3.setVisibility(View.INVISIBLE);
+    }
+
+    private void clearBonus777Splash(){
+
+        ImageView overlayBlue = (ImageView) findViewById(R.id.overlay_blue);
+        Glide.with(context).clear(overlayBlue);
+        overlayBlue.setVisibility(View.INVISIBLE);
+
+        ImageView logo = (ImageView) findViewById(R.id.popup_logo1);
+        Glide.with(context).clear(logo);
+        logo.setVisibility(View.INVISIBLE);
+
+        ImageView rays = (ImageView) findViewById(R.id.spiral);
+        rays.setVisibility(View.INVISIBLE);
+        rays.clearAnimation();
+
+        ImageView cherrys = (ImageView) findViewById(R.id.cherry);
+        cherrys.setVisibility(View.INVISIBLE);
+        cherrys.clearAnimation();
+    }
+
     private void processWin(int pingoNumber) {
 
         stopPplayInBackground();
@@ -860,21 +935,21 @@ public class GameActivity extends PingoActivity {
         },100);
 
         int duration;
-        AtomicReference<Intent> intent  = new AtomicReference<>(new Intent());
-        if(Game.attemptCounter == 0 && isWinningCard() && !card.isFreeGame()){
+        Intent intent  = null;
+        if(Game.attemptCounter == 0 && isWinningCard() && !Game.card.isFreeGame()){
             duration = 1200;
-            intent.set(new Intent(getApplicationContext(), FreeGameActivity.class));
+            intent = new Intent(getApplicationContext(), FreeGameActivity.class);
         }
         else{
-            intent.set(new Intent(getApplicationContext(), WinEmailActivity.class));
+            intent = new Intent(getApplicationContext(), WinEmailActivity.class);
             duration = 10000;
             new Handler().postDelayed(()->{ doWinningFlash();},1000);
         }
 
+        Intent finalIntent = intent;
         new Handler().postDelayed(() -> {
-            startActivity(intent.get());
-            Activity activity = (Activity) context;
-            activity.finish();
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GameActivity.this);
+            startActivity(finalIntent, options.toBundle());
         }, duration);
     }
 
@@ -892,7 +967,7 @@ public class GameActivity extends PingoActivity {
 
         TextView winBalance = (TextView) findViewById(R.id.win_amount);
         Typeface fontBalance = Typeface.createFromAsset(this.getAssets(), "fonts/showg.ttf");
-        int win = (int) card.getBalance();
+        int win = (int) Game.card.getBalance();
         winBalance.setText(String.valueOf(win)+" ");
         winBalance.setTypeface(fontBalance,Typeface.BOLD_ITALIC);
         Animation zoomIntAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.win_zoom_in);
@@ -939,9 +1014,14 @@ public class GameActivity extends PingoActivity {
             pingo2.showWinPin(Integer.parseInt(winPin.substring(1,2)));
             pingo3.showWinPin(Integer.parseInt(winPin.substring(2,3)));
             pingo4.showWinPin(Integer.parseInt(winPin.substring(3,4)));
+
+            stopPplayInBackground();
+
             new Handler().postDelayed(()->{
                 Intent intent = new Intent(getApplicationContext(), EndOfGameActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             },4000);
         }else{
             playSound(R.raw.error_short);
@@ -1107,10 +1187,10 @@ public class GameActivity extends PingoActivity {
         //generate alert on last window
         if(!pingoIterator.hasNext()){
             int alert = 0;
-            if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.BONUSPIN)){
+            if(Game.card.getBonusPin() != null && Game.card.getBonusPin().equals(Bonus.BONUSPIN)){
                 alert = R.drawable.alert_777;
             }
-            else if(card.getBonusPin() != null && card.getBonusPin().equals(Bonus.SUPERPIN)){
+            else if(Game.card.getBonusPin() != null && Game.card.getBonusPin().equals(Bonus.SUPERPIN)){
                 alert = R.drawable.alert_bonus;
             }
             if(alert != 0) {

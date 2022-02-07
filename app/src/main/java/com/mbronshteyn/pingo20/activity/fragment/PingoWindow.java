@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -45,7 +47,6 @@ import com.mbronshteyn.pingo20.events.WinAnimation;
 import com.mbronshteyn.pingo20.events.WinStarsEvent;
 import com.mbronshteyn.pingo20.model.Game;
 import com.mbronshteyn.pingo20.types.PingoState;
-import com.q42.android.scrollingimageview.ScrollingImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -251,7 +252,7 @@ public class PingoWindow extends Fragment {
         new Handler().postDelayed(()->{touchBackground.setEnabled(true);},totalDuration);
 
         //first tap
-        EventBus.getDefault().post(new FingerTap());
+        EventBus.getDefault().post(new FingerTap(1));
         fingerAnimation.start();
         new Handler().postDelayed(()->{
             if(play.getVisibility() == View.VISIBLE) {
@@ -265,7 +266,7 @@ public class PingoWindow extends Fragment {
         //second tap
         new Handler().postDelayed(()->{
             if(play.getVisibility() == View.VISIBLE) {
-                EventBus.getDefault().post(new FingerTap());
+                EventBus.getDefault().post(new FingerTap(2));
                 AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.rockplay);
                 rockplay.setTarget(play);
                 rockplay.setStartDelay(500);
@@ -340,7 +341,7 @@ public class PingoWindow extends Fragment {
             //touch scroll
             else {
                 fishka.setImageResource(blueFishkas[currentPingo]);
-                rockFishka(fishka);
+                zoomFishka(fishka);
                 if(!pingoState.equals(PingoState.GAMEOVER)) {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
                 }
@@ -348,6 +349,13 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
+
+    private void zoomFishka(ImageView fishka) {
+        AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_zoom);
+        fishka.setVisibility(View.VISIBLE);
+        rockplay.setTarget(fishka);
+        rockplay.start();
+    }
 
     private void rockFishka(ImageView fishka) {
         AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_rockplay);
@@ -487,31 +495,32 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new SpinEvent(pingoNumber));
 
             ImageView spin = (ImageView) getView().findViewById(R.id.spin);
-            fishka.setVisibility(View.INVISIBLE);
-            spin.setVisibility(View.VISIBLE);
             wheel.setVisibility(View.INVISIBLE);
+            spin.setVisibility(View.VISIBLE);
 
             int currentNumber = wheel.getCurrentItem();
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
-            ObjectAnimator numberAnimation = ObjectAnimator.ofFloat(spin,"rotationX", 0,-2520);
-            numberAnimation.setDuration(spinTiming);
-            numberAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
+
+            ObjectAnimator spinAnimation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
+            spinAnimation.setDuration(4000);
+            spinAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
 
             //spin cycle
-            ScrollingImageView scrollingBackground = (ScrollingImageView) getView().findViewById(R.id.scrolling_background);
             windowBackground.setBackgroundResource(R.drawable.spin0);
             new Handler().postDelayed(()->{
-                numberAnimation.start();
-                scrollingBackground.start();
-                windowBackground.setBackground(null);
-                scrollingBackground.setVisibility(View.VISIBLE);
-            },1000);
+                rockFishka(fishka);
+                spinAnimation.start();
+            },0);
+
+            //zoom in spin number
+            new Handler().postDelayed(()->{
+                Animation zoomIntAnimation = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.zoom_in_spin);
+                spin.startAnimation(zoomIntAnimation);
+            },4500);
 
             //stop spin
             new Handler().postDelayed(() -> {
-                scrollingBackground.stop();
-                scrollingBackground.setVisibility(View.INVISIBLE);
                 if(guessedNumber != null){
                     Game.guessedCount++;
                     pingoState = PingoState.WIN;
@@ -531,10 +540,10 @@ public class PingoWindow extends Fragment {
 
             //restore window state
             new Handler().postDelayed(() -> {
-                spin.setVisibility(View.INVISIBLE);
-                fishka.setVisibility(View.VISIBLE);
+                spin.clearAnimation();
                 wheel.setVisibility(View.VISIBLE);
                 spin.setBackground(null);
+                spin.setVisibility(View.INVISIBLE);
 
                 EventBus.getDefault().post(new NumberSpinEndEvent(pingoNumber,guessedNumber != null));
                 windowBackground.setBackgroundResource(R.drawable.window_background);

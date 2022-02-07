@@ -13,7 +13,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.mbronshteyn.gameserver.dto.game.CardDto;
 import com.mbronshteyn.gameserver.dto.game.HitDto;
 import com.mbronshteyn.pingo20.R;
 import com.mbronshteyn.pingo20.model.Game;
@@ -28,7 +27,6 @@ public class PingoActivity extends AppCompatActivity {
 
     public MediaPlayer mediaPlayer1 = new MediaPlayer();;
     public MediaPlayer mediaPlayer2 = new MediaPlayer();
-    protected static CardDto card;
     protected ImageView rightSmallBaloon;
     protected static SoundPool soundPool;
     public static Map<Integer,Integer> soundMap = new HashMap<>();
@@ -119,13 +117,6 @@ public class PingoActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        isOKToInit = false;
-        stopPplayInBackground();
-        finish();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         stopPplayInBackground();
@@ -142,6 +133,15 @@ public class PingoActivity extends AppCompatActivity {
             mediaPlayer2.release();
             mediaPlayer2 = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopPplayInBackground();
+        moveTaskToBack(true);
+        exitApp();
+        System.exit(1);
     }
 
     protected void exitApp(){
@@ -246,7 +246,7 @@ public class PingoActivity extends AppCompatActivity {
     protected boolean isWinningCard(){
          boolean winning = false;
 
-        List<HitDto> hits = card.getHits();
+        List<HitDto> hits = Game.card.getHits();
 
         boolean win1 = false;
         boolean win2 = false;
@@ -270,7 +270,7 @@ public class PingoActivity extends AppCompatActivity {
     public Integer loadNumberGuessed(int pingoNumber) {
 
         Integer guessed = null;
-        List<HitDto> hits = card.getHits();
+        List<HitDto> hits = Game.card.getHits();
         for(HitDto hit :hits){
             if(guessed != null){
                 break;
@@ -305,7 +305,7 @@ public class PingoActivity extends AppCompatActivity {
 
         int goessedCount = 0;
 
-        for(HitDto hit :card.getHits()){
+        for(HitDto hit : Game.card.getHits()){
             if(hit.getNumber_1().isGuessed() || hit.getNumber_2().isGuessed() || hit.getNumber_3().isGuessed() || hit.getNumber_4().isGuessed()){
                 goessedCount++;
             }
@@ -318,8 +318,8 @@ public class PingoActivity extends AppCompatActivity {
 
         String reward = "";
 
-        if(card.getBalance() != 0) {
-            reward = getString(R.string.card_balance) + " $" +(int) card.getBalance()+ " ";
+        if(Game.card.getBalance() != 0) {
+            reward = getString(R.string.card_balance) + " $" +(int) Game.card.getBalance()+ " ";
         }
         else if(Game.attemptCounter == 0){
             reward = "GAME OVER ";

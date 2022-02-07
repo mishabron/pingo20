@@ -149,13 +149,6 @@ public class LoginActivity extends PingoActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        moveTaskToBack(true);
-        System.exit(1);
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
@@ -334,7 +327,7 @@ public class LoginActivity extends PingoActivity {
         dotsProgress.setVisible(true,true);
 
         if(errorCode == null) {
-            this.card = response.body();
+            Game.card = response.body();
             Game.guessedCount = getGuessedCount();
             EventBus.getDefault().post(new CardAuthinticatedEvent(null));
         }else{
@@ -373,10 +366,10 @@ public class LoginActivity extends PingoActivity {
                 messageBaloon.setImageResource(R.drawable.played);
                 new Handler().postDelayed(()->{messageBaloon.setImageResource(R.drawable.blank_baloon);},4000);
             } else if (isWinningCard()) {
-                if(!StringUtils.isEmpty(card.getEmail())) {
+                if(!StringUtils.isEmpty(Game.card.getEmail())) {
                     playSound(R.raw.card_check_win3);
                     TextView balance = (TextView) findViewById(R.id.winAmount);
-                    balance.setText(Integer.toString((int) card.getBalance()) + " ");
+                    balance.setText(Integer.toString((int) Game.card.getBalance()) + " ");
                     Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/badabb.ttf");
                     balance.setTypeface(font, Typeface.BOLD_ITALIC);
                     balance.setVisibility(View.VISIBLE);
@@ -417,7 +410,7 @@ public class LoginActivity extends PingoActivity {
                 TransitionManager.beginDelayedTransition(root, transition);
                 constraintSet.applyTo(root);
             }
-        }, 1500);
+        }, 750);
     }
 
     public void scaleUi(){

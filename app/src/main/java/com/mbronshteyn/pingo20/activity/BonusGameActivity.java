@@ -3,7 +3,6 @@ package com.mbronshteyn.pingo20.activity;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -215,7 +214,7 @@ public class BonusGameActivity extends PingoActivity {
             gotoWin();
         }
         else if(attemptCounter == 0 && event.getPingoNumber() == 3){
-            gotoWin();
+            gotoNoWin();
         }
         else if(attemptCounter == 5 && event.getPingoNumber() == 3){
             fingerTimer = new FingerTimer(1500,100);
@@ -271,8 +270,6 @@ public class BonusGameActivity extends PingoActivity {
         sevenAnim3.setTarget(seven3);
         sevenAnim3.start();
 
-        //Game.bonusHit = Bonus.BONUSPIN;
-
         //update free attempt
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(PingoRemoteService.baseUrl)
@@ -280,7 +277,7 @@ public class BonusGameActivity extends PingoActivity {
                 .build();
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
         final AuthinticateDto dto = new AuthinticateDto();
-        dto.setCardNumber(card.getCardNumber());
+        dto.setCardNumber(Game.card.getCardNumber());
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
         Call<CardDto> call = service.saveFreeAttempt(dto);
@@ -296,7 +293,7 @@ public class BonusGameActivity extends PingoActivity {
     }
 
     private void processResponse(Response<CardDto> response) {
-        card = response.body();
+        Game.card = response.body();
         goToGame();
     }
 
@@ -375,6 +372,7 @@ public class BonusGameActivity extends PingoActivity {
     private void goToGame(){
         isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusGameActivity.this);
         startActivity(intent, options.toBundle());
     }

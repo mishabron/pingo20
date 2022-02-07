@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -197,7 +198,7 @@ public class WinEmailActivity extends PingoActivity {
         final PingoRemoteService service = retrofit.create(PingoRemoteService.class);
 
         WinnerEmailDto winnerEmailDto = new WinnerEmailDto();
-        winnerEmailDto.setCardNumber(card.getCardNumber());
+        winnerEmailDto.setCardNumber(Game.card.getCardNumber());
         winnerEmailDto.setDeviceId(Game.devicedId);
         winnerEmailDto.setGame(Game.GAMEID);
         winnerEmailDto.setEmail(email.getText().toString());
@@ -228,9 +229,10 @@ public class WinEmailActivity extends PingoActivity {
             playSound(R.raw.email_sent);
             new Handler().postDelayed(()->{
                 Intent intent = new Intent(getApplicationContext(), EndOfGameActivity.class);
-                startActivity(intent);
-                Activity activity = (Activity) context;
-                activity.finish();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(WinEmailActivity.this);
+                startActivity(intent, options.toBundle());
+                finish();
             },3500);
         }else{
             messageBaloon.setImageResource(R.drawable.bubble_network_error);

@@ -1,6 +1,5 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -84,7 +83,7 @@ public class BonusSpinActivity extends PingoActivity{
         pingo3 = (BonusSpinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusSpinPingo3);
         pingo4 = (BonusSpinWondow) getSupportFragmentManager().findFragmentById(R.id.bonusSpinPingo4);
 
-        fingerButton = (Button) findViewById(R.id.bonusButtonGo);
+        fingerButton = (Button) findViewById(R.id.bonusSpinButtonGo);
         fingerButton.setEnabled(false);
 
         fingerTimer = new BonusSpinActivity.FingerTimer(1000,100);
@@ -214,7 +213,7 @@ public class BonusSpinActivity extends PingoActivity{
 
         ArrayList<Integer>  numbersPlayed = new ArrayList<>();
 
-        List<HitDto> hits = card.getHits();
+        List<HitDto> hits = Game.card.getHits();
         for(HitDto hit :hits){
             Integer playedNumber = null;
             switch(pingoNumber){
@@ -250,6 +249,9 @@ public class BonusSpinActivity extends PingoActivity{
             stopPlaySound(R.raw.wheel_spinning);
 
             //start finger timer
+            ImageView instructionsPage = (ImageView) findViewById(R.id.instructionsPageBonus);
+            Glide.with(this).load(R.drawable.instruction_bonuspin).diskCacheStrategy( DiskCacheStrategy.NONE ).skipMemoryCache( true ).into(instructionsPage);
+            instructionsPage.setVisibility(View.VISIBLE);
             fingerButton.setEnabled(true);
             fingerTimer.start();
 
@@ -262,6 +264,8 @@ public class BonusSpinActivity extends PingoActivity{
                 @Override
                 public void onClick(View v) {
                     fingerTimer.cancel();
+                    ImageView instructionsPage = (ImageView) findViewById(R.id.instructionsPageBonus);
+                    instructionsPage.setVisibility(View.INVISIBLE);
                     spinPingos(pingosInPlay.get(0),spinSounds.get(0));
                     pingosInPlay.remove(0);
                     spinSounds.remove(0);
@@ -325,11 +329,9 @@ public class BonusSpinActivity extends PingoActivity{
     private void gotoMainGame() {
         isOKToInit = true;
         Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(BonusSpinActivity.this);
         startActivity(intent, options.toBundle());
-        Activity activity = (Activity) BonusSpinActivity.this;
-        activity.finish();
-        Runtime.getRuntime().gc();
     }
 
     private class FingerTimer extends CountDownTimer {
@@ -424,7 +426,7 @@ public class BonusSpinActivity extends PingoActivity{
         String message = headers.get("message");
 
         if(StringUtils.isEmpty(headers.get("errorCode"))) {
-            card = response.body();
+            Game.card = response.body();
         }else{
             playSound(R.raw.error_short);
             ErrorCode errorCode = ErrorCode.valueOf(headers.get("errorCode"));
@@ -508,8 +510,14 @@ public class BonusSpinActivity extends PingoActivity{
         pingoParams4.height = (int)(newBmapHeight*pingoHeight);
         pingoParams4.width = (int)(newBmapWidth*pingoWidth);
 
+        //scale instruction page
+        ImageView instructionPage = (ImageView) findViewById(R.id.instructionsPageBonus);
+        ViewGroup.LayoutParams instructionPageParams = instructionPage.getLayoutParams();
+        instructionPageParams.width = newBmapWidth;
+        instructionPageParams.height = newBmapHeight;
+
         //scale finger  button
-        Button fingerButton = (Button) findViewById(R.id.bonusButtonGo);
+        Button fingerButton = (Button) findViewById(R.id.bonusSpinButtonGo);
         int fingerButtonHeight = (int) (newBmapHeight * 0.4039F);
         int fingerButtonWidt = (int) (newBmapWidth * 0.2400F);
         ViewGroup.LayoutParams buttonParamsFinger = fingerButton.getLayoutParams();

@@ -48,7 +48,7 @@ public class FreeGameActivity extends PingoActivity{
                 .build();
 
         dto = new AuthinticateDto();;
-        dto.setCardNumber(card.getCardNumber());
+        dto.setCardNumber(Game.card.getCardNumber());
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
 
@@ -95,7 +95,7 @@ public class FreeGameActivity extends PingoActivity{
                 }
             });
             logo3.startAnimation(logoPopup3);
-        },850);
+        },250);
 
         new Handler().postDelayed(()->{
 
@@ -128,7 +128,7 @@ public class FreeGameActivity extends PingoActivity{
                 public void onAnimationStart(Animation animation) {}
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    card = response.body();
+                    Game.card = response.body();
                     Intent intent = new Intent(getApplicationContext(), GameActivity.class);
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

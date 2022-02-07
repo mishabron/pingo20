@@ -3,6 +3,7 @@ package com.mbronshteyn.pingo20.model;
 import android.os.Build;
 
 import com.mbronshteyn.gameserver.dto.game.Bonus;
+import com.mbronshteyn.gameserver.dto.game.CardDto;
 
 public class Game {
 
@@ -20,6 +21,8 @@ public class Game {
     public static String cardNumber;
 
     public static int guessedCount;
+    public static CardDto card;
+    public static boolean exit = false;
 
     private static Game game = new Game();
 

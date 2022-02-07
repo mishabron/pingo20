@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +20,7 @@ import com.mbronshteyn.pingo20.activity.fragment.ContactFragment;
 import com.mbronshteyn.pingo20.activity.fragment.RulesFragment;
 import com.mbronshteyn.pingo20.model.Game;
 
-public class MenuActivity extends PingoActivity {
+public class MenuActivity extends AppCompatActivity {
 
     private RulesFragment rulesFragment;
     private BonusesFragment bonusesFragment;
@@ -30,7 +31,7 @@ public class MenuActivity extends PingoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        double payouts[] = {card.getPayout1(),card.getPayout2(),card.getPayout3()};
+        double payouts[] = {Game.card.getPayout1(), Game.card.getPayout2(), Game.card.getPayout3()};
         rulesFragment = RulesFragment.newInstance(payouts);
         bonusesFragment = BonusesFragment.newInstance(null,null);
         contactFragment = ContactFragment.newInstance(null,null);
@@ -40,7 +41,6 @@ public class MenuActivity extends PingoActivity {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isOKToInit = false;
                 finish();
             }
         });
@@ -94,14 +94,13 @@ public class MenuActivity extends PingoActivity {
 
         AuthinticateDto dto = new AuthinticateDto();
         ;
-        dto.setCardNumber(card.getCardNumber());
+        dto.setCardNumber(Game.card.getCardNumber());
         dto.setDeviceId(Game.devicedId);
         dto.setGame(Game.getGAMEID());
     }
 
     @Override
     public void onBackPressed() {
-        isOKToInit = false;
         finish();
     }
 

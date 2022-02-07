@@ -1,6 +1,5 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -29,10 +28,9 @@ public class EndOfGameActivity extends PingoActivity {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("playAgain",true);
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                Activity activity = (Activity) context;
-                activity.finish();
             }
         });
 
@@ -41,11 +39,7 @@ public class EndOfGameActivity extends PingoActivity {
             @Override
             public void onClick(View v) {
                 exitApp();
-                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                homeIntent.addCategory( Intent.CATEGORY_HOME );
-                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
-                finish();
+                System.exit(1);
             }
         });
 

@@ -1,6 +1,5 @@
 package com.mbronshteyn.pingo20.activity;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -9,12 +8,11 @@ import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.mbronshteyn.pingo20.R;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends PingoActivity {
 
     private SplashActivity context;
 
@@ -24,8 +22,6 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
 
         scaleUi();
-
-        context = this;
     }
 
     @Override
@@ -33,14 +29,12 @@ public class SplashActivity extends Activity {
 
         super.onResume();
 
-        View rootView = getWindow().getDecorView().getRootView();
-
-        new Handler().postDelayed(()->{
+        new Handler().postDelayed(() -> {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtras(new Bundle());
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this);
             startActivity(intent, options.toBundle());
-        },5000);
+        }, 5000);
     }
 
     public void scaleUi() {
