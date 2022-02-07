@@ -341,7 +341,7 @@ public class PingoWindow extends Fragment {
             //touch scroll
             else {
                 fishka.setImageResource(blueFishkas[currentPingo]);
-                rockFishka(fishka);
+                zoomFishka(fishka);
                 if(!pingoState.equals(PingoState.GAMEOVER)) {
                     EventBus.getDefault().post(new PingoEvent(pingoNumber, currentPingo));
                 }
@@ -349,6 +349,13 @@ public class PingoWindow extends Fragment {
             EventBus.getDefault().post(new ScrollEnd(pingoNumber));
         }
     };
+
+    private void zoomFishka(ImageView fishka) {
+        AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_zoom);
+        fishka.setVisibility(View.VISIBLE);
+        rockplay.setTarget(fishka);
+        rockplay.start();
+    }
 
     private void rockFishka(ImageView fishka) {
         AnimatorSet rockplay = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.anim.fishka_rockplay);
@@ -495,10 +502,6 @@ public class PingoWindow extends Fragment {
             ImageView viw = numbers.get(currentNumber);
             spin.setImageDrawable(viw.getDrawable());
 
-            ObjectAnimator fishkaAnimation = ObjectAnimator.ofFloat(fishka,"rotationX", 0,3600);
-            fishkaAnimation.setDuration(7000);
-            fishkaAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
-
             ObjectAnimator spinAnimation = ObjectAnimator.ofFloat(spin,"rotationY", 0,360);
             spinAnimation.setDuration(4000);
             spinAnimation.setInterpolator(new AccelerateInterpolator(1.0F));
@@ -506,7 +509,7 @@ public class PingoWindow extends Fragment {
             //spin cycle
             windowBackground.setBackgroundResource(R.drawable.spin0);
             new Handler().postDelayed(()->{
-                fishkaAnimation.start();
+                rockFishka(fishka);
                 spinAnimation.start();
             },0);
 

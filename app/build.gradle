@@ -26,15 +26,13 @@ android {
     productFlavors {
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+    }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
 
 }
