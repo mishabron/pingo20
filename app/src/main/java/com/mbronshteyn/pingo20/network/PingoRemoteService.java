@@ -14,7 +14,7 @@ import retrofit2.http.Path;
 
 public interface PingoRemoteService {
 
-    public static String baseUrl = "http://pingo.win:8084";
+    public static String baseUrl = "https://pingo.win:8084";
 
     @POST("/pingo/Game/authinticate")
     Call<CardDto> authinticate(@Body AuthinticateDto authinticateDto);
